@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="BoardView">
+        <attr name="color_red" format="color"/>
+        <attr name="color_blue" format="color"/>"
+
+        <attr name="title_text" format="string"/>
+        <attr name="title_color" format="color"/>
+        <attr name="title_size" format="dimension"/>
+        <attr name="title_font" format="enum">
+            <enum name="regular" value="0"/>
+            <enum name="bold" value="1"/>
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="CustomImageView">
+        <attr name="x" format="reference" />
+        <attr name="zero" format="reference"/>
+    </declare-styleable>
+</resources>

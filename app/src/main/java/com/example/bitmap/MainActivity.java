@@ -3,15 +3,19 @@ package com.example.bitmap;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
-    MyCanvas myCanvas;
+    BoardView boardView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        myCanvas = new MyCanvas(this);
-        setContentView(myCanvas);
+        setContentView(R.layout.activity_main);
+
+        boardView = findViewById(R.id.board);
+        boardView.setMainActivity(this);
     }
 }

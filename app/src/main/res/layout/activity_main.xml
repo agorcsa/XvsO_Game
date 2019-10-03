@@ -1,13 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-<com.example.bitmap.MyCanvas
-    android:id="@+id/board"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"/>
+    <com.example.bitmap.CustomImageView
+        android:id="@+id/custom_imageview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="50dp"
+        android:layout_marginLeft="20dp"
+        custom:x="@drawable/ic_cross"
+        custom:zero="@drawable/ic_zero" />
+
+    <com.example.bitmap.BoardView
+        android:id="@+id/board"
+        android:layout_width="240dp"
+        android:layout_height="240dp"
+        android:layout_centerInParent="true"
+        custom:color_blue="@color/color_blue"
+        custom:color_red="@color/color_red" />
+
 </RelativeLayout>
