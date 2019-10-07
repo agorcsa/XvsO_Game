@@ -56,11 +56,12 @@ public class CustomImageView extends AppCompatImageView {
         x = typedArray.getResourceId(R.styleable.CustomImageView_x, R.drawable.ic_cross);
         zero = typedArray.getResourceId(R.styleable.CustomImageView_zero, R.drawable.ic_zero);
 
-        mXColor = typedArray.getResourceId(R.styleable.BoardView_color_red, getResources().getColor(R.color.color_red));
-        mZeroColor = typedArray.getResourceId(R.styleable.BoardView_color_blue, getResources().getColor(R.color.color_blue));
+        mXColor = typedArray.getResourceId(R.styleable.CustomBoardView_color_red, getResources().getColor(R.color.color_red));
+        mZeroColor = typedArray.getResourceId(R.styleable.CustomBoardView_color_blue, getResources().getColor(R.color.color_blue));
+
 
         imageView.setImageResource(x);
-        imageView.setColorFilter(mXColor);
+        //imageView.setColorFilter(mXColor);
 
         typedArray.recycle();
     }

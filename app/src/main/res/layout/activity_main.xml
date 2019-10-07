@@ -16,7 +16,7 @@
         custom:x="@drawable/ic_cross"
         custom:zero="@drawable/ic_zero" />
 
-    <com.example.bitmap.BoardView
+    <com.example.bitmap.CustomBoardView
         android:id="@+id/board"
         android:layout_width="240dp"
         android:layout_height="240dp"

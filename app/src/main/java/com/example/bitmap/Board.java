@@ -1,97 +1,89 @@
 package com.example.bitmap;
 
-import java.util.Random;
-
-
+// stores the elements of the grid in an array
+// contains a boolean indicating if the game has ended or not
 public class Board {
 
-    private static final Random RANDOM = new Random();
-
-    private char[] cell;
+    private char[] elts;
     private char currentPlayer;
-    private boolean gameEnded;
+    private boolean ended;
 
-
+    // constructor
+    // creates an array of 9 elements of the board
     public Board() {
-        cell = new char[9];
+        elts = new char[9];
         newGame();
     }
 
+    // checks if the game has ended
     public boolean isEnded() {
-        return gameEnded;
+        return ended;
     }
 
     // sets the mark of the currentPlayer on the grid at a given (x,y) position
     public char play(int x, int y) {
-        if (!gameEnded && cell[3 * y + x] == ' ') {
-            cell[3 * y + x] = currentPlayer;
+        if (!ended && elts[3 * y + x] == ' ') {
+            elts[3 * y + x] = currentPlayer;
             changePlayer();
         }
         return checkEnd();
     }
 
-    // change the current player for the next player
+    // changes the current player for the next play
     public void changePlayer() {
         currentPlayer = (currentPlayer == 'X' ? 'O' : 'X');
     }
 
-
+    // getter method
+    // returns the position
     public char getElt(int x, int y) {
-        return cell[3 * y + x];
+        return elts[3 * y + x];
     }
 
+    // reinitializes the board
+    // sets the current player to "X"
+    // assigns false to the ended variable
     public void newGame() {
-        for (int i = 0; i < cell.length; i++) {
-            cell[i] = ' ';
+        for (int i = 0; i < elts.length; i++) {
+            elts[i] = ' ';
         }
         currentPlayer = 'X';
-        gameEnded = false;
+        ended = false;
     }
 
-    // checks for winning combinations and marks the game as ended
+    // checks the board for winning combinations
+    // updates the boolean ended variable to false
     public char checkEnd() {
         for (int i = 0; i < 3; i++) {
             if (getElt(i, 0) != ' ' &&
                     getElt(i, 0) == getElt(i, 1) &&
                     getElt(i, 1) == getElt(i, 2)) {
-                gameEnded = true;
+                ended = true;
                 return getElt(i, 0);
             }
             if (getElt(0, i) != ' ' &&
                     getElt(0, i) == getElt(1, i) &&
                     getElt(1, i) == getElt(2, i)) {
-                gameEnded = true;
+                ended = true;
                 return getElt(0, i);
             }
         }
         if (getElt(0, 0) != ' ' &&
                 getElt(0, 0) == getElt(1, 1) &&
                 getElt(1, 1) == getElt(2, 2)) {
-            gameEnded= true;
+            ended = true;
             return getElt(0, 0);
         }
         if (getElt(2, 0) != ' ' &&
                 getElt(2, 0) == getElt(1, 1) &&
                 getElt(1, 1) == getElt(0, 2)) {
-            gameEnded = true;
+            ended = true;
             return getElt(2, 0);
         }
         for (int i = 0; i < 9; i++) {
-            if (cell[i] == ' ')
+            if (elts[i] == ' ')
                 return ' ';
         }
         return 'T';
-    }
-
-    public char computer() {
-        if (!gameEnded) {
-            int position = -1;
-            do {
-                position = RANDOM.nextInt(9);
-            } while (cell[position] != ' ');
-            cell[position] = currentPlayer;
-            changePlayer();
-        }
-        return checkEnd();
     }
 }

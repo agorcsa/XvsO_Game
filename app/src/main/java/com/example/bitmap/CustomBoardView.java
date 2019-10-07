@@ -6,15 +6,20 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
-
-public class BoardView extends View {
+// renders the Board on the screen
+// draws the Board using Canvas
+// contains the logic of the game
+public class CustomBoardView extends View {
 
     Paint paint;
+
+    InterfaceGame interfaceGame;
 
     private float X_PARTITION_RATIO = 1 / 3f;
     private float Y_PARTITION_RATIO = 1 / 3f;
@@ -27,26 +32,35 @@ public class BoardView extends View {
     int mXColor;
     int mZeroColor;
 
+    // ---------------------------------
+
+    private Board board;
+
     private MainActivity activity;
 
+    // width and height of the board
+    // eltW = cell weight, eltH = cell height
+    private int width, height, eltW, eltH;
 
-    public BoardView(Context context) {
+    // ----------------------------------
+
+    public CustomBoardView(Context context) {
         super(context);
         init(null);
     }
 
-    public BoardView(Context context, @Nullable AttributeSet attrs) {
+    public CustomBoardView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init(attrs);
     }
 
-    public BoardView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public CustomBoardView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(attrs);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    public BoardView(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public CustomBoardView(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init(attrs);
     }
@@ -63,8 +77,8 @@ public class BoardView extends View {
 
         TypedArray typedArray = getContext().obtainStyledAttributes(attributeSet, R.styleable.CustomImageView);
 
-        mXColor = typedArray.getResourceId(R.styleable.BoardView_color_red, getResources().getColor(R.color.color_red));
-        mZeroColor = typedArray.getResourceId(R.styleable.BoardView_color_blue, getResources().getColor(R.color.color_blue));
+        mXColor = typedArray.getResourceId(R.styleable.CustomBoardView_color_red, getResources().getColor(R.color.color_red));
+        mZeroColor = typedArray.getResourceId(R.styleable.CustomBoardView_color_blue, getResources().getColor(R.color.color_blue));
 
         x = typedArray.getResourceId(R.styleable.CustomImageView_x, R.drawable.ic_cross);
         zero = typedArray.getResourceId(R.styleable.CustomImageView_zero, R.drawable.ic_zero);
@@ -93,7 +107,49 @@ public class BoardView extends View {
         canvas.drawLine(0f, getHeight() * (2 * Y_PARTITION_RATIO), getWidth(), getHeight() * (2 * Y_PARTITION_RATIO), paint);
     }
 
-    public void setMainActivity(MainActivity mainActivity) {
-        activity = mainActivity;
+    // ---------------------------
+
+    public void setup(InterfaceGame interfaceGame) {
+        this.interfaceGame = interfaceGame;
+    }
+
+    public void setMainActivity(MainActivity a) {
+        activity = a;
+    }
+
+    public void setBoard(Board b) {
+        board = b;
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        height = View.MeasureSpec.getSize(heightMeasureSpec);
+        width = View.MeasureSpec.getSize(widthMeasureSpec);
+        eltW = width  / 3;
+        eltH = height / 3;
+
+        setMeasuredDimension(width, height);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (!board.isEnded()  &&  event.getAction() == MotionEvent.ACTION_DOWN) {
+            int x = (int) (event.getX() / eltW);
+            int y = (int) (event.getY() / eltH);
+            char win = board.play(x, y);
+            invalidate();
+
+            if (win != ' ') {
+                activity.gameEnded(win);
+            } else {
+                // computer plays ...
+
+
+                if (win != ' ') {
+                    activity.gameEnded(win);
+                }
+            }
+        }
+        return super.onTouchEvent(event);
     }
 }
