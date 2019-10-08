@@ -8,9 +8,13 @@ import android.os.Build;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+
+import com.example.bitmap.Board.*;
 
 // renders the Board on the screen
 // draws the Board using Canvas
@@ -20,29 +24,31 @@ public class CustomBoardView extends View {
     Paint paint;
 
     InterfaceGame interfaceGame;
-
-    private float X_PARTITION_RATIO = 1 / 3f;
-    private float Y_PARTITION_RATIO = 1 / 3f;
-
     // to save the value for the drawable reference
-    int x;
-    int zero;
-
+    public int x;
+    public int zero;
     // to save the value for the color
     int mXColor;
     int mZeroColor;
+    private float X_PARTITION_RATIO = 1 / 3f;
+    private float Y_PARTITION_RATIO = 1 / 3f;
 
     // ---------------------------------
-
     private Board board;
 
     private MainActivity activity;
+    Canvas canvas;
 
     // width and height of the board
     // eltW = cell weight, eltH = cell height
     private int width, height, eltW, eltH;
 
     // ----------------------------------
+
+    private CustomImageView customImageView;
+
+    boolean isX = true;
+
 
     public CustomBoardView(Context context) {
         super(context);
@@ -125,7 +131,7 @@ public class CustomBoardView extends View {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         height = View.MeasureSpec.getSize(heightMeasureSpec);
         width = View.MeasureSpec.getSize(widthMeasureSpec);
-        eltW = width  / 3;
+        eltW = width / 3;
         eltH = height / 3;
 
         setMeasuredDimension(width, height);
@@ -133,7 +139,7 @@ public class CustomBoardView extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (!board.isEnded()  &&  event.getAction() == MotionEvent.ACTION_DOWN) {
+        if (!board.isEnded() && event.getAction() == MotionEvent.ACTION_DOWN) {
             int x = (int) (event.getX() / eltW);
             int y = (int) (event.getY() / eltH);
             char win = board.play(x, y);
@@ -142,8 +148,14 @@ public class CustomBoardView extends View {
             if (win != ' ') {
                 activity.gameEnded(win);
             } else {
-                // computer plays ...
 
+                if (board.getCurrentPlayer() == 'X') {
+                    drawX();
+                } else {
+                    drawZero();
+                }
+
+                 invalidate();
 
                 if (win != ' ') {
                     activity.gameEnded(win);
@@ -151,5 +163,17 @@ public class CustomBoardView extends View {
             }
         }
         return super.onTouchEvent(event);
+    }
+
+    public void drawX(){
+        Toast.makeText(getContext(), "Draw X ", Toast.LENGTH_SHORT).show();
+        //ImageView xImage = customImageView.getCustomImageView();
+        //xImage.setImageResource(x);
+    }
+
+    public void drawZero(){
+        Toast.makeText(getContext(), "Draw Zero ", Toast.LENGTH_SHORT).show();
+        //ImageView zeroImage = customImageView.getCustomImageView();
+        //zeroImage.setImageResource(zero);
     }
 }

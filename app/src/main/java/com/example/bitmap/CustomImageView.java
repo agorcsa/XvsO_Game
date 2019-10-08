@@ -13,16 +13,20 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.AppCompatImageView;
 
+
 public class CustomImageView extends AppCompatImageView {
 
+    public ImageView customImageView;
+
     Paint paint;
-    ImageView imageView;
 
     int mXColor;
     int mZeroColor;
 
-    int x;
-    int zero;
+    int xDrawableId;
+    int zeroDrawableId;
+
+    boolean isX = true;
 
     public CustomImageView(Context context) {
         super(context);
@@ -39,13 +43,15 @@ public class CustomImageView extends AppCompatImageView {
         init(attrs);
     }
 
+    public ImageView getCustomImageView() {
+        return customImageView;
+    }
+
     private void init(@Nullable AttributeSet attributeSet) {
         paint = new Paint();
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(5);
         paint.setAntiAlias(true);
-
-        imageView = findViewById(R.id.custom_imageview);
 
         if (attributeSet == null) {
             return;
@@ -53,15 +59,23 @@ public class CustomImageView extends AppCompatImageView {
 
         TypedArray typedArray = getContext().obtainStyledAttributes(attributeSet, R.styleable.CustomImageView);
 
-        x = typedArray.getResourceId(R.styleable.CustomImageView_x, R.drawable.ic_cross);
-        zero = typedArray.getResourceId(R.styleable.CustomImageView_zero, R.drawable.ic_zero);
+        xDrawableId = typedArray.getResourceId(R.styleable.CustomImageView_x, R.drawable.ic_cross);
+        zeroDrawableId = typedArray.getResourceId(R.styleable.CustomImageView_zero, R.drawable.ic_zero);
 
         mXColor = typedArray.getResourceId(R.styleable.CustomBoardView_color_red, getResources().getColor(R.color.color_red));
         mZeroColor = typedArray.getResourceId(R.styleable.CustomBoardView_color_blue, getResources().getColor(R.color.color_blue));
 
+        customImageView = findViewById(R.id.custom_imageview);
 
-        imageView.setImageResource(x);
-        //imageView.setColorFilter(mXColor);
+        if (isX) {
+            customImageView.setImageResource(xDrawableId);
+        } else {
+            customImageView.setImageResource(zeroDrawableId);
+        }
+
+        //customImageView.setImageResource(xDrawableId);
+        //customImageView.setImageResource(zero);
+        //customImageView.setColorFilter(mXColor);
 
         typedArray.recycle();
     }

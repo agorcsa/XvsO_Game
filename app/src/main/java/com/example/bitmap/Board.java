@@ -15,6 +15,14 @@ public class Board {
         newGame();
     }
 
+    public char getCurrentPlayer() {
+        return currentPlayer;
+    }
+
+    public void setCurrentPlayer(char currentPlayer) {
+        this.currentPlayer = currentPlayer;
+    }
+
     // checks if the game has ended
     public boolean isEnded() {
         return ended;

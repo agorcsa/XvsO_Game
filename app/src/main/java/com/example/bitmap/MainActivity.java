@@ -7,18 +7,20 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-
-import com.allyants.boardview.BoardView;
+import android.widget.ImageView;
 
 public class MainActivity extends AppCompatActivity implements InterfaceGame {
 
     private CustomBoardView boardView;
     private Board board;
+    private ImageView imageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        imageView = findViewById(R.id.custom_imageview);
         boardView = findViewById(R.id.board);
         board = new Board();
         boardView.setBoard(board);
@@ -27,7 +29,6 @@ public class MainActivity extends AppCompatActivity implements InterfaceGame {
 
     @Override
     public void onGameEnded(char win) {
-
     }
 
     @Override
@@ -62,5 +63,4 @@ public class MainActivity extends AppCompatActivity implements InterfaceGame {
         board.newGame();
         boardView.invalidate();
     }
-
 }
