@@ -37,37 +37,44 @@ public class MainActivity extends AppCompatActivity {
     private int counterPlayer1 = 0;
     private int counterPlayer2 = 0;
 
-    private String scorePlayer1;
-    private String scorePlayer2;
+    public static final String SCORE_PLAYER_1 = "player_1_score";
+    public static final String SCORE_PLAYER_2 = "player_2_score";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (savedInstanceState != null)
-        {
-            if (savedInstanceState.containsKey(scorePlayer1) || savedInstanceState.containsKey(scorePlayer2))
-            {
-                counterPlayer1 = savedInstanceState.getInt(scorePlayer1);
-                counterPlayer2 = savedInstanceState.getInt(scorePlayer2);
-            }
-        }
-
-
         gridLayout = findViewById(R.id.grid_layout);
 
         lefVertical = findViewById(R.id.left_vertical);
         centerVertical = findViewById(R.id.center_vertical);
         rightVertical = findViewById(R.id.right_vertical);
+
         topHorizontal = findViewById(R.id.top_horizontal);
         centerHorizontal = findViewById(R.id.center_horizontal);
         bottomHorizontal = findViewById(R.id.bottom_horizontal);
+
         rightLeftDiagonal = findViewById(R.id.right_left_diagonal);
         leftRightDiagonal = findViewById(R.id.left_right_diagonal);
 
         player1Result = findViewById(R.id.player1_result);
         player2Result = findViewById(R.id.player2_result);
+
+        resetPlayers();
+
+        if (savedInstanceState != null)
+        {
+            if (savedInstanceState.containsKey(SCORE_PLAYER_1) || savedInstanceState.containsKey(SCORE_PLAYER_2))
+            {
+                counterPlayer1 = savedInstanceState.getInt(SCORE_PLAYER_1);
+                counterPlayer2 = savedInstanceState.getInt(SCORE_PLAYER_2);
+
+                player1Result.setText(String.valueOf(counterPlayer1));
+                player2Result.setText(String.valueOf(counterPlayer2));
+            }
+        }
+
     }
 
 
@@ -215,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
             isXWinner = false;
             centerVertical.setVisibility(View.VISIBLE);
             return true;
-        } else if (mCellIndex.get(2) == 1 && mCellIndex.get(5) == 1 && mCellIndex.get(8) == 1) {
+        } else if (mCellIndex.get(2) == 2 && mCellIndex.get(5) == 2 && mCellIndex.get(8) == 2) {
             isXWinner = false;
             rightVertical.setVisibility(View.VISIBLE);
             return true;
@@ -269,14 +276,20 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_new_game) {
+        if (item.getItemId() == R.id.action_new_round) {
 
             resetBoard();
+        } else if (item.getItemId() == R.id.action_new_game) {
+
+            resetBoard();
+            resetPlayers();
         }
+
         return super.onOptionsItemSelected(item);
     }
 
     public void hideWinningLines() {
+
         topHorizontal.setVisibility(View.INVISIBLE);
         centerHorizontal.setVisibility(View.INVISIBLE);
         bottomHorizontal.setVisibility(View.INVISIBLE);
@@ -294,7 +307,14 @@ public class MainActivity extends AppCompatActivity {
     {
         super.onSaveInstanceState(outState);
 
-        outState.putInt(scorePlayer1, counterPlayer1);
-        outState.putInt(scorePlayer2, counterPlayer2);
+        outState.putInt(SCORE_PLAYER_1, counterPlayer1);
+        outState.putInt(SCORE_PLAYER_2, counterPlayer2);
+    }
+
+    public void resetPlayers(){
+        player1Result.setText("0");
+        player2Result.setText("0");
+        counterPlayer1 = 0;
+        counterPlayer2 = 0;
     }
 }
