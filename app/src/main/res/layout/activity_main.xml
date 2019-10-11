@@ -1,267 +1,268 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/app_background">
-
-    <GridLayout
-        android:id="@+id/grid_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:background="@color/grid_background"
-        android:columnCount="3"
-        android:rowCount="3">
-        ​
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/block_1"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:layout_row="0"
-            android:layout_column="0"
-            android:layout_marginBottom="4dp"
-            android:background="@color/app_background"
-            android:onClick="dropIn"
-            android:tag="0" />
-
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/block_2"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:layout_row="0"
-            android:layout_column="1"
-            android:layout_marginStart="4dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginEnd="4dp"
-            android:layout_marginRight="4dp"
-            android:layout_marginBottom="4dp"
-            android:background="@color/app_background"
-            android:onClick="dropIn"
-            android:tag="1" />
-        ​
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/block_3"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:layout_row="0"
-            android:layout_column="2"
-            android:layout_marginBottom="4dp"
-            android:background="@color/app_background"
-            android:onClick="dropIn"
-            android:tag="2" />
-        ​
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/block_4"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:layout_row="1"
-            android:layout_column="0"
-            android:background="@color/app_background"
-            android:onClick="dropIn"
-            android:tag="3" />
-        ​
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/block_5"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:layout_row="1"
-            android:layout_column="1"
-            android:layout_marginStart="4dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginEnd="4dp"
-            android:layout_marginRight="4dp"
-            android:background="@color/app_background"
-            android:onClick="dropIn"
-            android:tag="4" />
-        ​
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/block_6"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:layout_row="1"
-            android:layout_column="2"
-            android:background="@color/app_background"
-            android:onClick="dropIn"
-            android:tag="5" />
-        ​
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/block_7"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:layout_row="2"
-            android:layout_column="0"
-            android:layout_marginTop="4dp"
-            android:background="@color/app_background"
-            android:onClick="dropIn"
-            android:tag="6" />
-        ​
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/block_8"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:layout_row="2"
-            android:layout_column="1"
-            android:layout_marginStart="4dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="4dp"
-            android:layout_marginRight="4dp"
-            android:background="@color/app_background"
-            android:onClick="dropIn"
-            android:tag="7" />
-        ​
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/block_9"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:layout_row="2"
-            android:layout_column="2"
-            android:layout_marginTop="4dp"
-            android:background="@color/app_background"
-            android:onClick="dropIn"
-            android:tag="8" />
-    </GridLayout>
-
-  <LinearLayout
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:orientation="vertical">
-
-      <LinearLayout
-          android:orientation="horizontal"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content">
-
-        <TextView
-            android:id="@+id/player1_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:layout_marginLeft="10dp"
-            android:textColor="@color/color_red"
-            android:textSize="@dimen/text_size_large"
-            android:text="Player X: "/>
-
-        <TextView
-            android:id="@+id/player1_result"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="20dp"
-            android:textColor="@color/color_blue"
-            android:textSize="@dimen/text_size_large" />
-      </LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:background="@color/app_background">
 
-        <TextView
-            android:id="@+id/player2_text"
+        <GridLayout
+            android:id="@+id/grid_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:textColor="@color/color_blue"
-            android:textSize="@dimen/text_size_large"
-            android:text="Player O: "/>
+            android:layout_gravity="center"
+            android:background="@color/grid_background"
+            android:columnCount="3"
+            android:rowCount="3">
 
-        <TextView
-            android:id="@+id/player2_result"
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/block_1"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_row="0"
+                android:layout_column="0"
+                android:layout_marginBottom="4dp"
+                android:background="@color/app_background"
+                android:onClick="dropIn"
+                android:tag="0" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/block_2"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_row="0"
+                android:layout_column="1"
+                android:layout_marginStart="4dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginEnd="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginBottom="4dp"
+                android:background="@color/app_background"
+                android:onClick="dropIn"
+                android:tag="1" />
+            ​
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/block_3"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_row="0"
+                android:layout_column="2"
+                android:layout_marginBottom="4dp"
+                android:background="@color/app_background"
+                android:onClick="dropIn"
+                android:tag="2" />
+            ​
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/block_4"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_row="1"
+                android:layout_column="0"
+                android:background="@color/app_background"
+                android:onClick="dropIn"
+                android:tag="3" />
+            ​
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/block_5"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_row="1"
+                android:layout_column="1"
+                android:layout_marginStart="4dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginEnd="4dp"
+                android:layout_marginRight="4dp"
+                android:background="@color/app_background"
+                android:onClick="dropIn"
+                android:tag="4" />
+            ​
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/block_6"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_row="1"
+                android:layout_column="2"
+                android:background="@color/app_background"
+                android:onClick="dropIn"
+                android:tag="5" />
+            ​
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/block_7"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_row="2"
+                android:layout_column="0"
+                android:layout_marginTop="4dp"
+                android:background="@color/app_background"
+                android:onClick="dropIn"
+                android:tag="6" />
+            ​
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/block_8"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_row="2"
+                android:layout_column="1"
+                android:layout_marginStart="4dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="4dp"
+                android:layout_marginRight="4dp"
+                android:background="@color/app_background"
+                android:onClick="dropIn"
+                android:tag="7" />
+            ​
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/block_9"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_row="2"
+                android:layout_column="2"
+                android:layout_marginTop="4dp"
+                android:background="@color/app_background"
+                android:onClick="dropIn"
+                android:tag="8" />
+        </GridLayout>
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:textColor="@color/color_red"
-            android:textSize="@dimen/text_size_large" />
-       </LinearLayout>
+            android:orientation="vertical">
 
-  </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-    <View
-        android:id="@+id/center_vertical"
-        android:layout_width="5dp"
-        android:layout_height="250dp"
-        android:layout_gravity="center"
-        android:background="@color/grid_background"
-        android:visibility="invisible" />
-    ​
-    <View
-        android:id="@+id/left_vertical"
-        android:layout_width="5dp"
-        android:layout_height="250dp"
-        android:layout_gravity="center"
-        android:layout_marginEnd="70dp"
-        android:layout_marginRight="70dp"
-        android:background="@color/grid_background"
-        android:visibility="invisible" />
-    ​
+                <TextView
+                    android:id="@+id/player1_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="20dp"
+                    android:text="Player X: "
+                    android:textColor="@color/color_red"
+                    android:textSize="@dimen/text_size_large" />
 
-    <View
-        android:id="@+id/right_vertical"
-        android:layout_width="5dp"
-        android:layout_height="250dp"
-        android:layout_gravity="center"
-        android:layout_marginStart="70dp"
-        android:layout_marginLeft="70dp"
-        android:background="@color/grid_background"
-        android:visibility="invisible" />
-    ​
+                <TextView
+                    android:id="@+id/player1_result"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="20dp"
+                    android:textColor="@color/color_blue"
+                    android:textSize="@dimen/text_size_large" />
+            </LinearLayout>
 
-    <View
-        android:id="@+id/center_horizontal"
-        android:layout_width="250dp"
-        android:layout_height="5dp"
-        android:layout_gravity="center"
-        android:background="@color/grid_background"
-        android:visibility="invisible" />
-    ​
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-    <View
-        android:id="@+id/bottom_horizontal"
-        android:layout_width="250dp"
-        android:layout_height="5dp"
-        android:layout_gravity="center"
-        android:layout_marginTop="70dp"
-        android:background="@color/grid_background"
-        android:visibility="invisible" />
-    ​
+                <TextView
+                    android:id="@+id/player2_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="Player O: "
+                    android:textColor="@color/color_blue"
+                    android:textSize="@dimen/text_size_large" />
 
-    <View
-        android:id="@+id/top_horizontal"
-        android:layout_width="250dp"
-        android:layout_height="3dp"
-        android:layout_gravity="center"
-        android:layout_marginBottom="70dp"
-        android:background="@color/grid_background"
-        android:visibility="invisible" />
-    ​
+                <TextView
+                    android:id="@+id/player2_result"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="@color/color_red"
+                    android:textSize="@dimen/text_size_large" />
+            </LinearLayout>
 
-    <View
-        android:id="@+id/right_left_diagonal"
-        android:layout_width="5dp"
-        android:layout_height="350dp"
-        android:layout_gravity="center"
-        android:background="@color/grid_background"
-        android:rotation="45"
-        android:visibility="invisible" />
-    ​
+        </LinearLayout>
 
-    <View
-        android:id="@+id/left_right_diagonal"
-        android:layout_width="5dp"
-        android:layout_height="350dp"
-        android:layout_gravity="center"
-        android:background="@color/grid_background"
-        android:rotation="135"
-        android:visibility="invisible" />
-    ​
-</FrameLayout>
+        <View
+            android:id="@+id/center_vertical"
+            android:layout_width="5dp"
+            android:layout_height="250dp"
+            android:layout_gravity="center"
+            android:background="@color/grid_background"
+            android:visibility="invisible" />
+        ​
+
+        <View
+            android:id="@+id/left_vertical"
+            android:layout_width="5dp"
+            android:layout_height="250dp"
+            android:layout_gravity="center"
+            android:layout_marginEnd="70dp"
+            android:layout_marginRight="70dp"
+            android:background="@color/grid_background"
+            android:visibility="invisible" />
+        ​
+
+        <View
+            android:id="@+id/right_vertical"
+            android:layout_width="5dp"
+            android:layout_height="250dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="70dp"
+            android:layout_marginLeft="70dp"
+            android:background="@color/grid_background"
+            android:visibility="invisible" />
+        ​
+
+        <View
+            android:id="@+id/center_horizontal"
+            android:layout_width="250dp"
+            android:layout_height="5dp"
+            android:layout_gravity="center"
+            android:background="@color/grid_background"
+            android:visibility="invisible" />
+        ​
+
+        <View
+            android:id="@+id/bottom_horizontal"
+            android:layout_width="250dp"
+            android:layout_height="5dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="70dp"
+            android:background="@color/grid_background"
+            android:visibility="invisible" />
+        ​
+
+        <View
+            android:id="@+id/top_horizontal"
+            android:layout_width="250dp"
+            android:layout_height="3dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="70dp"
+            android:background="@color/grid_background"
+            android:visibility="invisible" />
+        ​
+
+        <View
+            android:id="@+id/right_left_diagonal"
+            android:layout_width="5dp"
+            android:layout_height="350dp"
+            android:layout_gravity="center"
+            android:background="@color/grid_background"
+            android:rotation="45"
+            android:visibility="invisible" />
+        ​
+
+        <View
+            android:id="@+id/left_right_diagonal"
+            android:layout_width="5dp"
+            android:layout_height="350dp"
+            android:layout_gravity="center"
+            android:background="@color/grid_background"
+            android:rotation="135"
+            android:visibility="invisible" />
+        ​
+    </FrameLayout>
+</layout>

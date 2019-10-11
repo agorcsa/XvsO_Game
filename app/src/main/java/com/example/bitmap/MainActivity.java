@@ -2,6 +2,7 @@ package com.example.bitmap;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageView;
+import androidx.databinding.DataBindingUtil;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -9,10 +10,10 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.GridLayout;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.bitmap.databinding.ActivityMainBinding;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,10 +22,6 @@ import java.util.Arrays;
 public class MainActivity extends AppCompatActivity {
 
     public static final String LOG_TAG = "MainActivity";
-
-    // key constants used to save the value of the players' score in onSaveInstanceState()
-    public static final String SCORE_PLAYER_1 = "player_1_score";
-    public static final String SCORE_PLAYER_2 = "player_2_score";
 
     // represents the tag of each cell of the grid
     // (0, 1, 2)
@@ -39,66 +36,16 @@ public class MainActivity extends AppCompatActivity {
 
     ArrayList<Integer> mCellIndex = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0));
 
-    private GridLayout gridLayout;
-
-    // represent the cells of the grid layout
-    private AppCompatImageView block1;
-    private AppCompatImageView block2;
-    private AppCompatImageView block3;
-    private AppCompatImageView block4;
-    private AppCompatImageView block5;
-    private AppCompatImageView block6;
-    private AppCompatImageView block7;
-    private AppCompatImageView block8;
-    private AppCompatImageView block9;
-
-    // represent the wining lines of the game
-    private View lefVertical;
-    private View centerVertical;
-    private View rightVertical;
-    private View topHorizontal;
-    private View centerHorizontal;
-    private View bottomHorizontal;
-    private View rightLeftDiagonal;
-    private View leftRightDiagonal;
-
-    // displays the value of counterPlayer1 and counterPlayer2;
-    private TextView player1Result;
-    private TextView player2Result;
-
     // keeps track of the score of both players
     private int counterPlayer1 = 0;
     private int counterPlayer2 = 0;
 
+    ActivityMainBinding activityBinding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        gridLayout = findViewById(R.id.grid_layout);
-
-        // cells of the grid layout
-        block1 = findViewById(R.id.block_1);
-        block2 = findViewById(R.id.block_2);
-        block3 = findViewById(R.id.block_3);
-        block4 = findViewById(R.id.block_4);
-        block5 = findViewById(R.id.block_5);
-        block6 = findViewById(R.id.block_6);
-        block7 = findViewById(R.id.block_7);
-        block8 = findViewById(R.id.block_8);
-        block9 = findViewById(R.id.block_9);
-
-        // winning lines
-        lefVertical = findViewById(R.id.left_vertical);
-        centerVertical = findViewById(R.id.center_vertical);
-        rightVertical = findViewById(R.id.right_vertical);
-        topHorizontal = findViewById(R.id.top_horizontal);
-        centerHorizontal = findViewById(R.id.center_horizontal);
-        bottomHorizontal = findViewById(R.id.bottom_horizontal);
-        rightLeftDiagonal = findViewById(R.id.right_left_diagonal);
-        leftRightDiagonal = findViewById(R.id.left_right_diagonal);
-        player1Result = findViewById(R.id.player1_result);
-        player2Result = findViewById(R.id.player2_result);
+        activityBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
         initializePlayers();
     }
@@ -134,8 +81,8 @@ public class MainActivity extends AppCompatActivity {
 
         Log.i(LOG_TAG, "new game button was clicked");
 
-        for (int i = 0; i < gridLayout.getChildCount(); i++) {
-            ImageView imageView = (ImageView) gridLayout.getChildAt(i);
+        for (int i = 0; i < activityBinding.gridLayout.getChildCount(); i++) {
+            ImageView imageView = (ImageView) activityBinding.gridLayout.getChildAt(i);
             imageView.setImageResource(0);
 
             mCellIndex = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0));
@@ -143,7 +90,6 @@ public class MainActivity extends AppCompatActivity {
             imageView.setClickable(true);
 
             hideWinningLines();
-            ;
             checkForWin();
         }
     }
@@ -175,26 +121,26 @@ public class MainActivity extends AppCompatActivity {
         if (isXWinner) {
             showToast("Player 1 has won! (X)");
             counterPlayer1++;
-            player1Result.setText(String.valueOf(counterPlayer1));
+            activityBinding.player1Result.setText(String.valueOf(counterPlayer1));
         } else {
             showToast("Player 2 has won! (O)");
             counterPlayer2++;
-            player2Result.setText(String.valueOf(counterPlayer2));
+            activityBinding.player2Result.setText(String.valueOf(counterPlayer2));
         }
     }
 
     public boolean checkRowsX() {
         if (mCellIndex.get(0) == 1 && mCellIndex.get(1) == 1 && mCellIndex.get(2) == 1) {
             isXWinner = true;
-            topHorizontal.setVisibility(View.VISIBLE);
+            activityBinding.topHorizontal.setVisibility(View.VISIBLE);
             return true;
         } else if (mCellIndex.get(3) == 1 && mCellIndex.get(4) == 1 && mCellIndex.get(5) == 1) {
             isXWinner = true;
-            centerHorizontal.setVisibility(View.VISIBLE);
+            activityBinding.centerHorizontal.setVisibility(View.VISIBLE);
             return true;
         } else if (mCellIndex.get(6) == 1 && mCellIndex.get(7) == 1 && mCellIndex.get(8) == 1) {
             isXWinner = true;
-            bottomHorizontal.setVisibility(View.VISIBLE);
+            activityBinding.bottomHorizontal.setVisibility(View.VISIBLE);
             return true;
         } else {
             isXWinner = false;
@@ -206,15 +152,15 @@ public class MainActivity extends AppCompatActivity {
     public boolean checkRowsZero() {
         if (mCellIndex.get(0) == 2 && mCellIndex.get(1) == 2 && mCellIndex.get(2) == 2) {
             isXWinner = false;
-            topHorizontal.setVisibility(View.VISIBLE);
+            activityBinding.topHorizontal.setVisibility(View.VISIBLE);
             return true;
         } else if (mCellIndex.get(3) == 2 && mCellIndex.get(4) == 2 && mCellIndex.get(5) == 2) {
             isXWinner = false;
-            centerHorizontal.setVisibility(View.VISIBLE);
+            activityBinding.centerHorizontal.setVisibility(View.VISIBLE);
             return true;
         } else if (mCellIndex.get(6) == 2 && mCellIndex.get(7) == 2 && mCellIndex.get(8) == 2) {
             isXWinner = false;
-            bottomHorizontal.setVisibility(View.VISIBLE);
+            activityBinding.bottomHorizontal.setVisibility(View.VISIBLE);
             return true;
         } else {
             isXWinner = true;
@@ -225,15 +171,15 @@ public class MainActivity extends AppCompatActivity {
     public boolean checkColumnsX() {
         if (mCellIndex.get(0) == 1 && mCellIndex.get(3) == 1 && mCellIndex.get(6) == 1) {
             isXWinner = true;
-            lefVertical.setVisibility(View.VISIBLE);
+            activityBinding.leftVertical.setVisibility(View.VISIBLE);
             return true;
         } else if (mCellIndex.get(1) == 1 && mCellIndex.get(4) == 1 && mCellIndex.get(7) == 1) {
             isXWinner = true;
-            centerVertical.setVisibility(View.VISIBLE);
+            activityBinding.centerVertical.setVisibility(View.VISIBLE);
             return true;
         } else if (mCellIndex.get(2) == 1 && mCellIndex.get(5) == 1 && mCellIndex.get(8) == 1) {
             isXWinner = true;
-            rightVertical.setVisibility(View.VISIBLE);
+            activityBinding.rightVertical.setVisibility(View.VISIBLE);
             return true;
         } else {
             return false;
@@ -243,15 +189,15 @@ public class MainActivity extends AppCompatActivity {
     public boolean checkColumnsZero() {
         if (mCellIndex.get(0) == 2 && mCellIndex.get(3) == 2 && mCellIndex.get(6) == 2) {
             isXWinner = false;
-            lefVertical.setVisibility(View.VISIBLE);
+            activityBinding.leftVertical.setVisibility(View.VISIBLE);
             return true;
         } else if (mCellIndex.get(1) == 2 && mCellIndex.get(4) == 2 && mCellIndex.get(7) == 2) {
             isXWinner = false;
-            centerVertical.setVisibility(View.VISIBLE);
+            activityBinding.centerVertical.setVisibility(View.VISIBLE);
             return true;
         } else if (mCellIndex.get(2) == 2 && mCellIndex.get(5) == 2 && mCellIndex.get(8) == 2) {
             isXWinner = false;
-            rightVertical.setVisibility(View.VISIBLE);
+            activityBinding.rightVertical.setVisibility(View.VISIBLE);
             return true;
         } else {
             isXWinner = true;
@@ -263,11 +209,11 @@ public class MainActivity extends AppCompatActivity {
     public boolean checkDiagonalsX() {
         if (mCellIndex.get(0) == 1 && mCellIndex.get(4) == 1 && mCellIndex.get(8) == 1) {
             isXWinner = true;
-            leftRightDiagonal.setVisibility(View.VISIBLE);
+            activityBinding.leftRightDiagonal.setVisibility(View.VISIBLE);
             return true;
         } else if (mCellIndex.get(2) == 1 && mCellIndex.get(4) == 1 && mCellIndex.get(6) == 1) {
             isXWinner = true;
-            rightLeftDiagonal.setVisibility(View.VISIBLE);
+            activityBinding.rightLeftDiagonal.setVisibility(View.VISIBLE);
             return true;
         } else {
             isXWinner = false;
@@ -278,10 +224,10 @@ public class MainActivity extends AppCompatActivity {
     public boolean checkDiagonalsZero() {
         if (mCellIndex.get(0) == 2 && mCellIndex.get(4) == 2 && mCellIndex.get(8) == 2) {
             isXWinner = false;
-            leftRightDiagonal.setVisibility(View.VISIBLE);
+            activityBinding.leftRightDiagonal.setVisibility(View.VISIBLE);
             return true;
         } else if (mCellIndex.get(2) == 2 && mCellIndex.get(4) == 2 && mCellIndex.get(6) == 2) {
-            rightLeftDiagonal.setVisibility(View.VISIBLE);
+            activityBinding.rightLeftDiagonal.setVisibility(View.VISIBLE);
             return true;
         } else {
             return false;
@@ -316,36 +262,34 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void hideWinningLines() {
-
-        topHorizontal.setVisibility(View.INVISIBLE);
-        centerHorizontal.setVisibility(View.INVISIBLE);
-        bottomHorizontal.setVisibility(View.INVISIBLE);
-
-        lefVertical.setVisibility(View.INVISIBLE);
-        centerVertical.setVisibility(View.INVISIBLE);
-        rightVertical.setVisibility(View.INVISIBLE);
-
-        leftRightDiagonal.setVisibility(View.INVISIBLE);
-        rightLeftDiagonal.setVisibility(View.INVISIBLE);
+        activityBinding.topHorizontal.setVisibility(View.INVISIBLE);
+        activityBinding.centerHorizontal.setVisibility(View.INVISIBLE);
+        activityBinding.bottomHorizontal.setVisibility(View.INVISIBLE);
+        activityBinding.leftVertical.setVisibility(View.INVISIBLE);
+        activityBinding.centerVertical.setVisibility(View.INVISIBLE);
+        activityBinding.rightVertical.setVisibility(View.INVISIBLE);
+        activityBinding.leftRightDiagonal.setVisibility(View.INVISIBLE);
+        activityBinding.rightLeftDiagonal.setVisibility(View.INVISIBLE);
     }
 
 
     public void initializePlayers() {
-        player1Result.setText("0");
-        player2Result.setText("0");
+        activityBinding.player1Result.setText("0");
+        activityBinding.player2Result.setText("0");
+
         counterPlayer1 = 0;
         counterPlayer2 = 0;
     }
 
     public void setClickableFalse(){
-        block1.setClickable(false);
-        block2.setClickable(false);
-        block3.setClickable(false);
-        block4.setClickable(false);
-        block5.setClickable(false);
-        block6.setClickable(false);
-        block7.setClickable(false);
-        block8.setClickable(false);
-        block9.setClickable(false);
+        activityBinding.block1.setClickable(false);
+        activityBinding.block2.setClickable(false);
+        activityBinding.block3.setClickable(false);
+        activityBinding.block4.setClickable(false);
+        activityBinding.block5.setClickable(false);
+        activityBinding.block6.setClickable(false);
+        activityBinding.block7.setClickable(false);
+        activityBinding.block8.setClickable(false);
+        activityBinding.block9.setClickable(false);
     }
 }
