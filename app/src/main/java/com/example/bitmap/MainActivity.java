@@ -1,6 +1,7 @@
 package com.example.bitmap;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatImageView;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -20,25 +21,54 @@ import java.util.Arrays;
 public class MainActivity extends AppCompatActivity {
 
     public static final String LOG_TAG = "MainActivity";
-    // 0 -> empty cell
-    // 1 -> x cell
-    // 2 -> zero cell
-    public int tag;
+
+    // key constants used to save the value of the players' score in onSaveInstanceState()
+    public static final String SCORE_PLAYER_1 = "player_1_score";
+    public static final String SCORE_PLAYER_2 = "player_2_score";
+
+    // represents the tag of each cell of the grid
     // (0, 1, 2)
     // (3, 4, 5)
     // (6, 7, 8)
-    public int isX = 1;
-    public boolean isXWinner;
-    ArrayList<Integer> mCellIndex = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0));
-    private GridLayout gridLayout;
-    private View lefVertical, centerVertical, rightVertical, topHorizontal, centerHorizontal, bottomHorizontal, rightLeftDiagonal, leftRightDiagonal;
-    private TextView player1Result, player2Result;
+    public int tag;
 
+    // if variable isX = 2, the cell stores a "O" not an "X"
+    public int isX = 1;
+
+    public boolean isXWinner;
+
+    ArrayList<Integer> mCellIndex = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0));
+
+    private GridLayout gridLayout;
+
+    // represent the cells of the grid layout
+    private AppCompatImageView block1;
+    private AppCompatImageView block2;
+    private AppCompatImageView block3;
+    private AppCompatImageView block4;
+    private AppCompatImageView block5;
+    private AppCompatImageView block6;
+    private AppCompatImageView block7;
+    private AppCompatImageView block8;
+    private AppCompatImageView block9;
+
+    // represent the wining lines of the game
+    private View lefVertical;
+    private View centerVertical;
+    private View rightVertical;
+    private View topHorizontal;
+    private View centerHorizontal;
+    private View bottomHorizontal;
+    private View rightLeftDiagonal;
+    private View leftRightDiagonal;
+
+    // displays the value of counterPlayer1 and counterPlayer2;
+    private TextView player1Result;
+    private TextView player2Result;
+
+    // keeps track of the score of both players
     private int counterPlayer1 = 0;
     private int counterPlayer2 = 0;
-
-    public static final String SCORE_PLAYER_1 = "player_1_score";
-    public static final String SCORE_PLAYER_2 = "player_2_score";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,34 +77,30 @@ public class MainActivity extends AppCompatActivity {
 
         gridLayout = findViewById(R.id.grid_layout);
 
+        // cells of the grid layout
+        block1 = findViewById(R.id.block_1);
+        block2 = findViewById(R.id.block_2);
+        block3 = findViewById(R.id.block_3);
+        block4 = findViewById(R.id.block_4);
+        block5 = findViewById(R.id.block_5);
+        block6 = findViewById(R.id.block_6);
+        block7 = findViewById(R.id.block_7);
+        block8 = findViewById(R.id.block_8);
+        block9 = findViewById(R.id.block_9);
+
+        // winning lines
         lefVertical = findViewById(R.id.left_vertical);
         centerVertical = findViewById(R.id.center_vertical);
         rightVertical = findViewById(R.id.right_vertical);
-
         topHorizontal = findViewById(R.id.top_horizontal);
         centerHorizontal = findViewById(R.id.center_horizontal);
         bottomHorizontal = findViewById(R.id.bottom_horizontal);
-
         rightLeftDiagonal = findViewById(R.id.right_left_diagonal);
         leftRightDiagonal = findViewById(R.id.left_right_diagonal);
-
         player1Result = findViewById(R.id.player1_result);
         player2Result = findViewById(R.id.player2_result);
 
-        resetPlayers();
-
-        if (savedInstanceState != null)
-        {
-            if (savedInstanceState.containsKey(SCORE_PLAYER_1) || savedInstanceState.containsKey(SCORE_PLAYER_2))
-            {
-                counterPlayer1 = savedInstanceState.getInt(SCORE_PLAYER_1);
-                counterPlayer2 = savedInstanceState.getInt(SCORE_PLAYER_2);
-
-                player1Result.setText(String.valueOf(counterPlayer1));
-                player2Result.setText(String.valueOf(counterPlayer2));
-            }
-        }
-
+        initializePlayers();
     }
 
 
@@ -138,6 +164,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean checkForWin() {
         if (checkRowsX() || checkRowsZero() || checkColumnsX() || checkColumnsZero() || checkDiagonalsX() || checkDiagonalsZero()) {
             announceWinner();
+            setClickableFalse();
             return true;
         } else {
             return false;
@@ -148,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
         if (isXWinner) {
             showToast("Player 1 has won! (X)");
             counterPlayer1++;
-            player1Result.setText( String.valueOf(counterPlayer1));
+            player1Result.setText(String.valueOf(counterPlayer1));
         } else {
             showToast("Player 2 has won! (O)");
             counterPlayer2++;
@@ -282,7 +309,7 @@ public class MainActivity extends AppCompatActivity {
         } else if (item.getItemId() == R.id.action_new_game) {
 
             resetBoard();
-            resetPlayers();
+            initializePlayers();
         }
 
         return super.onOptionsItemSelected(item);
@@ -302,19 +329,23 @@ public class MainActivity extends AppCompatActivity {
         rightLeftDiagonal.setVisibility(View.INVISIBLE);
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState)
-    {
-        super.onSaveInstanceState(outState);
 
-        outState.putInt(SCORE_PLAYER_1, counterPlayer1);
-        outState.putInt(SCORE_PLAYER_2, counterPlayer2);
-    }
-
-    public void resetPlayers(){
+    public void initializePlayers() {
         player1Result.setText("0");
         player2Result.setText("0");
         counterPlayer1 = 0;
         counterPlayer2 = 0;
+    }
+
+    public void setClickableFalse(){
+        block1.setClickable(false);
+        block2.setClickable(false);
+        block3.setClickable(false);
+        block4.setClickable(false);
+        block5.setClickable(false);
+        block6.setClickable(false);
+        block7.setClickable(false);
+        block8.setClickable(false);
+        block9.setClickable(false);
     }
 }
