@@ -1,4 +1,4 @@
-package com.example.bitmap;
+package com.example.xvso;
 
 import org.junit.Test;
 

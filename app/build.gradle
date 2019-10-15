@@ -7,7 +7,7 @@ android {
         enabled = true
     }
     defaultConfig {
-        applicationId "com.example.bitmap"
+        applicationId "com.example.xvso"
         vectorDrawables.useSupportLibrary = true
         minSdkVersion 15
         targetSdkVersion 28
