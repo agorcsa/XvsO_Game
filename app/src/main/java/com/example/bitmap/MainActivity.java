@@ -81,16 +81,14 @@ public class MainActivity extends AppCompatActivity {
 
         Log.i(LOG_TAG, "new game button was clicked");
 
+        mCellIndex = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0));
+        hideWinningLines();
+        checkForWin();
+
         for (int i = 0; i < activityBinding.gridLayout.getChildCount(); i++) {
             ImageView imageView = (ImageView) activityBinding.gridLayout.getChildAt(i);
             imageView.setImageResource(0);
-
-            mCellIndex = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0));
-
             imageView.setClickable(true);
-
-            hideWinningLines();
-            checkForWin();
         }
     }
 
@@ -282,14 +280,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setClickableFalse(){
-        activityBinding.block1.setClickable(false);
-        activityBinding.block2.setClickable(false);
-        activityBinding.block3.setClickable(false);
-        activityBinding.block4.setClickable(false);
-        activityBinding.block5.setClickable(false);
-        activityBinding.block6.setClickable(false);
-        activityBinding.block7.setClickable(false);
-        activityBinding.block8.setClickable(false);
-        activityBinding.block9.setClickable(false);
+        for (int i = 0; i < activityBinding.gridLayout.getChildCount(); i++) {
+            activityBinding.gridLayout.getChildAt(i).setClickable(false);
+        }
     }
 }
