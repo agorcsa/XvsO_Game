@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">X vs. 0</string>
+    <string name="signup_activity">SignUp</string>
+    <string name="login_activity">LogIn</string>
 
     <!-- Firebase strings -->
     <string name="action_sign_in_short">Register</string>
