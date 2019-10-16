@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "877213484925",
+    "firebase_url": "https://xvso-502e0.firebaseio.com",
+    "project_id": "xvso-502e0",
+    "storage_bucket": "xvso-502e0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:877213484925:android:ad5fa1b90ba0faa4652e14",
+        "android_client_info": {
+          "package_name": "com.example.xvso"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "877213484925-4tk2uun3lrdm65du45d7luld8maa81m7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBQAdLwWtA0YzKakOssz4VcqDHLapYhrEw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "877213484925-4tk2uun3lrdm65du45d7luld8maa81m7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

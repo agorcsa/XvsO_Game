@@ -263,6 +263,5 @@
             android:background="@color/grid_background"
             android:rotation="135"
             android:visibility="invisible" />
-        ​
     </FrameLayout>
 </layout>
