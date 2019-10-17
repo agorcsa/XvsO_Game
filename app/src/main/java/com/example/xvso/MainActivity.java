@@ -1,11 +1,13 @@
 package com.example.xvso;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -22,6 +24,8 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String LOG_TAG = "MainActivity";
 
+    public static final String LOGGED_USER = "logged user";
+
     // represents the tag of each cell of the grid
     // (0, 1, 2)
     // (3, 4, 5)
@@ -32,9 +36,10 @@ public class MainActivity extends AppCompatActivity {
     public int isX = 1;
 
     public boolean isXWinner;
-
     ArrayList<Integer> mCellIndex = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0));
     ActivityMainBinding activityBinding;
+    // for log out button
+
     // keeps track of the score of both players
     private int counterPlayer1 = 0;
     private int counterPlayer2 = 0;
@@ -43,6 +48,21 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activityBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+
+       /* if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(LOGGED_USER)) {
+                String user = savedInstanceState.getString(LOGGED_USER);
+                activityBinding.player1Text.setText(user + " X:");
+            }
+        }*/
+
+        Intent intent = getIntent();
+        String user = intent.getStringExtra("user");
+        if (user != null) {
+            activityBinding.player1Text.setText(user + " X:");
+        } else {
+            activityBinding.player1Text.setText("Player X: ");
+        }
 
         initializePlayers();
     }
@@ -251,6 +271,8 @@ public class MainActivity extends AppCompatActivity {
 
             resetBoard();
             initializePlayers();
+        } else if (item.getItemId() == R.id.action_log_out) {
+            showToast("Log out");
         }
 
         return super.onOptionsItemSelected(item);
@@ -281,4 +303,11 @@ public class MainActivity extends AppCompatActivity {
             activityBinding.gridLayout.getChildAt(i).setClickable(false);
         }
     }
+
+   /* @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putString(LOGGED_USER, user);
+    }*/
 }

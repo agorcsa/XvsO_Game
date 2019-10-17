@@ -12,7 +12,8 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".LoginActivity"
+            android:name=".firebase.LoginActivity"
+            android:label="@string/app_name"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,23 +23,34 @@
         </activity>
 
         <activity
-            android:name=".SignupActivity"
-            android:label="@string/signup_activity"
-            android:parentActivityName=".LoginActivity"
+            android:name=".firebase.SignupActivity"
+            android:label="@string/app_name"
+            android:parentActivityName=".firebase.LoginActivity"
             android:launchMode="singleTop">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".LoginActivity" />
+                android:value=".firebase.LoginActivity" />
         </activity>
 
         <activity
             android:name=".MainActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name"
-            android:parentActivityName=".LoginActivity"
+            android:parentActivityName=".firebase.SignupActivity"
             android:launchMode="singleTop">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".LoginActivity" />
+                android:value=".firebase.SignupActivity" />
+        </activity>
+
+        <activity
+            android:name=".firebase.ResetPasswordActivity"
+            android:label="@string/reset_password_activity"
+            android:parentActivityName=".firebase.LoginActivity"
+            android:launchMode="singleTop">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".firebase.LoginActivity" />
         </activity>
 
     </application>

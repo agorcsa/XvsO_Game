@@ -146,8 +146,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:layout_marginTop="20dp"
-                    android:text="Player X: "
-                    android:textColor="@color/color_red"
+                    android:hint="Player X: "
+                    android:textColor="@color/color_blue"
                     android:textSize="@dimen/text_size_large" />
 
                 <TextView
@@ -156,7 +156,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:layout_marginTop="20dp"
-                    android:textColor="@color/color_blue"
+                    android:textColor="@color/color_red"
                     android:textSize="@dimen/text_size_large" />
             </LinearLayout>
 
