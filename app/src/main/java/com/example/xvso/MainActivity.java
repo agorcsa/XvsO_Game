@@ -44,22 +44,24 @@ public class MainActivity extends AppCompatActivity {
     private int counterPlayer1 = 0;
     private int counterPlayer2 = 0;
 
+    private String mUser;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activityBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
-       /* if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(LOGGED_USER)) {
-                String user = savedInstanceState.getString(LOGGED_USER);
-                activityBinding.player1Text.setText(user + " X:");
-            }
-        }*/
+        if (savedInstanceState != null && savedInstanceState.containsKey(LOGGED_USER)) {
+
+            String loggedUser = savedInstanceState.getString(LOGGED_USER);
+            activityBinding.player1Text.setText(loggedUser + " X:");
+        }
 
         Intent intent = getIntent();
         String user = intent.getStringExtra("user");
-        if (user != null) {
-            activityBinding.player1Text.setText(user + " X:");
+        mUser = user;
+        if (mUser != null) {
+            activityBinding.player1Text.setText(mUser + " X:");
         } else {
             activityBinding.player1Text.setText("Player X: ");
         }
@@ -304,10 +306,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-   /* @Override
+    @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putString(LOGGED_USER, user);
-    }*/
+        outState.putString(LOGGED_USER, mUser);
+    }
 }
