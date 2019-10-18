@@ -33,6 +33,16 @@
         </activity>
 
         <activity
+            android:name=".firebase.UpdateUserData"
+            android:label="@string/app_name"
+            android:parentActivityName=".firebase.SignupActivity"
+            android:launchMode="singleTop">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".firebase.SignupActivity" />
+        </activity>
+
+        <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait"
             android:label="@string/app_name"

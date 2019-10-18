@@ -15,16 +15,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
 import com.example.xvso.databinding.ActivityMainBinding;
+import com.example.xvso.firebase.BaseActivity;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     public static final String LOG_TAG = "MainActivity";
-
-    public static final String LOGGED_USER = "logged user";
 
     // represents the tag of each cell of the grid
     // (0, 1, 2)
@@ -44,26 +44,15 @@ public class MainActivity extends AppCompatActivity {
     private int counterPlayer1 = 0;
     private int counterPlayer2 = 0;
 
-    private String mUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activityBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
-        if (savedInstanceState != null && savedInstanceState.containsKey(LOGGED_USER)) {
-
-            String loggedUser = savedInstanceState.getString(LOGGED_USER);
-            activityBinding.player1Text.setText(loggedUser + " X:");
-        }
-
-        Intent intent = getIntent();
-        String user = intent.getStringExtra("user");
-        mUser = user;
-        if (mUser != null) {
-            activityBinding.player1Text.setText(mUser + " X:");
-        } else {
-            activityBinding.player1Text.setText("Player X: ");
+        if (getFirebaseUser()!= null) {
+            String user = getFirebaseUser().getEmail().substring(0, getFirebaseUser().getEmail().indexOf("@"));
+            activityBinding.player1Text.setText(user + " X:");
         }
 
         initializePlayers();
@@ -275,6 +264,8 @@ public class MainActivity extends AppCompatActivity {
             initializePlayers();
         } else if (item.getItemId() == R.id.action_log_out) {
             showToast("Log out");
+            FirebaseAuth.getInstance().signOut();
+            activityBinding.player1Text.setText("Player X: ");
         }
 
         return super.onOptionsItemSelected(item);
@@ -304,12 +295,5 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 0; i < activityBinding.gridLayout.getChildCount(); i++) {
             activityBinding.gridLayout.getChildAt(i).setClickable(false);
         }
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        outState.putString(LOGGED_USER, mUser);
     }
 }

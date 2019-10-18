@@ -20,5 +20,5 @@
         android:id="@+id/action_log_out"
         android:orderInCategory="3"
         android:title="Log Out"
-        app:showAsAction="always" />
+        app:showAsAction="collapseActionView" />
 </menu>
