@@ -15,10 +15,15 @@
         android:title="Reset Game"
         app:showAsAction="collapseActionView" />
 
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="3"
+        android:title="Settings"
+        app:showAsAction="collapseActionView" />
 
     <item
         android:id="@+id/action_log_out"
-        android:orderInCategory="3"
+        android:orderInCategory="4"
         android:title="Log Out"
         app:showAsAction="collapseActionView" />
 </menu>
