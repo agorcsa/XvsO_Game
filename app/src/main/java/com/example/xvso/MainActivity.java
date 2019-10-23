@@ -1,7 +1,6 @@
 package com.example.xvso;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -11,17 +10,13 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 
 import com.example.xvso.databinding.ActivityMainBinding;
 import com.example.xvso.firebase.BaseActivity;
 import com.example.xvso.firebase.ProfileActivity;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserProfileChangeRequest;
+
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -55,12 +50,9 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         activityBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
-        if (getFirebaseUser() == null) {
+        if (getFirebaseUser()  != null) {
             String userString = getFirebaseUser().getEmail().substring(0, getFirebaseUser().getEmail().indexOf("@"));
             activityBinding.player1Text.setText(userString + " X:");
-        } else {
-
-            updateUser();
         }
 
         initializePlayers();
@@ -308,29 +300,6 @@ public class MainActivity extends BaseActivity {
         for (int i = 0; i < activityBinding.gridLayout.getChildCount(); i++) {
             activityBinding.gridLayout.getChildAt(i).setClickable(false);
         }
-    }
-
-    public void updateUser() {
-        Intent intent = getIntent();
-        String firstName = intent.getStringExtra("firstName");
-        String lastName = intent.getStringExtra("lastName");
-        String email = intent.getStringExtra("email");
-
-        FirebaseUser user = getFirebaseUser();
-
-        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                .setDisplayName(firstName + " " + lastName)
-                .build();
-
-        user.updateProfile(profileUpdates)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Log.d(LOG_TAG, "User profile updated.");
-                        }
-                    }
-                });
     }
 }
 

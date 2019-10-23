@@ -1,56 +1,66 @@
 package com.example.xvso.firebase;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
+
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 
-import com.example.xvso.MainActivity;
+import com.bumptech.glide.Glide;
 import com.example.xvso.R;
 import com.example.xvso.databinding.ActivityProfileBinding;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.StorageTask;
+import com.google.firebase.storage.UploadTask;
 import com.kienht.csiv.CircleSliceImageView;
+import com.squareup.picasso.Picasso;
 
+import java.util.UUID;
 
-public class ProfileActivity extends BaseActivity {
+public class ProfileActivity extends BaseActivity implements View.OnClickListener {
 
     public static final String LOG_TAG = "ProfileActivity";
 
     // number of images to select
     private static final int PICK_IMAGE = 1;
-    private static final String IMAGE_URI = "uri";
-    private static final String SHARED_PREFERENCE = "image_uri";
 
-    ActivityProfileBinding profileBinding;
+    private ActivityProfileBinding profileBinding;
+
+    private StorageReference mStorageRef;
+
+    // used for checking if an upload is already running
+    private StorageTask mUploadTask;
+
+    public Uri imagePath;
+
+    private CircleSliceImageView profilePicture;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         profileBinding = DataBindingUtil.setContentView(this, R.layout.activity_profile);
 
-        SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCE, MODE_PRIVATE);
-        String imageString = preferences.getString("image path", "");
+        mStorageRef = FirebaseStorage.getInstance().getReference();
 
-            if (imageString != null) {
-                Uri myUri = Uri.parse(imageString);
-                profileBinding.profilePicture.setImageURI(myUri);
-            } else {
-                profileBinding.profilePicture.setImageURI(Uri.parse("https://i.pinimg.com/originals/92/fb/2e/92fb2e031df943d53008c3fa946662f3.jpg"));
-            }
-        }
+        profileBinding.submitButton.setOnClickListener(this);
+        profilePicture = findViewById(R.id.profile_picture);
+        profilePicture.setOnClickListener(this);
 
-   public void selectPicture(View view) {
+    }
+
+    public void selectImage() {
         Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(galleryIntent, PICK_IMAGE);
     }
@@ -59,29 +69,81 @@ public class ProfileActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == PICK_IMAGE && resultCode == RESULT_OK){
+        if (requestCode == PICK_IMAGE && resultCode == RESULT_OK
+                && data != null && data.getData() != null) {
 
-            Uri imageUri = data.getData();
-            profileBinding.profilePicture.setImageURI(imageUri);
+            imagePath = data.getData();
 
-            String imagePath = String.valueOf(imageUri);
-
-            SharedPreferences.Editor editor = getSharedPreferences(SHARED_PREFERENCE, MODE_PRIVATE).edit();
-            editor.putString("image path", imagePath);
-            editor.apply();
+            Picasso.get()
+                    .load(imagePath)
+                    .placeholder(R.drawable.penguin)
+                    .error(R.drawable.error)
+                    .into(profileBinding.profilePicture);
         }
     }
 
-    public void submitUserChanges(View view){
-        String firstName = profileBinding.firstNameEditview.getText().toString();
-        String lastName = profileBinding.lastNameEditview.getText().toString();
-        String email = profileBinding.emailEditview.getText().toString();
 
-        Intent userDataIntent = new Intent(ProfileActivity.this, MainActivity.class);
-        userDataIntent.putExtra("firstName", firstName);
-        userDataIntent.putExtra("lastName", lastName);
-        userDataIntent.putExtra("email", email);
-        startActivity(userDataIntent);
+    public void uploadImage() {
+
+        if (imagePath != null) {
+            final ProgressDialog progressDialog = new ProgressDialog(this);
+            progressDialog.setTitle("Uploading...");
+            progressDialog.show();
+
+            StorageReference reference = mStorageRef.child("images/" + UUID.randomUUID().toString());
+
+           mUploadTask = reference.putFile(imagePath)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            progressDialog.dismiss();
+                            Toast.makeText(ProfileActivity.this, "Uploaded", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            progressDialog.dismiss();
+                            Toast.makeText(ProfileActivity.this, "Failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                            double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot
+                                    .getTotalByteCount());
+                            progressDialog.setMessage("Uploaded " + (int) progress + "%");
+                        }
+                    });
+        }
+    }
+
+    public void saveImage() {
+        mStorageRef = FirebaseStorage.getInstance().getReference();
+
+        Uri downloadURI = mStorageRef.child("images/" + UUID.randomUUID().toString()).getDownloadUrl().getResult();
+
+        Glide.with(ProfileActivity.this)
+                .load(downloadURI)
+                .into(profilePicture);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.profile_picture:
+                selectImage();
+                break;
+            case R.id.submit_button:
+                // in case the "submit" button is clicked more times for the same picture,
+                // while the upload is already in progress
+                if (mUploadTask != null && mUploadTask.isInProgress()) {
+                    Toast.makeText(getApplicationContext(), "Upload is already in progress", Toast.LENGTH_SHORT).show();
+                } else {
+                    uploadImage();
+                }
+                break;
+        }
     }
 }
 
