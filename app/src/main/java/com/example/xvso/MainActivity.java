@@ -44,13 +44,18 @@ public class MainActivity extends BaseActivity {
     private int counterPlayer1 = 0;
     private int counterPlayer2 = 0;
 
+    private String displayName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activityBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
-        if (getFirebaseUser()  != null) {
+        displayName = getFirebaseUser().getDisplayName();
+
+        if (!displayName.isEmpty()) {
+            activityBinding.player1Text.setText(displayName + " X:");
+        } else {
             String userString = getFirebaseUser().getEmail().substring(0, getFirebaseUser().getEmail().indexOf("@"));
             activityBinding.player1Text.setText(userString + " X:");
         }
