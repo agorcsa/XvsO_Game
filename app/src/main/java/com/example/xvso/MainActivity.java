@@ -50,7 +50,10 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activityBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+    }
 
+    protected void onResume() {
+        super.onResume();
         displayName = getFirebaseUser().getDisplayName();
 
         if (!displayName.isEmpty()) {
