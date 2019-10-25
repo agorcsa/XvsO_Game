@@ -187,27 +187,19 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
         lastName = profileBinding.lastNameEditview.getText().toString();
         email = profileBinding.emailEditview.getText().toString();
 
-        if (firstName.isEmpty()) {
-            showMessage("Please introduce your first name");
-        } else if (lastName.isEmpty()) {
-            showMessage("Please introduce your last name");
-        } else if (email.isEmpty()) {
-            showMessage("Please introduce your e-mail address");
-        } else {
-            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                    .setDisplayName(firstName + " " + lastName)
-                    .build();
+        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                .setDisplayName(firstName + " " + lastName)
+                .build();
 
-            user.updateProfile(profileUpdates)
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()) {
-                                Log.d(LOG_TAG, "User profile updated.");
-                            }
+        user.updateProfile(profileUpdates)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d(LOG_TAG, "User profile updated.");
                         }
-                    });
-        }
+                    }
+                });
     }
 
 
