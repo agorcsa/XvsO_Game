@@ -1,12 +1,14 @@
 package com.example.xvso.firebase;
 
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
 import android.util.Log;
 import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -16,6 +18,7 @@ import androidx.databinding.DataBindingUtil;
 
 import com.bumptech.glide.Glide;
 import com.example.xvso.R;
+import com.example.xvso.User;
 import com.example.xvso.databinding.ActivityProfileBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -45,27 +48,33 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
     // number of images to select
     private static final int PICK_IMAGE = 1;
     ActivityProfileBinding profileBinding;
-    FirebaseDatabase mDatabase;
-    DatabaseReference mDatabaseReference;
-    private String fileName = "";
-    private StorageReference mStorageRef;
-    // used for checking if an upload is already running
-    private StorageTask mUploadTask;
-    private Uri imagePath;
+
     private String firstName;
     private String lastName;
     private String email;
+    private Uri imagePath;
+
+    private StorageReference mStorageRef;
+    private DatabaseReference mDatabaseRef;
+    // used for checking if an upload is already running
+    private StorageTask mUploadTask;
+
+    private User newUser;
+
+    private String fileName = "";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mStorageRef = FirebaseStorage.getInstance().getReference();
-
         profileBinding = DataBindingUtil.setContentView(this, R.layout.activity_profile);
-
         profileBinding.submitButton.setOnClickListener(this);
         profileBinding.profilePicture.setOnClickListener(this);
+
+        mStorageRef = FirebaseStorage.getInstance().getReference("users");
+        mDatabaseRef = FirebaseDatabase.getInstance().getReference("users");
+
+        readFromDatabase();
     }
 
     private void selectImage() {
@@ -89,40 +98,46 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
     private void uploadImage() {
 
         if (imagePath != null) {
+
             final ProgressDialog progressDialog = new ProgressDialog(this);
             progressDialog.setTitle("Uploading...");
             progressDialog.show();
 
             fileName = UUID.randomUUID().toString();
+            final StorageReference storageReference = mStorageRef.child("userProfile/").child(getFirebaseUser().getUid() + fileName + "." + getFileExtension(imagePath));
 
-            final StorageReference reference = mStorageRef.child("images/" + fileName);
-
-            mUploadTask = reference.putFile(imagePath)
+            mUploadTask = storageReference.putFile(imagePath)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             progressDialog.dismiss();
                             Toast.makeText(ProfileActivity.this, "Uploaded", Toast.LENGTH_SHORT).show();
 
-                            reference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                 @Override
                                 public void onSuccess(final Uri uri) {
 
-                                    DatabaseReference imageStore = FirebaseDatabase.getInstance().getReference().child("images/");
+                                    firstName = profileBinding.firstNameEditview.getText().toString();
+                                    lastName = profileBinding.lastNameEditview.getText().toString();
+                                    email = profileBinding.emailEditview.getText().toString();
 
-                                    imageStore.setValue(String.valueOf(uri)).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    newUser = new User(getFirebaseUser().getUid(), firstName, lastName, email, uri.toString());
+
+                                    mDatabaseRef.child("userProfile").setValue(newUser).addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid) {
+
                                             showMessage("Image successfully saved to database");
 
                                             Glide.with(ProfileActivity.this)
-                                                    .load(uri)
+                                                    .load(uri.toString())
                                                     .into(profileBinding.profilePicture);
                                         }
                                     });
-                                }
-                            });
 
+                        }
+                            });
 
                         }
                     })
@@ -141,33 +156,48 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
                             progressDialog.setMessage("Uploaded " + (int) progress + "%");
                         }
                     });
+        } else {
+            showMessage("No image selected");
         }
     }
+
+    private String getFileExtension(Uri uri){
+        ContentResolver contentResolver = getContentResolver();
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+        return mime.getExtensionFromMimeType(contentResolver.getType(uri));
+    }
+
 
     @Override
     protected void onResume() {
         super.onResume();
-        //readFromDatabase();
+        readFromDatabase();
     }
 
     private void readFromDatabase() {
 
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference("images/" + fileName);
-
+        mDatabaseRef = FirebaseDatabase.getInstance().getReference("users/");
 
         // Read from the database
-        mDatabaseReference.addValueEventListener(new ValueEventListener() {
+        mDatabaseRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
-                String uri =  dataSnapshot.child("images/").getValue(String.class);
+                User user =  dataSnapshot.child("userProfile/").getValue(User.class);
 
-                Glide.with(ProfileActivity.this)
-                        .load(Uri.parse(uri))
-                        .into(profileBinding.profilePicture);
-                Log.d(LOG_TAG, "Value is: " + uri);
+                if (user != null) {
+
+                    String uri = user.getImageUrl();
+
+                    Glide.with(ProfileActivity.this)
+                            .load(Uri.parse(uri))
+                            .into(profileBinding.profilePicture);
+                    Log.d(LOG_TAG, "Value is: " + uri);
+
+                    profileBinding.firstNameEditview.setText(user.getFirstName());
+                }
             }
 
             @Override
