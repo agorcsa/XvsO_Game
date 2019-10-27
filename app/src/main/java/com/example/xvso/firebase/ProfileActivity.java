@@ -7,6 +7,8 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.EditText;
@@ -104,7 +106,7 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
             progressDialog.show();
 
             fileName = UUID.randomUUID().toString();
-            final StorageReference storageReference = mStorageRef.child("userProfile/").child(getFirebaseUser().getUid() + fileName + "." + getFileExtension(imagePath));
+            final StorageReference storageReference = mStorageRef.child(getFirebaseUser().getUid()).child(fileName + "." + getFileExtension(imagePath));
 
             mUploadTask = storageReference.putFile(imagePath)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -122,9 +124,9 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
                                     lastName = profileBinding.lastNameEditview.getText().toString();
                                     email = profileBinding.emailEditview.getText().toString();
 
-                                    newUser = new User(getFirebaseUser().getUid(), firstName, lastName, email, uri.toString());
+                                    newUser = new User(firstName, lastName, email, uri.toString());
 
-                                    mDatabaseRef.child("userProfile").setValue(newUser).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    mDatabaseRef.child(getFirebaseUser().getUid()).setValue(newUser).addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid) {
 
@@ -135,7 +137,6 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
                                                     .into(profileBinding.profilePicture);
                                         }
                                     });
-
                         }
                             });
 
@@ -185,8 +186,10 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
 
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
-                User user =  dataSnapshot.child("userProfile/").getValue(User.class);
+                User user = dataSnapshot.child(getFirebaseUser().getUid()).getValue(User.class);
 
+
+                // picture part
                 if (user != null) {
 
                     String uri = user.getImageUrl();
@@ -196,7 +199,14 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
                             .into(profileBinding.profilePicture);
                     Log.d(LOG_TAG, "Value is: " + uri);
 
-                    profileBinding.firstNameEditview.setText(user.getFirstName());
+                    // data part
+                    firstName = user.getFirstName();
+                    lastName = user.getLastName();
+                    email = user.getEmailAddress();
+
+                    profileBinding.firstNameEditview.setText(firstName);
+                    profileBinding.lastNameEditview.setText(lastName);
+                    profileBinding.emailEditview.setText(email);
                 }
             }
 
@@ -217,14 +227,6 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
         lastName = profileBinding.lastNameEditview.getText().toString();
         email = profileBinding.emailEditview.getText().toString();
 
-         if (firstName.isEmpty()) {
-           showMessage("Please introduce your first name");
-         } else if (lastName.isEmpty()) {
-             showMessage("Please introduce your last name");
-         } else if (email.isEmpty()) {
-             showMessage("Please introduce your e-mail address");
-         } else {
-
              UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                      .setDisplayName(firstName + " " + lastName)
                      .build();
@@ -238,7 +240,6 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
                              }
                          }
                      });
-         }
     }
 
 
@@ -254,6 +255,7 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
                 if (mUploadTask != null && mUploadTask.isInProgress()) {
                     Toast.makeText(getApplicationContext(), "Upload is already in progress", Toast.LENGTH_SHORT).show();
                 } else {
+                    readFromDatabase();
                     updateUserProfile();
                     showMessage("Changes have been saved");
                 }
@@ -264,5 +266,21 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
 
     public void showMessage(String message) {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.profile_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_edit_profile) {
+
+            showMessage("Edit profile");
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

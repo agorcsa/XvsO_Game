@@ -57,15 +57,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".firebase.LoginActivity" />
         </activity>
-        <receiver android:name=".XandOWidget">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/xand_owidget_info" />
-        </receiver>
     </application>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 

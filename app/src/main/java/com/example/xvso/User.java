@@ -2,7 +2,6 @@ package com.example.xvso;
 
 public class User {
 
-    private String mUserId;
     private String mFirstName;
     private String mLastName;
     private String mEmailAddress;
@@ -13,20 +12,11 @@ public class User {
 
     }
 
-    public User(String userId, String firstName, String lastName, String emailAddress, String imageUrl) {
-        mUserId = userId;
+    public User(String firstName, String lastName, String emailAddress, String imageUrl) {
         mFirstName = firstName;
         mLastName = lastName;
         mEmailAddress = emailAddress;
         mImageUrl = imageUrl;
-    }
-
-    public String getUserId() {
-        return mUserId;
-    }
-
-    public void setUserId(String userId) {
-        mUserId = userId;
     }
 
     public String getFirstName() {
