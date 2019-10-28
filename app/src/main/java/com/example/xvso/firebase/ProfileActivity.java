@@ -51,6 +51,7 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
     private static final int PICK_IMAGE = 1;
     ActivityProfileBinding profileBinding;
 
+    private String displayName;
     private String firstName;
     private String lastName;
     private String email;
@@ -75,8 +76,6 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
 
         mStorageRef = FirebaseStorage.getInstance().getReference("users");
         mDatabaseRef = FirebaseDatabase.getInstance().getReference("users");
-
-        readFromDatabase();
     }
 
     private void selectImage() {
@@ -137,7 +136,8 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
                                                     .into(profileBinding.profilePicture);
                                         }
                                     });
-                        }
+
+                                }
                             });
 
                         }
@@ -188,10 +188,8 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
                 // whenever data at this location is updated.
                 User user = dataSnapshot.child(getFirebaseUser().getUid()).getValue(User.class);
 
-
-                // picture part
                 if (user != null) {
-
+                    // picture part
                     String uri = user.getImageUrl();
 
                     Glide.with(ProfileActivity.this)
@@ -199,14 +197,20 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
                             .into(profileBinding.profilePicture);
                     Log.d(LOG_TAG, "Value is: " + uri);
 
-                    // data part
-                    firstName = user.getFirstName();
-                    lastName = user.getLastName();
-                    email = user.getEmailAddress();
 
-                    profileBinding.firstNameEditview.setText(firstName);
-                    profileBinding.lastNameEditview.setText(lastName);
+                    // displays the user's name and email under the profile picture
+                    displayName = getFirebaseUser().getDisplayName();
+                    profileBinding.userNameTextview.setText(displayName);
+
+                    email = getFirebaseUser().getEmail();
                     profileBinding.emailEditview.setText(email);
+
+                    // shows the edit text values for first name, last name and email
+                    profileBinding.firstNameEditview.setText(getFirebaseUser().getDisplayName().substring(0, getFirebaseUser().getDisplayName().indexOf(" ")));
+
+                    profileBinding.lastNameEditview.setText(getFirebaseUser().getDisplayName().substring(getFirebaseUser().getDisplayName().indexOf(" ")));
+
+                    profileBinding.emailAddressTextview.setText(email);
                 }
             }
 
