@@ -22,6 +22,7 @@ import com.bumptech.glide.Glide;
 import com.example.xvso.R;
 import com.example.xvso.User;
 import com.example.xvso.databinding.ActivityProfileBinding;
+import com.google.android.gms.auth.api.signin.internal.Storage;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -162,6 +163,23 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
         }
     }
 
+
+    public void updateUserData(){
+
+        String firstName = newUser.getFirstName();
+        String lastName = newUser.getLastName();
+        String email = newUser.getEmailAddress();
+
+        FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
+
+        String userId = getFirebaseUser().getUid();
+
+        DatabaseReference mDbRef = mDatabase.getReference("Users/userId/firstName");
+
+        mDbRef.setValue(firstName);
+    }
+
+
     private String getFileExtension(Uri uri){
         ContentResolver contentResolver = getContentResolver();
         MimeTypeMap mime = MimeTypeMap.getSingleton();
@@ -197,20 +215,13 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
                             .into(profileBinding.profilePicture);
                     Log.d(LOG_TAG, "Value is: " + uri);
 
+                    String firstName = user.getFirstName();
+                    String lastName = user.getLastName();
+                    String email = user.getEmailAddress();
 
-                    // displays the user's name and email under the profile picture
-                    displayName = getFirebaseUser().getDisplayName();
-                    profileBinding.userNameTextview.setText(displayName);
-
-                    email = getFirebaseUser().getEmail();
+                    profileBinding.firstNameEditview.setText(firstName);
+                    profileBinding.lastNameEditview.setText(lastName);
                     profileBinding.emailEditview.setText(email);
-
-                    // shows the edit text values for first name, last name and email
-                    profileBinding.firstNameEditview.setText(getFirebaseUser().getDisplayName().substring(0, getFirebaseUser().getDisplayName().indexOf(" ")));
-
-                    profileBinding.lastNameEditview.setText(getFirebaseUser().getDisplayName().substring(getFirebaseUser().getDisplayName().indexOf(" ")));
-
-                    profileBinding.emailAddressTextview.setText(email);
                 }
             }
 
@@ -231,19 +242,19 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
         lastName = profileBinding.lastNameEditview.getText().toString();
         email = profileBinding.emailEditview.getText().toString();
 
-             UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                     .setDisplayName(firstName + " " + lastName)
-                     .build();
+        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                .setDisplayName(firstName + " " + lastName)
+                .build();
 
-             user.updateProfile(profileUpdates)
-                     .addOnCompleteListener(new OnCompleteListener<Void>() {
-                         @Override
-                         public void onComplete(@NonNull Task<Void> task) {
-                             if (task.isSuccessful()) {
-                                 Log.d(LOG_TAG, "User profile updated.");
-                             }
-                         }
-                     });
+        user.updateProfile(profileUpdates)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d(LOG_TAG, "User profile updated.");
+                        }
+                    }
+                });
     }
 
 
