@@ -164,19 +164,44 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
     }
 
 
-    public void updateUserData(){
+    public void updateUserData() {
 
-        String firstName = newUser.getFirstName();
-        String lastName = newUser.getLastName();
-        String email = newUser.getEmailAddress();
+        firstName = profileBinding.firstNameEditview.getText().toString();
 
-        FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
+        lastName = profileBinding.lastNameEditview.getText().toString();
 
-        String userId = getFirebaseUser().getUid();
+        email = profileBinding.emailEditview.getText().toString();
 
-        DatabaseReference mDbRef = mDatabase.getReference("Users/userId/firstName");
+        if (imagePath != null) {
 
-        mDbRef.setValue(firstName);
+            String imageUrl = imagePath.toString();
+
+            User user = new User(firstName, lastName, email, imageUrl);
+
+            FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
+
+            DatabaseReference mDbRef = mDatabase.getReference("users").child(getFirebaseUser().getUid());
+
+            mDbRef.setValue(user);
+
+        } else {
+
+            Uri uri = Uri.parse("android.resource://com.example.xvso.firebase/" + R.drawable.penguin);
+
+            String penguinUrl = uri.toString();
+
+            User user = new User(firstName, lastName, email, penguinUrl);
+
+            FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
+
+            DatabaseReference mDbRef = mDatabase.getReference("users").child(getFirebaseUser().getUid());
+
+            mDbRef.setValue(user);
+
+            Glide.with(ProfileActivity.this)
+                    .load(uri)
+                    .into(profileBinding.profilePicture);
+        }
     }
 
 
@@ -272,6 +297,7 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
                 } else {
                     readFromDatabase();
                     updateUserProfile();
+                    updateUserData();
                     showMessage("Changes have been saved");
                 }
                 break;
