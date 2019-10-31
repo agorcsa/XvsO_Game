@@ -111,30 +111,7 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
                             progressDialog.dismiss();
                             Toast.makeText(ProfileActivity.this, "Uploaded", Toast.LENGTH_SHORT).show();
 
-                            storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                @Override
-                                public void onSuccess(final Uri uri) {
-
-                                    firstName = profileBinding.firstNameEditview.getText().toString();
-                                    lastName = profileBinding.lastNameEditview.getText().toString();
-                                    email = profileBinding.emailEditview.getText().toString();
-
-                                    newUser = new User(firstName, lastName, email, uri.toString());
-
-                                    mDatabaseRef.child(getFirebaseUser().getUid()).setValue(newUser).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                        @Override
-                                        public void onSuccess(Void aVoid) {
-
-                                            showMessage("Image successfully saved to database");
-
-                                            Glide.with(ProfileActivity.this)
-                                                    .load(uri.toString())
-                                                    .into(profileBinding.profilePicture);
-                                        }
-                                    });
-
-                                }
-                            });
+                            uploadImage();
 
                         }
                     })
@@ -158,25 +135,50 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
         }
     }
 
-    public void updateUserData() {
+    public void uploadImage() {
+        final StorageReference storageReference = mStorageRef.child(getFirebaseUser().getUid()).child(fileName + "." + getFileExtension(imagePath));
+
+        storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(final Uri uri) {
+
+                getEditTextData();
+
+                newUser = new User(firstName, lastName, email, uri.toString());
+
+                mDatabaseRef.child(getFirebaseUser().getUid()).setValue(newUser).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+
+                        showMessage("Image successfully saved to database");
+
+                        Glide.with(ProfileActivity.this)
+                                .load(uri.toString())
+                                .into(profileBinding.profilePicture);
+                    }
+                });
+
+            }
+        });
+    }
+
+
+    public void getEditTextData() {
 
         firstName = profileBinding.firstNameEditview.getText().toString();
-
         lastName = profileBinding.lastNameEditview.getText().toString();
-
         email = profileBinding.emailEditview.getText().toString();
+    }
+
+    public void updateUserData() {
+
+       getEditTextData();
 
         if (imagePath != null) {
 
             String imageUrl = imagePath.toString();
 
-            User user = new User(firstName, lastName, email, imageUrl);
-
-            FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
-
-            DatabaseReference mDbRef = mDatabase.getReference("users").child(getFirebaseUser().getUid());
-
-            mDbRef.setValue(user);
+            setDatabaseReference(imageUrl);
 
         } else {
 
@@ -184,14 +186,19 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
 
             String penguinUrl = uri.toString();
 
-            User user = new User(firstName, lastName, email, penguinUrl);
-
-            FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
-
-            DatabaseReference mDbRef = mDatabase.getReference("users").child(getFirebaseUser().getUid());
-
-            mDbRef.setValue(user);
+            setDatabaseReference(penguinUrl);
         }
+    }
+
+    public void setDatabaseReference(String url) {
+
+        User user = new User(firstName, lastName, email, url);
+
+        FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
+
+        DatabaseReference mDbRef = mDatabase.getReference("users").child(getFirebaseUser().getUid());
+
+        mDbRef.setValue(user);
     }
 
 
@@ -247,6 +254,9 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
             }
         });
     }
+
+
+
 
 
     public void updateUserProfile() {
