@@ -170,9 +170,15 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
         email = profileBinding.emailEditview.getText().toString();
     }
 
+    private void setEditTextData(String firstName, String lastName, String email) {
+        profileBinding.firstNameEditview.setText(firstName);
+        profileBinding.lastNameEditview.setText(lastName);
+        profileBinding.emailEditview.setText(email);
+    }
+
     public void updateUserData() {
 
-       getEditTextData();
+        getEditTextData();
 
         if (imagePath != null) {
 
@@ -202,7 +208,7 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
     }
 
 
-    private String getFileExtension(Uri uri){
+    private String getFileExtension(Uri uri) {
         ContentResolver contentResolver = getContentResolver();
         MimeTypeMap mime = MimeTypeMap.getSingleton();
         return mime.getExtensionFromMimeType(contentResolver.getType(uri));
@@ -241,9 +247,7 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
                     String lastName = user.getLastName();
                     String email = user.getEmailAddress();
 
-                    profileBinding.firstNameEditview.setText(firstName);
-                    profileBinding.lastNameEditview.setText(lastName);
-                    profileBinding.emailEditview.setText(email);
+                    setEditTextData(firstName,lastName,email);
                 }
             }
 
@@ -256,16 +260,11 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
     }
 
 
-
-
-
     public void updateUserProfile() {
 
         FirebaseUser user = getFirebaseUser();
 
-        firstName = profileBinding.firstNameEditview.getText().toString();
-        lastName = profileBinding.lastNameEditview.getText().toString();
-        email = profileBinding.emailEditview.getText().toString();
+        getEditTextData();
 
         UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                 .setDisplayName(firstName + " " + lastName)
