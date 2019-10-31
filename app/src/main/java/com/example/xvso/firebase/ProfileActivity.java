@@ -52,13 +52,14 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
     private String lastName;
     private String email;
     private Uri imagePath;
+    private String imageUrl;
 
     private StorageReference mStorageRef;
     private DatabaseReference mDatabaseRef;
     // used for checking if an upload is already running
     private StorageTask mUploadTask;
 
-    private User newUser;
+    private User globalUser;
 
     private String fileName = "";
 
@@ -75,7 +76,7 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
     }
 
     private void selectImage() {
-        Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(galleryIntent, PICK_IMAGE);
     }
 
@@ -99,6 +100,10 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
             final ProgressDialog progressDialog = new ProgressDialog(this);
             progressDialog.setTitle("Uploading...");
             progressDialog.show();
+
+            imageUrl = imagePath.toString();
+
+            globalUser = new User(firstName, lastName, email, imageUrl);
 
             fileName = UUID.randomUUID().toString();
             final StorageReference storageReference = mStorageRef.child(getFirebaseUser().getUid()).child(fileName + "." + getFileExtension(imagePath));
@@ -144,17 +149,20 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
 
                 getEditTextData();
 
-                newUser = new User(firstName, lastName, email, uri.toString());
+                globalUser.setImageUrl(uri.toString());
 
-                mDatabaseRef.child(getFirebaseUser().getUid()).setValue(newUser).addOnSuccessListener(new OnSuccessListener<Void>() {
+                mDatabaseRef.child(getFirebaseUser().getUid()).setValue(globalUser).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
 
                         showMessage("Image successfully saved to database");
 
-                        Glide.with(ProfileActivity.this)
-                                .load(uri.toString())
-                                .into(profileBinding.profilePicture);
+                        if (globalUser.getImageUrl() != null) {
+
+                            Glide.with(ProfileActivity.this)
+                                    .load(globalUser.getImageUrl())
+                                    .into(profileBinding.profilePicture);
+                        }
                     }
                 });
 
@@ -164,7 +172,6 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
 
 
     public void getEditTextData() {
-
         firstName = profileBinding.firstNameEditview.getText().toString();
         lastName = profileBinding.lastNameEditview.getText().toString();
         email = profileBinding.emailEditview.getText().toString();
@@ -232,22 +239,25 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
 
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
-                User user = dataSnapshot.child(getFirebaseUser().getUid()).getValue(User.class);
+                globalUser = dataSnapshot.child(getFirebaseUser().getUid()).getValue(User.class);
 
-                if (user != null) {
+                if (globalUser!= null) {
                     // picture part
-                    String uri = user.getImageUrl();
+                    String uri = globalUser.getImageUrl();
 
-                    Glide.with(getApplicationContext())
-                            .load(Uri.parse(uri))
-                            .into(profileBinding.profilePicture);
-                    Log.d(LOG_TAG, "Value is: " + uri);
+                    if (globalUser.getImageUrl() != null) {
 
-                    String firstName = user.getFirstName();
-                    String lastName = user.getLastName();
-                    String email = user.getEmailAddress();
+                        Glide.with(getApplicationContext())
+                                .load(globalUser.getImageUrl())
+                                .into(profileBinding.profilePicture);
+                        Log.d(LOG_TAG, "Value is: " + uri);
 
-                    setEditTextData(firstName,lastName,email);
+                        String firstName = globalUser.getFirstName();
+                        String lastName = globalUser.getLastName();
+                        String email = globalUser.getEmailAddress();
+
+                        setEditTextData(firstName,lastName,email);
+                    }
                 }
             }
 
