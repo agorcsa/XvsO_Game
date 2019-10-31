@@ -5,13 +5,11 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.MimeTypeMap;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -22,11 +20,9 @@ import com.bumptech.glide.Glide;
 import com.example.xvso.R;
 import com.example.xvso.User;
 import com.example.xvso.databinding.ActivityProfileBinding;
-import com.google.android.gms.auth.api.signin.internal.Storage;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
@@ -41,7 +37,6 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 
-import java.util.HashMap;
 import java.util.UUID;
 
 import static com.example.xvso.MainActivity.LOG_TAG;
@@ -92,12 +87,12 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
 
             imagePath = data.getData();
 
-            uploadImage();
+            uploadUserImage();
         }
     }
 
 
-    private void uploadImage() {
+    private void uploadUserImage() {
 
         if (imagePath != null) {
 
@@ -163,7 +158,6 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
         }
     }
 
-
     public void updateUserData() {
 
         firstName = profileBinding.firstNameEditview.getText().toString();
@@ -197,10 +191,6 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
             DatabaseReference mDbRef = mDatabase.getReference("users").child(getFirebaseUser().getUid());
 
             mDbRef.setValue(user);
-
-            Glide.with(ProfileActivity.this)
-                    .load(uri)
-                    .into(profileBinding.profilePicture);
         }
     }
 
@@ -235,7 +225,7 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
                     // picture part
                     String uri = user.getImageUrl();
 
-                    Glide.with(ProfileActivity.this)
+                    Glide.with(getApplicationContext())
                             .load(Uri.parse(uri))
                             .into(profileBinding.profilePicture);
                     Log.d(LOG_TAG, "Value is: " + uri);

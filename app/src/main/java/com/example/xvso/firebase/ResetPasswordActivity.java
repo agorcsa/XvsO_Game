@@ -3,19 +3,15 @@ package com.example.xvso.firebase;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
 
 import com.example.xvso.R;
 import com.example.xvso.databinding.ActivityResetPasswordBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
 
 public class ResetPasswordActivity extends BaseActivity {
 
@@ -25,6 +21,8 @@ public class ResetPasswordActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reset_password);
+
+        resetPasswordBinding = DataBindingUtil.setContentView(this, R.layout.activity_reset_password);
 
         resetPasswordBinding.btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
