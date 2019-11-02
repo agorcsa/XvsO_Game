@@ -17,6 +17,7 @@ import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.xvso.R;
 import com.example.xvso.User;
 import com.example.xvso.databinding.ActivityProfileBinding;
@@ -148,6 +149,8 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
 
                 getEditTextData();
 
+                globalUser = new User(firstName, lastName, email, imageUrl);
+
                 globalUser.setImageUrl(uri.toString());
 
                 mDatabaseRef.child(getFirebaseUser().getUid()).setValue(globalUser).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -160,11 +163,11 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
 
                             Glide.with(ProfileActivity.this)
                                     .load(globalUser.getImageUrl())
+                                    .apply(new RequestOptions().placeholder(R.drawable.penguin))
                                     .into(profileBinding.profilePicture);
                         }
                     }
                 });
-
             }
         });
     }
@@ -244,7 +247,7 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
                 // whenever data at this location is updated.
                 globalUser = dataSnapshot.child(getFirebaseUser().getUid()).getValue(User.class);
 
-                if (globalUser!= null) {
+                if (globalUser != null) {
                     // picture part
                     String uri = globalUser.getImageUrl();
 
@@ -259,7 +262,12 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
                         String lastName = globalUser.getLastName();
                         String email = globalUser.getEmailAddress();
 
-                        setEditTextData(firstName,lastName,email);
+                        setEditTextData(firstName, lastName, email);
+
+                        String fullName = firstName + " " + lastName;
+
+                        profileBinding.userNameTextview.setText(fullName);
+                        profileBinding.emailAddressTextview.setText(email);
                     }
                 }
             }
