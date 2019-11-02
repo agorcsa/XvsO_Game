@@ -39,15 +39,14 @@ import com.google.firebase.storage.UploadTask;
 
 import java.util.UUID;
 
-import static com.example.xvso.MainActivity.LOG_TAG;
-
 public class ProfileActivity extends BaseActivity implements View.OnClickListener {
+
+    public static final String LOG_TAG = "ProfileActivity";
 
     // number of images to select
     private static final int PICK_IMAGE = 1;
     ActivityProfileBinding profileBinding;
 
-    private String displayName;
     private String firstName;
     private String lastName;
     private String email;
