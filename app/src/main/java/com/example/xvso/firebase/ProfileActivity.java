@@ -76,7 +76,7 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
     }
 
     private void selectImage() {
-        Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(galleryIntent, PICK_IMAGE);
     }
 
@@ -205,13 +205,17 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
 
     public void setDatabaseReference(String url) {
 
-        User user = new User(firstName, lastName, email, url);
+        globalUser.setFirstName(firstName);
+
+        globalUser.setLastName(lastName);
+
+        globalUser.setEmailAddress(email);
 
         FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
 
         DatabaseReference mDbRef = mDatabase.getReference("users").child(getFirebaseUser().getUid());
 
-        mDbRef.setValue(user);
+        mDbRef.setValue(globalUser);
     }
 
 
