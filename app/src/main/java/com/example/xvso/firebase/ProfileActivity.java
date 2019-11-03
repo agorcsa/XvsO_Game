@@ -185,6 +185,81 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
         profileBinding.emailEditview.setText(email);
     }
 
+
+    private boolean validateFirstName() {
+        String firstNameInput = profileBinding.firstNameEditview.getText().toString().trim();
+        if (firstNameInput.isEmpty()) {
+            profileBinding.firstNameEditview.setError("Field can't be empty");
+            return false;
+        } else if (firstNameInput.length() > 10){
+            profileBinding.firstNameEditview.setError("First name too long");
+            return false;
+        } else {
+            profileBinding.emailEditview.setError(null);
+            return true;
+        }
+    }
+
+
+    private boolean validateLastName() {
+        String lastNameInput = profileBinding.lastNameEditview.getText().toString().trim();
+        if (lastNameInput.isEmpty()) {
+            profileBinding.lastNameEditview.setError("Field can't be empty");
+            return false;
+        } else if (lastNameInput.length() > 10){
+            profileBinding.lastNameEditview.setError("Last name too long");
+            return false;
+        } else {
+            profileBinding.lastNameEditview.setError(null);
+            return true;
+        }
+    }
+
+    private boolean validateEmail() {
+
+        String emailInput = profileBinding.emailEditview.getText().toString().trim();
+
+        if (emailInput.isEmpty()) {
+            profileBinding.emailEditview.setError("Field can't be empty");
+            return false;
+        } else {
+            profileBinding.emailEditview.setError(null);
+            return true;
+        }
+    }
+
+
+    private boolean validatePassword() {
+
+        String passwordInput = profileBinding.passwordEditview.getText().toString().trim();
+
+        if (passwordInput.isEmpty()) {
+            profileBinding.passwordEditview.setError("Field can't be empty");
+            return false;
+        } else {
+            profileBinding.passwordEditview.setError(null);
+            return true;
+        }
+    }
+
+    private boolean confirmInput() {
+        if (!validateFirstName() | !validateLastName() | !validateEmail() | !validatePassword()) {
+            return false;
+        }
+
+        String input = "First name: " + profileBinding.firstNameEditview.getText().toString();
+        input += "\n";
+        input += "Last name: " + profileBinding.lastNameEditview.getText().toString();
+        input += "\n";
+        input += "Email: " + profileBinding.emailEditview.getText().toString();
+        input += "\n";
+        input += "Password: " + profileBinding.passwordEditview.getText().toString();
+
+        showMessage(input);
+        return true;
+    }
+
+
     public void updateUserData() {
 
         getEditTextData();
@@ -318,7 +393,9 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
                     readFromDatabase();
                     updateUserProfile();
                     updateUserData();
-                    showMessage("Changes have been saved");
+                    if (confirmInput()) {
+                        showMessage("Changes have been saved");
+                    }
                 }
                 break;
         }
