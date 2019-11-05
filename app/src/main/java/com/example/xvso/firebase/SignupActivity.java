@@ -3,8 +3,7 @@ package com.example.xvso.firebase;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,7 +20,20 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.regex.Pattern;
+
 public class SignupActivity extends AppCompatActivity {
+
+    private static final Pattern PASSWORD_PATTERN =
+            Pattern.compile("^" +           // beginning of the String
+                    "(?=.*[0-9])" +       // at least 1 digit
+                    "(?=.*[a-z])" +       // at least 1 lower case letter
+                    //"(?=.*[A-Z])" +       // at least 1 upper case letter
+                    //"(?=.*[a-zA-Z])" +      // any letter (upper or lower case)
+                    //"(?=.*[@#$%^&+=])" +    // at least 1 special character
+                    //"(?=\\S+$)" +           // no white spaces
+                    //".{6,}" +             // at least 6 characters
+                    "$");                   // end of the String
 
     private EditText inputEmail, inputPassword;
     private Button btnSignIn, btnSignUp, btnResetPassword;
@@ -67,6 +79,9 @@ public class SignupActivity extends AppCompatActivity {
                 if (TextUtils.isEmpty(email)) {
                     Toast.makeText(getApplicationContext(), "Enter email address!", Toast.LENGTH_SHORT).show();
                     return;
+
+                } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                    inputEmail.setError("Please enter a valid e-mail address");
                 }
 
                 if (TextUtils.isEmpty(password)) {

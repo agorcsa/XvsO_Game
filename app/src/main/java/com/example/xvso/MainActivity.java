@@ -11,12 +11,14 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.example.xvso.databinding.ActivityMainBinding;
 import com.example.xvso.firebase.BaseActivity;
 import com.example.xvso.firebase.ProfileActivity;
+import com.example.xvso.viewmodel.ScoreViewModel;
 import com.google.firebase.auth.FirebaseAuth;
-
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,10 +48,14 @@ public class MainActivity extends BaseActivity {
 
     private String displayName;
 
+    public ViewModel mScoreViewModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         activityBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        mScoreViewModel = ViewModelProviders.of(this).get(ScoreViewModel.class);
     }
 
     protected void onResume() {
@@ -310,4 +316,3 @@ public class MainActivity extends BaseActivity {
         }
     }
 }
-
