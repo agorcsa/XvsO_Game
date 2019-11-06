@@ -1,8 +1,12 @@
 package com.example.xvso.viewmodel;
 
+import android.util.Log;
+
 import androidx.lifecycle.ViewModel;
 
 public class ScoreViewModel extends ViewModel {
+
+    private final String LOG_TAG = this.getClass().getSimpleName();
 
     // Tracks the score of player X
     private int scorePlayerX = 0;
@@ -24,5 +28,11 @@ public class ScoreViewModel extends ViewModel {
 
     public void setScorePlayerO(int scorePlayerO) {
         this.scorePlayerO = scorePlayerO;
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        Log.i(LOG_TAG, "ViewModel was destroyed");
     }
 }

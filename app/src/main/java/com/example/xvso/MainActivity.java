@@ -54,7 +54,7 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 
         activityBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
-        mScoreViewModel = ViewModelProviders.of(this).get(ScoreViewModel.class);
+
     }
 
     protected void onResume() {
@@ -137,6 +137,7 @@ public class MainActivity extends BaseActivity {
     }
 
     public void announceWinner() {
+        mScoreViewModel = ViewModelProviders.of(this).get(ScoreViewModel.class);
         if (isXWinner) {
             showToast("Player 1 has won! (X)");
             counterPlayer1 = mScoreViewModel.getScorePlayerX();
