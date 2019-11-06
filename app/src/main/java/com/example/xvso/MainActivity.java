@@ -11,7 +11,6 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.example.xvso.databinding.ActivityMainBinding;
@@ -43,12 +42,12 @@ public class MainActivity extends BaseActivity {
     // for log out button
 
     // keeps track of the score of both players
-    private int counterPlayer1 = 0;
-    private int counterPlayer2 = 0;
+    private int counterPlayer1;
+    private int counterPlayer2;
 
     private String displayName;
 
-    public ViewModel mScoreViewModel;
+    public ScoreViewModel mScoreViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,11 +139,15 @@ public class MainActivity extends BaseActivity {
     public void announceWinner() {
         if (isXWinner) {
             showToast("Player 1 has won! (X)");
+            counterPlayer1 = mScoreViewModel.getScorePlayerX();
             counterPlayer1++;
+            mScoreViewModel.setScorePlayerX(counterPlayer1);
             activityBinding.player1Result.setText(String.valueOf(counterPlayer1));
         } else {
             showToast("Player 2 has won! (O)");
+            counterPlayer2 = mScoreViewModel.getScorePlayerO();
             counterPlayer2++;
+            mScoreViewModel.setScorePlayerO(counterPlayer2);
             activityBinding.player2Result.setText(String.valueOf(counterPlayer2));
         }
     }

@@ -161,9 +161,9 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
 
                         if (globalUser.getImageUrl() != null) {
 
-                            Glide.with(ProfileActivity.this)
+                            Glide.with(getApplicationContext())
                                     .load(globalUser.getImageUrl())
-                                    .apply(new RequestOptions().placeholder(R.drawable.penguin))
+                                    .apply(new RequestOptions().error(R.drawable.penguin))
                                     .into(profileBinding.profilePicture);
                         }
                     }
@@ -330,7 +330,9 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
 
                         Glide.with(getApplicationContext())
                                 .load(globalUser.getImageUrl())
+                                .apply(new RequestOptions().error(R.drawable.penguin))
                                 .into(profileBinding.profilePicture);
+
                         Log.d(LOG_TAG, "Value is: " + uri);
 
                         String firstName = globalUser.getFirstName();

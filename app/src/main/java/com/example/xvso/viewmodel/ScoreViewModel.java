@@ -5,10 +5,10 @@ import androidx.lifecycle.ViewModel;
 public class ScoreViewModel extends ViewModel {
 
     // Tracks the score of player X
-    private int scorePlayerX;
+    private int scorePlayerX = 0;
 
     // Tracks the score of player O
-    private int scorePlayerO;
+    private int scorePlayerO = 0;
 
     public int getScorePlayerX() {
         return scorePlayerX;
