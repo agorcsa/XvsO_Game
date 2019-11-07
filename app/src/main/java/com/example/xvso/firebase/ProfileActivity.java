@@ -320,31 +320,34 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
 
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
-                globalUser = dataSnapshot.child(getFirebaseUser().getUid()).getValue(User.class);
+                if (getFirebaseUser() != null) {
 
-                if (globalUser != null) {
-                    // picture part
-                    String uri = globalUser.getImageUrl();
+                    globalUser = dataSnapshot.child(getFirebaseUser().getUid()).getValue(User.class);
 
-                    if (globalUser.getImageUrl() != null) {
+                    if (globalUser != null) {
+                        // picture part
+                        String uri = globalUser.getImageUrl();
 
-                        Glide.with(getApplicationContext())
-                                .load(globalUser.getImageUrl())
-                                .apply(new RequestOptions().error(R.drawable.penguin))
-                                .into(profileBinding.profilePicture);
+                        if (globalUser.getImageUrl() != null) {
 
-                        Log.d(LOG_TAG, "Value is: " + uri);
+                            Glide.with(getApplicationContext())
+                                    .load(globalUser.getImageUrl())
+                                    .apply(new RequestOptions().error(R.drawable.penguin))
+                                    .into(profileBinding.profilePicture);
 
-                        String firstName = globalUser.getFirstName();
-                        String lastName = globalUser.getLastName();
-                        String email = globalUser.getEmailAddress();
+                            Log.d(LOG_TAG, "Value is: " + uri);
 
-                        setEditTextData(firstName, lastName, email);
+                            String firstName = globalUser.getFirstName();
+                            String lastName = globalUser.getLastName();
+                            String email = globalUser.getEmailAddress();
 
-                        String fullName = firstName + " " + lastName;
+                            setEditTextData(firstName, lastName, email);
 
-                        profileBinding.userNameTextview.setText(fullName);
-                        profileBinding.emailAddressTextview.setText(email);
+                            String fullName = firstName + " " + lastName;
+
+                            profileBinding.userNameTextview.setText(fullName);
+                            profileBinding.emailAddressTextview.setText(email);
+                        }
                     }
                 }
             }

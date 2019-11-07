@@ -37,17 +37,14 @@ public class MainActivity extends BaseActivity {
     public int isX = 1;
 
     public boolean isXWinner;
+    public ScoreViewModel mScoreViewModel;
     ArrayList<Integer> mCellIndex = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0));
-    ActivityMainBinding activityBinding;
     // for log out button
-
+    ActivityMainBinding activityBinding;
     // keeps track of the score of both players
     private int counterPlayer1;
     private int counterPlayer2;
-
     private String displayName;
-
-    public ScoreViewModel mScoreViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,16 +56,20 @@ public class MainActivity extends BaseActivity {
 
     protected void onResume() {
         super.onResume();
-        displayName = getFirebaseUser().getDisplayName();
 
-        if (!displayName.isEmpty()) {
-            activityBinding.player1Text.setText(displayName + " X:");
-        } else {
-            String userString = getFirebaseUser().getEmail().substring(0, getFirebaseUser().getEmail().indexOf("@"));
-            activityBinding.player1Text.setText(userString + " X:");
+        if (getFirebaseUser() != null) {
+            displayName = getFirebaseUser().getDisplayName();
+
+            if (!displayName.isEmpty()) {
+                activityBinding.player1Text.setText(displayName + " X:");
+            } else {
+                String userString = getFirebaseUser().getEmail().substring(0, getFirebaseUser().getEmail().indexOf("@"));
+                activityBinding.player1Text.setText(userString + " X:");
+            }
+
+            //initializePlayers();
+            updateCounters();
         }
-
-        initializePlayers();
     }
 
 
@@ -139,18 +140,27 @@ public class MainActivity extends BaseActivity {
     public void announceWinner() {
         if (isXWinner) {
             showToast("Player 1 has won! (X)");
-            counterPlayer1 = mScoreViewModel.getScorePlayerX();
-            counterPlayer1++;
-            mScoreViewModel.setScorePlayerX(counterPlayer1);
-            activityBinding.player1Result.setText(String.valueOf(counterPlayer1));
+            viewModelX();
         } else {
             showToast("Player 2 has won! (O)");
-            counterPlayer2 = mScoreViewModel.getScorePlayerO();
-            counterPlayer2++;
-            mScoreViewModel.setScorePlayerO(counterPlayer2);
-            activityBinding.player2Result.setText(String.valueOf(counterPlayer2));
+            viewModelO();
         }
     }
+
+    public void viewModelX() {
+        readFromViewModelX();
+        counterPlayer1++;
+        writeToViewModelX();
+        displayCounterX();
+    }
+
+    public void viewModelO() {
+        readFromViewModelX();
+        counterPlayer2++;
+        writeToViewModelO();
+        displayCounterO();
+    }
+
 
     public boolean checkRowsX() {
         if (mCellIndex.get(0) == 1 && mCellIndex.get(1) == 1 && mCellIndex.get(2) == 1) {
@@ -311,6 +321,39 @@ public class MainActivity extends BaseActivity {
 
         counterPlayer1 = 0;
         counterPlayer2 = 0;
+    }
+
+
+    public void updateCounters() {
+        readFromViewModelX();
+        readFromViewModelO();
+
+        displayCounterX();
+        displayCounterO();
+    }
+
+    public void readFromViewModelX() {
+        counterPlayer1 = mScoreViewModel.getScorePlayerX();
+    }
+
+    public void writeToViewModelX() {
+        mScoreViewModel.setScorePlayerX(counterPlayer1);
+    }
+
+    public void readFromViewModelO() {
+        counterPlayer2 = mScoreViewModel.getScorePlayerO();
+    }
+
+    public void writeToViewModelO() {
+        mScoreViewModel.setScorePlayerO(counterPlayer2);
+    }
+
+    public void displayCounterX() {
+        activityBinding.player1Result.setText(String.valueOf(counterPlayer1));
+    }
+
+    public void displayCounterO() {
+        activityBinding.player2Result.setText(String.valueOf(counterPlayer2));
     }
 
     public void setClickableFalse() {
