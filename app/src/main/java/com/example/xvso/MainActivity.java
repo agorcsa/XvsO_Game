@@ -16,7 +16,7 @@ import androidx.lifecycle.ViewModelProviders;
 import com.example.xvso.databinding.ActivityMainBinding;
 import com.example.xvso.firebase.BaseActivity;
 import com.example.xvso.firebase.ProfileActivity;
-import com.example.xvso.viewmodel.MainActivityViewModel;
+import com.example.xvso.viewmodel.ScoreViewModel;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
@@ -37,7 +37,7 @@ public class MainActivity extends BaseActivity {
     public int isX = 1;
 
     public boolean isXWinner;
-    public MainActivityViewModel mScoreViewModel;
+    public ScoreViewModel mScoreViewModel;
     ArrayList<Integer> mCellIndex = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0));
     // for log out button
     ActivityMainBinding activityBinding;
@@ -51,7 +51,7 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 
         activityBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
-        mScoreViewModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
+        mScoreViewModel = ViewModelProviders.of(this).get(ScoreViewModel.class);
     }
 
     protected void onResume() {
@@ -81,6 +81,7 @@ public class MainActivity extends BaseActivity {
 
         counter.animate().translationYBy(1000f).setDuration(300);
 
+        int tagg = mScoreViewModel.getTag();
         tag = Integer.parseInt((String) counter.getTag());
 
         if (isX == 1 && !checkForWin()) {

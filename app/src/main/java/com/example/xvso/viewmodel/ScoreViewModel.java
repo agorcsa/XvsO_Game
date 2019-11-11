@@ -5,7 +5,7 @@ import android.util.Log;
 import androidx.lifecycle.ViewModel;
 
 
-public class MainActivityViewModel extends ViewModel {
+public class ScoreViewModel extends ViewModel {
 
     private final String LOG_TAG = this.getClass().getSimpleName();
 
@@ -14,6 +14,18 @@ public class MainActivityViewModel extends ViewModel {
 
     // Tracks the score of player O
     private int scorePlayerO = 0;
+
+    // takes values from 0 -> 8
+    // represents the tag of each cell of the grid
+    private int tag;
+
+    public int getTag() {
+        return tag;
+    }
+
+    public void setTag(int tag) {
+        this.tag = tag;
+    }
 
     public int getScorePlayerX() {
         return scorePlayerX;

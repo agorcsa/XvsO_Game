@@ -439,8 +439,4 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
 
         return super.onOptionsItemSelected(item);
     }
-
-    public void logOut() {
-
-    }
 }
