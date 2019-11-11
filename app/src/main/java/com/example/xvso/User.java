@@ -5,6 +5,7 @@ public class User {
     private String mFirstName;
     private String mLastName;
     private String mEmailAddress;
+    private String mPassword;
     private String mImageUrl;
 
     // empty constructor used for saving the user to database
@@ -12,10 +13,11 @@ public class User {
 
     }
 
-    public User(String firstName, String lastName, String emailAddress, String imageUrl) {
+    public User(String firstName, String lastName, String emailAddress, String password, String imageUrl) {
         mFirstName = firstName;
         mLastName = lastName;
         mEmailAddress = emailAddress;
+        mPassword = password;
         mImageUrl = imageUrl;
     }
 
@@ -43,11 +45,11 @@ public class User {
         mEmailAddress = emailAddress;
     }
 
-    public String getImageUrl() {
-        return mImageUrl;
-    }
+    public String getPassword() { return mPassword;}
 
-    public void setImageUrl(String imageUrl) {
-        mImageUrl = imageUrl;
-    }
+    public void setPassword(String mPassword) { this.mPassword = mPassword;  }
+
+    public String getImageUrl() { return mImageUrl;}
+
+    public void setImageUrl(String imageUrl) { mImageUrl = imageUrl; }
 }

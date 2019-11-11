@@ -16,7 +16,7 @@ import androidx.lifecycle.ViewModelProviders;
 import com.example.xvso.databinding.ActivityMainBinding;
 import com.example.xvso.firebase.BaseActivity;
 import com.example.xvso.firebase.ProfileActivity;
-import com.example.xvso.viewmodel.ScoreViewModel;
+import com.example.xvso.viewmodel.MainActivityViewModel;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
@@ -37,7 +37,7 @@ public class MainActivity extends BaseActivity {
     public int isX = 1;
 
     public boolean isXWinner;
-    public ScoreViewModel mScoreViewModel;
+    public MainActivityViewModel mScoreViewModel;
     ArrayList<Integer> mCellIndex = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0));
     // for log out button
     ActivityMainBinding activityBinding;
@@ -51,7 +51,7 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 
         activityBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
-        mScoreViewModel = ViewModelProviders.of(this).get(ScoreViewModel.class);
+        mScoreViewModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
     }
 
     protected void onResume() {
@@ -292,8 +292,12 @@ public class MainActivity extends BaseActivity {
         } else if (item.getItemId() == R.id.action_log_out) {
 
             showToast("Log out");
+
+            String userString = getFirebaseUser().getEmail().substring(0, getFirebaseUser().getEmail().indexOf("@"));
             FirebaseAuth.getInstance().signOut();
-            activityBinding.player1Text.setText("Player X: ");
+            String name = userString + " X:";
+            activityBinding.player1Text.setText(name);
+
         } else if (item.getItemId() == R.id.action_settings) {
 
             Intent settingsIntent = new Intent(MainActivity.this, ProfileActivity.class);

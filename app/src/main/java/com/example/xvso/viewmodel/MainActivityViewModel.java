@@ -4,7 +4,8 @@ import android.util.Log;
 
 import androidx.lifecycle.ViewModel;
 
-public class ScoreViewModel extends ViewModel {
+
+public class MainActivityViewModel extends ViewModel {
 
     private final String LOG_TAG = this.getClass().getSimpleName();
 

@@ -51,6 +51,7 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
     private String firstName;
     private String lastName;
     private String email;
+    private String password;
     private Uri imagePath;
     private String imageUrl;
 
@@ -103,7 +104,7 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
 
             imageUrl = imagePath.toString();
 
-            globalUser = new User(firstName, lastName, email, imageUrl);
+            globalUser = new User(firstName, lastName, email, password, imageUrl);
 
             fileName = UUID.randomUUID().toString();
             final StorageReference storageReference = mStorageRef.child(getFirebaseUser().getUid()).child(fileName + "." + getFileExtension(imagePath));
@@ -149,7 +150,7 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
 
                 getEditTextData();
 
-                globalUser = new User(firstName, lastName, email, imageUrl);
+                globalUser = new User(firstName, lastName, email, password, imageUrl);
 
                 globalUser.setImageUrl(uri.toString());
 
@@ -163,7 +164,7 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
 
                             Glide.with(getApplicationContext())
                                     .load(globalUser.getImageUrl())
-                                    .apply(new RequestOptions().error(R.drawable.penguin))
+                                    .apply(new RequestOptions().error(R.drawable.tictactoe))
                                     .into(profileBinding.profilePicture);
                         }
                     }
@@ -176,12 +177,14 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
     public void getEditTextData() {
         firstName = profileBinding.firstNameEditview.getText().toString();
         lastName = profileBinding.lastNameEditview.getText().toString();
+        password = profileBinding.passwordEditview.getText().toString();
         email = profileBinding.emailEditview.getText().toString();
     }
 
-    private void setEditTextData(String firstName, String lastName, String email) {
+    private void setEditTextData(String firstName, String lastName, String password, String email) {
         profileBinding.firstNameEditview.setText(firstName);
         profileBinding.lastNameEditview.setText(lastName);
+        profileBinding.passwordEditview.setText(password);
         profileBinding.emailEditview.setText(email);
     }
 
@@ -191,7 +194,7 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
         if (firstNameInput.isEmpty()) {
             profileBinding.firstNameEditview.setError("Field can't be empty");
             return false;
-        } else if (firstNameInput.length() > 10){
+        } else if (firstNameInput.length() > 10) {
             profileBinding.firstNameEditview.setError("First name too long");
             return false;
         } else {
@@ -206,7 +209,7 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
         if (lastNameInput.isEmpty()) {
             profileBinding.lastNameEditview.setError("Field can't be empty");
             return false;
-        } else if (lastNameInput.length() > 10){
+        } else if (lastNameInput.length() > 10) {
             profileBinding.lastNameEditview.setError("Last name too long");
             return false;
         } else {
@@ -272,27 +275,29 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
 
         } else {
 
-            Uri uri = Uri.parse("android.resource://com.example.xvso.firebase/" + R.drawable.penguin);
+            Uri uri = Uri.parse("android.resource://com.example.xvso.firebase/" + R.drawable.tictactoe);
 
-            String penguinUrl = uri.toString();
+            String placeholderUrl = uri.toString();
 
-            setDatabaseReference(penguinUrl);
+            setDatabaseReference(placeholderUrl);
         }
     }
 
     public void setDatabaseReference(String url) {
 
-        globalUser.setFirstName(firstName);
+            globalUser.setFirstName(firstName);
 
-        globalUser.setLastName(lastName);
+            globalUser.setLastName(lastName);
 
-        globalUser.setEmailAddress(email);
+            globalUser.setPassword(password);
 
-        FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
+            globalUser.setEmailAddress(email);
 
-        DatabaseReference mDbRef = mDatabase.getReference("users").child(getFirebaseUser().getUid());
+            FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
 
-        mDbRef.setValue(globalUser);
+            DatabaseReference mDbRef = mDatabase.getReference("users").child(getFirebaseUser().getUid());
+
+            mDbRef.setValue(globalUser);
     }
 
 
@@ -332,25 +337,33 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
 
                             Glide.with(getApplicationContext())
                                     .load(globalUser.getImageUrl())
-                                    .apply(new RequestOptions().error(R.drawable.penguin))
+                                    .apply(new RequestOptions().error(R.drawable.tictactoe))
                                     .into(profileBinding.profilePicture);
 
                             Log.d(LOG_TAG, "Value is: " + uri);
 
                             String firstName = globalUser.getFirstName();
                             String lastName = globalUser.getLastName();
+                            String password = globalUser.getPassword();
                             String email = globalUser.getEmailAddress();
 
-                            setEditTextData(firstName, lastName, email);
+                            setEditTextData(firstName, lastName, password, email);
 
                             String fullName = firstName + " " + lastName;
 
                             profileBinding.userNameTextview.setText(fullName);
                             profileBinding.emailAddressTextview.setText(email);
                         }
+
+                    } else {
+
+                        Glide.with(getApplicationContext())
+                                .load(R.drawable.tictactoe)
+                                .into(profileBinding.profilePicture);
                     }
                 }
             }
+
 
             @Override
             public void onCancelled(DatabaseError error) {
@@ -425,5 +438,9 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void logOut() {
+
     }
 }
