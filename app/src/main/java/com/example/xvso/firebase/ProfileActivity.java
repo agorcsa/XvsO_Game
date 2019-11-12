@@ -48,6 +48,8 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
     private static final int PICK_IMAGE = 1;
     ActivityProfileBinding profileBinding;
 
+    // represents the substring of the email address, the first part before "@"
+    private String name;
     private String firstName;
     private String lastName;
     private String email;
@@ -75,7 +77,8 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
         mStorageRef = FirebaseStorage.getInstance().getReference("users");
         mDatabaseRef = FirebaseDatabase.getInstance().getReference("users");
 
-        globalUser = new User(firstName, lastName,email, password, imageUrl);
+        //globalUser = new User(firstName, lastName, email, password, imageUrl);
+        globalUser = new User();
     }
 
     private void selectImage() {
@@ -105,8 +108,6 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
             progressDialog.show();
 
             imageUrl = imagePath.toString();
-
-            globalUser = new User(firstName, lastName, email, password, imageUrl);
 
             fileName = UUID.randomUUID().toString();
             final StorageReference storageReference = mStorageRef.child(getFirebaseUser().getUid()).child(fileName + "." + getFileExtension(imagePath));
@@ -152,7 +153,7 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
 
                 getEditTextData();
 
-                globalUser = new User(firstName, lastName, email, password, imageUrl);
+                //globalUser = new User(firstName, lastName, email, password, imageUrl);
 
                 globalUser.setImageUrl(uri.toString());
 

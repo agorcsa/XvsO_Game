@@ -114,12 +114,13 @@ public class SignupActivity extends BaseActivity {
                                     Toast.makeText(SignupActivity.this, "Authentication failed." + task.getException(),
                                             Toast.LENGTH_SHORT).show();
                                 } else {
-                                    String firstName = getFirebaseUser().getEmail().substring(0, getFirebaseUser().getEmail().indexOf("@"));
-                                    String lastName = "";
-                                    String imageUrl = "";
-                                    User user = new User(firstName, lastName, email, password, imageUrl);
+
+                                    String name = getFirebaseUser().getEmail().substring(0, getFirebaseUser().getEmail().indexOf("@"));
+                                    User user = new User(name, email, password);
+
                                     databaseReference = FirebaseDatabase.getInstance().getReference("users");
                                     databaseReference.child(getFirebaseUser().getUid()).setValue(user);
+
                                     startActivity(new Intent(SignupActivity.this, MainActivity.class));
                                     finish();
                                 }

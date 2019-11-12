@@ -1,34 +1,31 @@
 package com.example.xvso;
 
-import android.net.Uri;
 import android.os.Bundle;
-import android.widget.MediaController;
-import android.widget.VideoView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
+
 public class VideoActivity extends AppCompatActivity {
 
-    private String videoPath = "https://www.youtube.com/watch?v=5n2aQ3UQu9Y&t=9s";
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video);
 
-        VideoView videoView = findViewById(R.id.videoView);
+        YouTubePlayerView youTubePlayerView = findViewById(R.id.youtube_player_view);
+        getLifecycle().addObserver(youTubePlayerView);
 
-        Uri uri = Uri.parse(videoPath);
-        videoView.setVideoURI(uri);
-        videoView.setVideoPath(videoPath);
-
-        MediaController mediaController = new MediaController(this);
-
-        // attaches the media controller to the videoView
-        mediaController.setAnchorView(videoView);
-
-        videoView.setMediaController(mediaController);
-
-        videoView.start();
+        youTubePlayerView.addYouTubePlayerListener(new AbstractYouTubePlayerListener() {
+            @Override
+            public void onReady(@NonNull YouTubePlayer youTubePlayer) {
+                String videoId = "5n2aQ3UQu9Y";
+                youTubePlayer.loadVideo(videoId, 0f);
+            }
+        });
     }
 }

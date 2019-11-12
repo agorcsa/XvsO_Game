@@ -48,6 +48,9 @@ dependencies {
 
     // ViewModel and LiveData
     implementation "androidx.lifecycle:lifecycle-extensions:2.1.0"
+
+    // Youtube Android WebView
+    implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:core:10.0.5'
 }
 
 apply plugin: 'com.google.gms.google-services'
