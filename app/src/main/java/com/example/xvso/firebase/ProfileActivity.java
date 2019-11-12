@@ -74,6 +74,8 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
 
         mStorageRef = FirebaseStorage.getInstance().getReference("users");
         mDatabaseRef = FirebaseDatabase.getInstance().getReference("users");
+
+        globalUser = new User(firstName, lastName,email, password, imageUrl);
     }
 
     private void selectImage() {
@@ -408,7 +410,7 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
                 if (mUploadTask != null && mUploadTask.isInProgress()) {
                     Toast.makeText(getApplicationContext(), "Upload is already in progress", Toast.LENGTH_SHORT).show();
                 } else {
-                    readFromDatabase();
+                   // readFromDatabase();
                     updateUserProfile();
                     updateUserData();
                     if (confirmInput()) {

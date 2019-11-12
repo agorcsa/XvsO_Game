@@ -8,9 +8,16 @@ public class User {
     private String mPassword;
     private String mImageUrl;
 
+    private String mName;
+
     // empty constructor used for saving the user to database
     public User() {
 
+    }
+
+    public User(String name, String email, String password) {
+        mName = name;
+        
     }
 
     public User(String firstName, String lastName, String emailAddress, String password, String imageUrl) {

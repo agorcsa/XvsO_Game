@@ -48,6 +48,15 @@
                 android:value=".firebase.SignupActivity" />
         </activity>
         <activity
+            android:name=".VideoActivity"
+            android:label="Learn to play"
+            android:launchMode="singleTop"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+        <activity
             android:name=".firebase.ResetPasswordActivity"
             android:label="@string/reset_password_activity"
             android:launchMode="singleTop"
@@ -56,6 +65,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".firebase.LoginActivity" />
         </activity>
+
+
     </application>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 

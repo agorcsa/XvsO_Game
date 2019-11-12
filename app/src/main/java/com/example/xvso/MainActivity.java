@@ -60,7 +60,7 @@ public class MainActivity extends BaseActivity {
         if (getFirebaseUser() != null) {
             displayName = getFirebaseUser().getDisplayName();
 
-            if (!displayName.isEmpty()) {
+            if (displayName != null && !displayName.isEmpty()) {
                 activityBinding.player1Text.setText(displayName + " X:");
             } else {
                 String userString = getFirebaseUser().getEmail().substring(0, getFirebaseUser().getEmail().indexOf("@"));
@@ -290,6 +290,12 @@ public class MainActivity extends BaseActivity {
 
             resetBoard();
             initializePlayers();
+
+        } else if (item.getItemId() == R.id.action_watch_video) {
+
+           Intent intent = new Intent(MainActivity.this, VideoActivity.class);
+           startActivity(intent);
+
         } else if (item.getItemId() == R.id.action_log_out) {
 
             showToast("Log out");
@@ -327,7 +333,6 @@ public class MainActivity extends BaseActivity {
         counterPlayer1 = 0;
         counterPlayer2 = 0;
     }
-
 
     public void updateCounters() {
         readFromViewModelX();
