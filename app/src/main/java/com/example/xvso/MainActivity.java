@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.example.xvso.databinding.ActivityMainBinding;
 import com.example.xvso.firebase.BaseActivity;
+import com.example.xvso.firebase.LoginActivity;
 import com.example.xvso.firebase.ProfileActivity;
 import com.example.xvso.viewmodel.ScoreViewModel;
 import com.google.firebase.auth.FirebaseAuth;
@@ -300,10 +301,10 @@ public class MainActivity extends BaseActivity {
 
             showToast("Log out");
 
-            String userString = getFirebaseUser().getEmail().substring(0, getFirebaseUser().getEmail().indexOf("@"));
             FirebaseAuth.getInstance().signOut();
-            String name = userString + " X:";
-            activityBinding.player1Text.setText(name);
+
+            Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(loginIntent);
 
         } else if (item.getItemId() == R.id.action_settings) {
 
