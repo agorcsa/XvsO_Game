@@ -169,6 +169,8 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
                                     .load(globalUser.getImageUrl())
                                     .apply(new RequestOptions().error(R.drawable.tictactoe))
                                     .into(profileBinding.profilePicture);
+                        } else {
+
                         }
                     }
                 });
@@ -356,6 +358,12 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
 
                             profileBinding.userNameTextview.setText(fullName);
                             profileBinding.emailAddressTextview.setText(email);
+
+                        }  else {
+
+                            Glide.with(getApplicationContext())
+                                    .load(R.drawable.tictactoe)
+                                    .into(profileBinding.profilePicture);
                         }
 
                     } else {
