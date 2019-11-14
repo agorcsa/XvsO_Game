@@ -26,26 +26,11 @@ import java.util.Arrays;
 
 public class MainActivity extends BaseActivity {
 
-    public static final String LOG_TAG = "MainActivity";
+    private static final String LOG_TAG = "MainActivity";
 
-    // represents the tag of each cell of the grid
-    // (0, 1, 2)
-    // (3, 4, 5)
-    // (6, 7, 8)
-    public int tag;
+    private ScoreViewModel mScoreViewModel;
 
-    // if variable isX = 2, the cell stores a "O" not an "X"
-    public int isX = 1;
-
-    public boolean isXWinner;
-    public ScoreViewModel mScoreViewModel;
-    ArrayList<Integer> mCellIndex = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0));
-    // for log out button
-    ActivityMainBinding activityBinding;
-    // keeps track of the score of both players
-    private int counterPlayer1;
-    private int counterPlayer2;
-    private String displayName;
+    private ActivityMainBinding activityBinding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,16 +44,14 @@ public class MainActivity extends BaseActivity {
         super.onResume();
 
         if (getFirebaseUser() != null) {
-            displayName = getFirebaseUser().getDisplayName();
+            mScoreViewModel.setDisplayName(getFirebaseUser().getDisplayName());
 
-            if (displayName != null && !displayName.isEmpty()) {
-                activityBinding.player1Text.setText(displayName + " X:");
+            if (mScoreViewModel.getDisplayName() != null && !mScoreViewModel.getDisplayName().isEmpty()) {
+                activityBinding.player1Text.setText(mScoreViewModel.getDisplayName() + " X:");
             } else {
                 String userString = getFirebaseUser().getEmail().substring(0, getFirebaseUser().getEmail().indexOf("@"));
                 activityBinding.player1Text.setText(userString + " X:");
             }
-
-            //initializePlayers();
             updateCounters();
         }
     }
@@ -82,18 +65,17 @@ public class MainActivity extends BaseActivity {
 
         counter.animate().translationYBy(1000f).setDuration(300);
 
-        int tagg = mScoreViewModel.getTag();
-        tag = Integer.parseInt((String) counter.getTag());
+        mScoreViewModel.setTag(Integer.parseInt((String) counter.getTag()));
 
-        if (isX == 1 && !checkForWin()) {
+        if (mScoreViewModel.getIsX() == 1 && !checkForWin()) {
             counter.setImageResource(R.drawable.ic_cross);
-            mCellIndex.set(tag, isX);
-            isX = 2;
+            mScoreViewModel.getCellIndex().set(mScoreViewModel.getTag(), mScoreViewModel.getIsX());
+            mScoreViewModel.setIsX(2);
             view.setClickable(false);
-        } else if (isX == 2 && !checkForWin()) {
+        } else if (mScoreViewModel.getIsX() == 2 && !checkForWin()) {
             counter.setImageResource(R.drawable.ic_zero);
-            mCellIndex.set(tag, isX);
-            isX = 1;
+            mScoreViewModel.getCellIndex().set(mScoreViewModel.getTag(), mScoreViewModel.getIsX());
+            mScoreViewModel.setIsX(1);
             view.setClickable(false);
         }
 
@@ -105,7 +87,8 @@ public class MainActivity extends BaseActivity {
 
         Log.i(LOG_TAG, "new game button was clicked");
 
-        mCellIndex = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0));
+        mScoreViewModel.setCellIndex(new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0)));
+
         hideWinningLines();
         checkForWin();
 
@@ -119,8 +102,8 @@ public class MainActivity extends BaseActivity {
     public boolean fullBoard() {
         // iterate in the whole list and read the mCellStatus of the mCellIndex
 
-        for (int i = 0; i < mCellIndex.size(); i++) {
-            if (mCellIndex.get(i) == 0) {
+        for (int i = 0; i < mScoreViewModel.getCellIndex().size(); i++) {
+            if (mScoreViewModel.getCellIndex().get(i) == 0) {
                 return false;
             }
         }
@@ -140,7 +123,7 @@ public class MainActivity extends BaseActivity {
     }
 
     public void announceWinner() {
-        if (isXWinner) {
+        if (mScoreViewModel.XWinner()) {
             showToast("Player 1 has won! (X)");
             viewModelX();
         } else {
@@ -151,69 +134,69 @@ public class MainActivity extends BaseActivity {
 
     public void viewModelX() {
         readFromViewModelX();
-        counterPlayer1++;
+        mScoreViewModel.setCounterPlayer1(mScoreViewModel.getCounterPlayer1() + 1);
         writeToViewModelX();
         displayCounterX();
     }
 
     public void viewModelO() {
         readFromViewModelX();
-        counterPlayer2++;
+        mScoreViewModel.setCounterPlayer2(mScoreViewModel.getCounterPlayer2() + 1);
         writeToViewModelO();
         displayCounterO();
     }
 
 
     public boolean checkRowsX() {
-        if (mCellIndex.get(0) == 1 && mCellIndex.get(1) == 1 && mCellIndex.get(2) == 1) {
-            isXWinner = true;
+        if (mScoreViewModel.getCellIndex().get(0) == 1 && mScoreViewModel.getCellIndex().get(1) == 1 && mScoreViewModel.getCellIndex().get(2) == 1) {
+            mScoreViewModel.setXWinner(true);
             activityBinding.topHorizontal.setVisibility(View.VISIBLE);
             return true;
-        } else if (mCellIndex.get(3) == 1 && mCellIndex.get(4) == 1 && mCellIndex.get(5) == 1) {
-            isXWinner = true;
+        } else if (mScoreViewModel.getCellIndex().get(3) == 1 && mScoreViewModel.getCellIndex().get(4) == 1 && mScoreViewModel.getCellIndex().get(5) == 1) {
+            mScoreViewModel.setXWinner(true);
             activityBinding.centerHorizontal.setVisibility(View.VISIBLE);
             return true;
-        } else if (mCellIndex.get(6) == 1 && mCellIndex.get(7) == 1 && mCellIndex.get(8) == 1) {
-            isXWinner = true;
+        } else if (mScoreViewModel.getCellIndex().get(6) == 1 && mScoreViewModel.getCellIndex().get(7) == 1 && mScoreViewModel.getCellIndex().get(8) == 1) {
+            mScoreViewModel.setXWinner(true);
             activityBinding.bottomHorizontal.setVisibility(View.VISIBLE);
             return true;
         } else {
-            isXWinner = false;
+            mScoreViewModel.setXWinner(false);;
             return false;
         }
     }
 
 
     public boolean checkRowsZero() {
-        if (mCellIndex.get(0) == 2 && mCellIndex.get(1) == 2 && mCellIndex.get(2) == 2) {
-            isXWinner = false;
+        if (mScoreViewModel.getCellIndex().get(0) == 2 && mScoreViewModel.getCellIndex().get(1) == 2 && mScoreViewModel.getCellIndex().get(2) == 2) {
+            mScoreViewModel.setXWinner(false);
             activityBinding.topHorizontal.setVisibility(View.VISIBLE);
             return true;
-        } else if (mCellIndex.get(3) == 2 && mCellIndex.get(4) == 2 && mCellIndex.get(5) == 2) {
-            isXWinner = false;
+        } else if (mScoreViewModel.getCellIndex().get(3) == 2 && mScoreViewModel.getCellIndex().get(4) == 2 && mScoreViewModel.getCellIndex().get(5) == 2) {
+            mScoreViewModel.setXWinner(false);
             activityBinding.centerHorizontal.setVisibility(View.VISIBLE);
             return true;
-        } else if (mCellIndex.get(6) == 2 && mCellIndex.get(7) == 2 && mCellIndex.get(8) == 2) {
-            isXWinner = false;
+        } else if (mScoreViewModel.getCellIndex().get(6) == 2 && mScoreViewModel.getCellIndex().get(7) == 2 && mScoreViewModel.getCellIndex().get(8) == 2) {
+            mScoreViewModel.setXWinner(false);
             activityBinding.bottomHorizontal.setVisibility(View.VISIBLE);
             return true;
         } else {
-            isXWinner = true;
+            mScoreViewModel.setXWinner(true);
             return false;
         }
     }
 
     public boolean checkColumnsX() {
-        if (mCellIndex.get(0) == 1 && mCellIndex.get(3) == 1 && mCellIndex.get(6) == 1) {
-            isXWinner = true;
+        if (mScoreViewModel.getCellIndex().get(0) == 1 && mScoreViewModel.getCellIndex().get(3) == 1 && mScoreViewModel.getCellIndex().get(6) == 1) {
+            mScoreViewModel.setXWinner(true);
             activityBinding.leftVertical.setVisibility(View.VISIBLE);
             return true;
-        } else if (mCellIndex.get(1) == 1 && mCellIndex.get(4) == 1 && mCellIndex.get(7) == 1) {
-            isXWinner = true;
+        } else if (mScoreViewModel.getCellIndex().get(1) == 1 && mScoreViewModel.getCellIndex().get(4) == 1 && mScoreViewModel.getCellIndex().get(7) == 1) {
+            mScoreViewModel.setXWinner(true);
             activityBinding.centerVertical.setVisibility(View.VISIBLE);
             return true;
-        } else if (mCellIndex.get(2) == 1 && mCellIndex.get(5) == 1 && mCellIndex.get(8) == 1) {
-            isXWinner = true;
+        } else if (mScoreViewModel.getCellIndex().get(2) == 1 && mScoreViewModel.getCellIndex().get(5) == 1 && mScoreViewModel.getCellIndex().get(8) == 1) {
+            mScoreViewModel.setXWinner(true);
             activityBinding.rightVertical.setVisibility(View.VISIBLE);
             return true;
         } else {
@@ -222,46 +205,46 @@ public class MainActivity extends BaseActivity {
     }
 
     public boolean checkColumnsZero() {
-        if (mCellIndex.get(0) == 2 && mCellIndex.get(3) == 2 && mCellIndex.get(6) == 2) {
-            isXWinner = false;
+        if (mScoreViewModel.getCellIndex().get(0) == 2 && mScoreViewModel.getCellIndex().get(3) == 2 && mScoreViewModel.getCellIndex().get(6) == 2) {
+            mScoreViewModel.setXWinner(false);
             activityBinding.leftVertical.setVisibility(View.VISIBLE);
             return true;
-        } else if (mCellIndex.get(1) == 2 && mCellIndex.get(4) == 2 && mCellIndex.get(7) == 2) {
-            isXWinner = false;
+        } else if (mScoreViewModel.getCellIndex().get(1) == 2 && mScoreViewModel.getCellIndex().get(4) == 2 && mScoreViewModel.getCellIndex().get(7) == 2) {
+            mScoreViewModel.setXWinner(false);
             activityBinding.centerVertical.setVisibility(View.VISIBLE);
             return true;
-        } else if (mCellIndex.get(2) == 2 && mCellIndex.get(5) == 2 && mCellIndex.get(8) == 2) {
-            isXWinner = false;
+        } else if (mScoreViewModel.getCellIndex().get(2) == 2 && mScoreViewModel.getCellIndex().get(5) == 2 && mScoreViewModel.getCellIndex().get(8) == 2) {
+            mScoreViewModel.setXWinner(false);
             activityBinding.rightVertical.setVisibility(View.VISIBLE);
             return true;
         } else {
-            isXWinner = true;
+            mScoreViewModel.setXWinner(true);
             return false;
         }
     }
 
 
     public boolean checkDiagonalsX() {
-        if (mCellIndex.get(0) == 1 && mCellIndex.get(4) == 1 && mCellIndex.get(8) == 1) {
-            isXWinner = true;
+        if (mScoreViewModel.getCellIndex().get(0) == 1 && mScoreViewModel.getCellIndex().get(4) == 1 && mScoreViewModel.getCellIndex().get(8) == 1) {
+            mScoreViewModel.setXWinner(true);
             activityBinding.leftRightDiagonal.setVisibility(View.VISIBLE);
             return true;
-        } else if (mCellIndex.get(2) == 1 && mCellIndex.get(4) == 1 && mCellIndex.get(6) == 1) {
-            isXWinner = true;
+        } else if (mScoreViewModel.getCellIndex().get(2) == 1 && mScoreViewModel.getCellIndex().get(4) == 1 && mScoreViewModel.getCellIndex().get(6) == 1) {
+            mScoreViewModel.setXWinner(true);
             activityBinding.rightLeftDiagonal.setVisibility(View.VISIBLE);
             return true;
         } else {
-            isXWinner = false;
+            mScoreViewModel.setXWinner(false);
             return false;
         }
     }
 
     public boolean checkDiagonalsZero() {
-        if (mCellIndex.get(0) == 2 && mCellIndex.get(4) == 2 && mCellIndex.get(8) == 2) {
-            isXWinner = false;
+        if (mScoreViewModel.getCellIndex().get(0) == 2 && mScoreViewModel.getCellIndex().get(4) == 2 && mScoreViewModel.getCellIndex().get(8) == 2) {
+            mScoreViewModel.setXWinner(false);
             activityBinding.leftRightDiagonal.setVisibility(View.VISIBLE);
             return true;
-        } else if (mCellIndex.get(2) == 2 && mCellIndex.get(4) == 2 && mCellIndex.get(6) == 2) {
+        } else if (mScoreViewModel.getCellIndex().get(2) == 2 && mScoreViewModel.getCellIndex().get(4) == 2 && mScoreViewModel.getCellIndex().get(6) == 2) {
             activityBinding.rightLeftDiagonal.setVisibility(View.VISIBLE);
             return true;
         } else {
@@ -331,8 +314,8 @@ public class MainActivity extends BaseActivity {
         activityBinding.player1Result.setText("0");
         activityBinding.player2Result.setText("0");
 
-        counterPlayer1 = 0;
-        counterPlayer2 = 0;
+        mScoreViewModel.setCounterPlayer1(0);
+        mScoreViewModel.setCounterPlayer2(0);
     }
 
     public void updateCounters() {
@@ -344,27 +327,27 @@ public class MainActivity extends BaseActivity {
     }
 
     public void readFromViewModelX() {
-        counterPlayer1 = mScoreViewModel.getScorePlayerX();
+        mScoreViewModel.setCounterPlayer1(mScoreViewModel.getScorePlayerX());
     }
 
     public void writeToViewModelX() {
-        mScoreViewModel.setScorePlayerX(counterPlayer1);
+        mScoreViewModel.setScorePlayerX(mScoreViewModel.getCounterPlayer1());
     }
 
     public void readFromViewModelO() {
-        counterPlayer2 = mScoreViewModel.getScorePlayerO();
+        mScoreViewModel.setCounterPlayer2(mScoreViewModel.getScorePlayerO());
     }
 
     public void writeToViewModelO() {
-        mScoreViewModel.setScorePlayerO(counterPlayer2);
+        mScoreViewModel.setScorePlayerO(mScoreViewModel.getCounterPlayer2());
     }
 
     public void displayCounterX() {
-        activityBinding.player1Result.setText(String.valueOf(counterPlayer1));
+        activityBinding.player1Result.setText(String.valueOf(mScoreViewModel.getCounterPlayer1()));
     }
 
     public void displayCounterO() {
-        activityBinding.player2Result.setText(String.valueOf(counterPlayer2));
+        activityBinding.player2Result.setText(String.valueOf(mScoreViewModel.getCounterPlayer2()));
     }
 
     public void setClickableFalse() {
