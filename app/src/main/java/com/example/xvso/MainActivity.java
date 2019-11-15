@@ -32,6 +32,8 @@ public class MainActivity extends BaseActivity {
 
     private ActivityMainBinding activityBinding;
 
+    private ImageView counterVM;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,7 +58,6 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-
     public void dropIn(View view) {
 
         ImageView counter = (ImageView) view;
@@ -66,10 +67,13 @@ public class MainActivity extends BaseActivity {
         counter.animate().translationYBy(1000f).setDuration(300);
 
         mScoreViewModel.setTag(Integer.parseInt((String) counter.getTag()));
+        //Toast.makeText(this, "Tag: " + mScoreViewModel.getTag(), Toast.LENGTH_SHORT).show();
+        Log.i(LOG_TAG, "Clicked tag: " + mScoreViewModel.getTag());
 
         if (mScoreViewModel.getIsX() == 1 && !checkForWin()) {
             counter.setImageResource(R.drawable.ic_cross);
             mScoreViewModel.getCellIndex().set(mScoreViewModel.getTag(), mScoreViewModel.getIsX());
+            Log.i(LOG_TAG, "mCellIndex: " + mScoreViewModel.getCellIndex());
             mScoreViewModel.setIsX(2);
             view.setClickable(false);
         } else if (mScoreViewModel.getIsX() == 2 && !checkForWin()) {
