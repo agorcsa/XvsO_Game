@@ -32,7 +32,7 @@ public class MainActivity extends BaseActivity {
 
     private ActivityMainBinding activityBinding;
 
-    private ImageView counterVM;
+    private boolean gameOver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +55,61 @@ public class MainActivity extends BaseActivity {
                 activityBinding.player1Text.setText(userString + " X:");
             }
             updateCounters();
+            drawLine();
+            preserveBoard();
+
+        }
+    }
+
+    public void drawLine() {
+        if (mScoreViewModel.getCellIndex().get(0) == 1 && mScoreViewModel.getCellIndex().get(4) == 1 && mScoreViewModel.getCellIndex().get(8) == 1) {
+            activityBinding.leftRightDiagonal.setVisibility(View.VISIBLE);
+            setClickableFalse();
+        } else if (mScoreViewModel.getCellIndex().get(2) == 1 && mScoreViewModel.getCellIndex().get(4) == 1 && mScoreViewModel.getCellIndex().get(6) == 1) {
+            activityBinding.rightLeftDiagonal.setVisibility(View.VISIBLE);
+            setClickableFalse();
+        } else if (mScoreViewModel.getCellIndex().get(0) == 2 && mScoreViewModel.getCellIndex().get(4) == 2 && mScoreViewModel.getCellIndex().get(8) == 2) {
+            activityBinding.leftRightDiagonal.setVisibility(View.VISIBLE);
+            setClickableFalse();
+        } else if (mScoreViewModel.getCellIndex().get(2) == 2 && mScoreViewModel.getCellIndex().get(4) == 2 && mScoreViewModel.getCellIndex().get(6) == 2) {
+            activityBinding.rightLeftDiagonal.setVisibility(View.VISIBLE);
+            setClickableFalse();
+        } else if (mScoreViewModel.getCellIndex().get(0) == 1 && mScoreViewModel.getCellIndex().get(1) == 1 && mScoreViewModel.getCellIndex().get(2) == 1) {
+            activityBinding.topHorizontal.setVisibility(View.VISIBLE);
+            setClickableFalse();
+        } else if (mScoreViewModel.getCellIndex().get(0) == 2 && mScoreViewModel.getCellIndex().get(1) == 2 && mScoreViewModel.getCellIndex().get(2) == 2) {
+            activityBinding.topHorizontal.setVisibility(View.VISIBLE);
+            setClickableFalse();
+        } else if (mScoreViewModel.getCellIndex().get(3) == 1 && mScoreViewModel.getCellIndex().get(4) == 1 && mScoreViewModel.getCellIndex().get(5) == 1) {
+            activityBinding.centerHorizontal.setVisibility(View.VISIBLE);
+            setClickableFalse();
+        } else if (mScoreViewModel.getCellIndex().get(3) == 2 && mScoreViewModel.getCellIndex().get(4) == 2 && mScoreViewModel.getCellIndex().get(5) == 2) {
+            activityBinding.centerHorizontal.setVisibility(View.VISIBLE);
+            setClickableFalse();
+        } else if (mScoreViewModel.getCellIndex().get(6) == 1 && mScoreViewModel.getCellIndex().get(7) == 1 && mScoreViewModel.getCellIndex().get(8) == 1) {
+            activityBinding.bottomHorizontal.setVisibility(View.VISIBLE);
+            setClickableFalse();
+        } else if (mScoreViewModel.getCellIndex().get(6) == 2 && mScoreViewModel.getCellIndex().get(7) == 2 && mScoreViewModel.getCellIndex().get(8) == 2) {
+            activityBinding.bottomHorizontal.setVisibility(View.VISIBLE);
+            setClickableFalse();
+        } else if (mScoreViewModel.getCellIndex().get(0) == 1 && mScoreViewModel.getCellIndex().get(3) == 1 && mScoreViewModel.getCellIndex().get(6) == 1) {
+            activityBinding.leftVertical.setVisibility(View.VISIBLE);
+            setClickableFalse();
+        } else if (mScoreViewModel.getCellIndex().get(0) == 2 && mScoreViewModel.getCellIndex().get(3) == 2 && mScoreViewModel.getCellIndex().get(6) == 2) {
+            activityBinding.leftVertical.setVisibility(View.VISIBLE);
+            setClickableFalse();
+        } else if (mScoreViewModel.getCellIndex().get(1) == 1 && mScoreViewModel.getCellIndex().get(4) == 1 && mScoreViewModel.getCellIndex().get(7) == 1) {
+            activityBinding.centerVertical.setVisibility(View.VISIBLE);
+            setClickableFalse();
+        } else if (mScoreViewModel.getCellIndex().get(1) == 2 && mScoreViewModel.getCellIndex().get(4) == 2 && mScoreViewModel.getCellIndex().get(7) == 2) {
+            activityBinding.centerVertical.setVisibility(View.VISIBLE);
+            setClickableFalse();
+        } else if (mScoreViewModel.getCellIndex().get(2) == 1 && mScoreViewModel.getCellIndex().get(5) == 1 && mScoreViewModel.getCellIndex().get(8) == 1) {
+            activityBinding.rightVertical.setVisibility(View.VISIBLE);
+            setClickableFalse();
+        } else if (mScoreViewModel.getCellIndex().get(2) == 2 && mScoreViewModel.getCellIndex().get(5) == 2 && mScoreViewModel.getCellIndex().get(8) == 2) {
+            activityBinding.rightVertical.setVisibility(View.VISIBLE);
+            setClickableFalse();
         }
     }
 
@@ -113,6 +168,19 @@ public class MainActivity extends BaseActivity {
         }
         showToast("It's a draw");
         return true;
+    }
+
+    public void preserveBoard() {
+        for (int i = 0; i < mScoreViewModel.getCellIndex().size(); i++) {
+            ImageView cell = (ImageView) activityBinding.gridLayout.getChildAt(i);
+            if (mScoreViewModel.getCellIndex().get(i) == 1) {
+                cell.setImageResource(R.drawable.ic_cross);
+                cell.setClickable(false);
+            } else if ((mScoreViewModel.getCellIndex().get(i) == 2)){
+                cell.setImageResource(R.drawable.ic_zero);
+                cell.setClickable(false);
+            }
+        }
     }
 
 
@@ -281,8 +349,8 @@ public class MainActivity extends BaseActivity {
 
         } else if (item.getItemId() == R.id.action_watch_video) {
 
-           Intent intent = new Intent(MainActivity.this, VideoActivity.class);
-           startActivity(intent);
+            Intent intent = new Intent(MainActivity.this, VideoActivity.class);
+            startActivity(intent);
 
         } else if (item.getItemId() == R.id.action_log_out) {
 
