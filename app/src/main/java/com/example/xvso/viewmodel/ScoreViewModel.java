@@ -27,6 +27,15 @@ public class ScoreViewModel extends ViewModel {
     private int tag;
     private String displayName;
     private ArrayList<Integer> mCellIndex = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0));
+    private boolean gameOver;
+
+    public boolean isGameOver() {
+        return gameOver;
+    }
+
+    public void setGameOver(boolean gameOver) {
+        this.gameOver = gameOver;
+    }
 
     public ArrayList<Integer> getCellIndex() {
         return mCellIndex;

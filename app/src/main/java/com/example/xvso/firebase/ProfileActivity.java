@@ -169,8 +169,6 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
                                     .load(globalUser.getImageUrl())
                                     .apply(new RequestOptions().error(R.drawable.tictactoe))
                                     .into(profileBinding.profilePicture);
-                        } else {
-
                         }
                     }
                 });
@@ -364,6 +362,18 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
                             Glide.with(getApplicationContext())
                                     .load(R.drawable.tictactoe)
                                     .into(profileBinding.profilePicture);
+
+                            String firstName = "";
+                            String lastName = "";
+                            String password = globalUser.getPassword();
+                            String email = globalUser.getEmailAddress();
+
+                            setEditTextData(firstName, lastName, password, email);
+
+                            String fullName = firstName + " " + lastName;
+
+                            profileBinding.userNameTextview.setText(fullName);
+                            profileBinding.emailAddressTextview.setText(email);
                         }
 
                     } else {

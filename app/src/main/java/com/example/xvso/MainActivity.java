@@ -32,8 +32,6 @@ public class MainActivity extends BaseActivity {
 
     private ActivityMainBinding activityBinding;
 
-    private boolean gameOver;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -113,6 +111,7 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+
     public void dropIn(View view) {
 
         ImageView counter = (ImageView) view;
@@ -187,9 +186,11 @@ public class MainActivity extends BaseActivity {
     public boolean checkForWin() {
         if (checkRowsX() || checkRowsZero() || checkColumnsX() || checkColumnsZero() || checkDiagonalsX() || checkDiagonalsZero()) {
             announceWinner();
+            mScoreViewModel.setGameOver(true);
             setClickableFalse();
             return true;
         } else {
+            mScoreViewModel.setGameOver(false);
             return false;
         }
     }
