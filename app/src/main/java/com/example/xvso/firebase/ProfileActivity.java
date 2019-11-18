@@ -288,19 +288,19 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
 
     public void setDatabaseReference(String url) {
 
-            globalUser.setFirstName(firstName);
+        globalUser.setFirstName(firstName);
 
-            globalUser.setLastName(lastName);
+        globalUser.setLastName(lastName);
 
-            globalUser.setPassword(password);
+        globalUser.setPassword(password);
 
-            globalUser.setEmailAddress(email);
+        globalUser.setEmailAddress(email);
 
-            FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
+        FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
 
-            DatabaseReference mDbRef = mDatabase.getReference("users").child(getFirebaseUser().getUid());
+        DatabaseReference mDbRef = mDatabase.getReference("users").child(getFirebaseUser().getUid());
 
-            mDbRef.setValue(globalUser);
+        mDbRef.setValue(globalUser);
     }
 
 
@@ -363,8 +363,18 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
                                     .load(R.drawable.tictactoe)
                                     .into(profileBinding.profilePicture);
 
-                            String firstName = "";
-                            String lastName = "";
+                            if (globalUser.getFirstName().isEmpty() || globalUser.getFirstName() == null) {
+                                firstName = "";
+                            } else {
+                                firstName = globalUser.getFirstName();
+                            }
+
+                            if (globalUser.getLastName().isEmpty() || globalUser.getLastName() == null) {
+                                lastName = "";
+                            } else {
+                                lastName = globalUser.getLastName();
+                            }
+
                             String password = globalUser.getPassword();
                             String email = globalUser.getEmailAddress();
 
@@ -429,7 +439,7 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
                 if (mUploadTask != null && mUploadTask.isInProgress()) {
                     Toast.makeText(getApplicationContext(), "Upload is already in progress", Toast.LENGTH_SHORT).show();
                 } else {
-                   // readFromDatabase();
+                    // readFromDatabase();
                     updateUserProfile();
                     updateUserData();
                     if (confirmInput()) {
