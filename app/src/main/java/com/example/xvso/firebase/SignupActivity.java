@@ -116,7 +116,9 @@ public class SignupActivity extends BaseActivity {
                                 } else {
 
                                     String name = getFirebaseUser().getEmail().substring(0, getFirebaseUser().getEmail().indexOf("@"));
-                                    User user = new User(name, email, password);
+                                    String firstName = "";
+                                    String lastName = "";
+                                    User user = new User(firstName, lastName, email, password);
 
                                     databaseReference = FirebaseDatabase.getInstance().getReference("users");
                                     databaseReference.child(getFirebaseUser().getUid()).setValue(user);
