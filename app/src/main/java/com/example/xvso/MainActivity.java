@@ -2,6 +2,7 @@ package com.example.xvso;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -53,6 +54,39 @@ public class MainActivity extends BaseActivity {
             }
             updateCounters();
             preserveBoard();
+        }
+    }
+
+    public void dropIn(View view) {
+
+        if (mScoreViewModel.checkForWin()) {
+            // There is a winner
+        } else if (mScoreViewModel.fullBoard()) {
+            // Not a winner but not more moves - it's a draw
+        } else {
+            // keep playing
+            ImageView counter = (ImageView) view;
+
+            counter.setTranslationY(-1000f);
+
+            counter.animate().translationYBy(1000f).setDuration(300);
+
+            mScoreViewModel.setTag(Integer.parseInt((String) counter.getTag()));
+            //Toast.makeText(this, "Tag: " + mScoreViewModel.getTag(), Toast.LENGTH_SHORT).show();
+            Log.i(LOG_TAG, "Clicked tag: " + mScoreViewModel.getTag());
+
+            if (mScoreViewModel.getIsX() == 1 && !mScoreViewModel.checkForWin()) {
+                counter.setImageResource(R.drawable.ic_cross);
+                mScoreViewModel.getCellIndex().set(mScoreViewModel.getTag(), mScoreViewModel.getIsX());
+                Log.i(LOG_TAG, "mCellIndex: " + mScoreViewModel.getCellIndex());
+                mScoreViewModel.setIsX(2);
+                view.setClickable(false);
+            } else if (mScoreViewModel.getIsX() == 2 && !mScoreViewModel.checkForWin()) {
+                counter.setImageResource(R.drawable.ic_zero);
+                mScoreViewModel.getCellIndex().set(mScoreViewModel.getTag(), mScoreViewModel.getIsX());
+                mScoreViewModel.setIsX(1);
+                view.setClickable(false);
+            }
         }
     }
 

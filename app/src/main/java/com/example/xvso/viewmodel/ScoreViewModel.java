@@ -1,12 +1,8 @@
 package com.example.xvso.viewmodel;
 
 import android.util.Log;
-import android.view.View;
-import android.widget.ImageView;
 
 import androidx.lifecycle.ViewModel;
-
-import com.example.xvso.R;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -177,38 +173,7 @@ public class ScoreViewModel extends ViewModel {
         return true;
     }
 
-    public void dropIn(View view) {
 
-        if (checkForWin()) {
-            // There is a winner
-        } else if (fullBoard()) {
-            // Not a winner but not more moves - it's a draw
-        } else {
-            // keep playing
-            ImageView counter = (ImageView) view;
-
-            counter.setTranslationY(-1000f);
-
-            counter.animate().translationYBy(1000f).setDuration(300);
-
-            setTag(Integer.parseInt((String) counter.getTag()));
-            //Toast.makeText(this, "Tag: " + mScoreViewModel.getTag(), Toast.LENGTH_SHORT).show();
-            Log.i(LOG_TAG, "Clicked tag: " + getTag());
-
-            if (isX == 1 && !checkForWin()) {
-                counter.setImageResource(R.drawable.ic_cross);
-                mCellIndex.set(getTag(), getIsX());
-                Log.i(LOG_TAG, "mCellIndex: " + getCellIndex());
-                setIsX(2);
-                view.setClickable(false);
-            } else if (getIsX() == 2 && !checkForWin()) {
-                counter.setImageResource(R.drawable.ic_zero);
-                getCellIndex().set(getTag(), getIsX());
-                setIsX(1);
-                view.setClickable(false);
-            }
-        }
-    }
 
 
     public boolean checkForWin() {
