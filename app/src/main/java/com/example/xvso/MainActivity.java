@@ -61,8 +61,10 @@ public class MainActivity extends BaseActivity {
 
         if (mScoreViewModel.checkForWin()) {
             // There is a winner
+            showToast("There is a winner");
         } else if (mScoreViewModel.fullBoard()) {
             // Not a winner but not more moves - it's a draw
+            showToast("It's a draw");
         } else {
             // keep playing
             ImageView counter = (ImageView) view;
