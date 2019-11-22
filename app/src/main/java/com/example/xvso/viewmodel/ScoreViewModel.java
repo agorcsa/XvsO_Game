@@ -2,6 +2,7 @@ package com.example.xvso.viewmodel;
 
 import android.util.Log;
 
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import java.util.ArrayList;
@@ -10,6 +11,56 @@ import java.util.Arrays;
 public class ScoreViewModel extends ViewModel {
 
     private final String LOG_TAG = this.getClass().getSimpleName();
+
+    private final MutableLiveData<Boolean> topHorizontalLine = new MutableLiveData<>(false);
+
+    private final MutableLiveData<Boolean> centerHorizontal = new MutableLiveData<>(false);
+
+    private final MutableLiveData<Boolean> bottomHorizontal = new MutableLiveData<>(false);
+
+    private final MutableLiveData<Boolean> leftVertical = new MutableLiveData<>(false);
+
+    private final MutableLiveData<Boolean> centerVertical = new MutableLiveData<>(false);
+
+    private final MutableLiveData<Boolean> rightVertical = new MutableLiveData<>(false);
+
+    private final MutableLiveData<Boolean> leftRightDiagonal = new MutableLiveData<>(false);
+
+    private final MutableLiveData<Boolean> rightLeftDiagonal = new MutableLiveData<>(false);
+
+
+    public MutableLiveData<Boolean> getTopHorizontalLine() {
+        return topHorizontalLine;
+    }
+
+    public MutableLiveData<Boolean> getCenterHorizontal() {
+        return centerHorizontal;
+    }
+
+    public MutableLiveData<Boolean> getBottomHorizontal() {
+        return bottomHorizontal;
+    }
+
+    public MutableLiveData<Boolean> getLeftVertical() {
+        return leftVertical;
+    }
+
+    public MutableLiveData<Boolean> getCenterVertical() {
+        return centerVertical;
+    }
+
+    public MutableLiveData<Boolean> getRightVertical() {
+        return rightVertical;
+    }
+
+    public MutableLiveData<Boolean> getLeftRightDiagonal() {
+        return leftRightDiagonal;
+    }
+
+    public MutableLiveData<Boolean> getRightLeftDiagonal() {
+        return rightLeftDiagonal;
+    }
+
     // if variable isX = 2, the cell stores a "O" not an "X"
     private int isX = 1;
     private boolean isWinner;
@@ -28,6 +79,8 @@ public class ScoreViewModel extends ViewModel {
     private String displayName;
     private ArrayList<Integer> mCellIndex = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0));
     private boolean gameOver;
+
+
 
     public boolean isWinner() {
         return isWinner;
@@ -112,15 +165,15 @@ public class ScoreViewModel extends ViewModel {
     public boolean checkRows() {
         if (mCellIndex.get(0) == isX && mCellIndex.get(1) == isX && mCellIndex.get(2) == isX) {
             isWinner = true;
-            //activityBinding.topHorizontal.setVisibility(View.VISIBLE);
+            topHorizontalLine.setValue(true);
             return true;
         } else if (mCellIndex.get(3) == isX && mCellIndex.get(4) == isX && mCellIndex.get(5) == isX) {
             isWinner = true;
-            //activityBinding.centerHorizontal.setVisibility(View.VISIBLE);
+            centerHorizontal.setValue(true);
             return true;
         } else if (mCellIndex.get(6) == isX && mCellIndex.get(7) == isX && mCellIndex.get(8) == isX) {
             isWinner = true;
-            //activityBinding.bottomHorizontal.setVisibility(View.VISIBLE);
+            bottomHorizontal.setValue(true);
             return true;
         } else {
             isWinner = true;
@@ -128,19 +181,18 @@ public class ScoreViewModel extends ViewModel {
         }
     }
 
-
     public boolean checkColumns() {
         if (mCellIndex.get(0) == isX && mCellIndex.get(3) == isX && mCellIndex.get(6) == isX) {
             isWinner = true;
-            //activityBinding.leftVertical.setVisibility(View.VISIBLE);
+            leftVertical.setValue(true);
             return true;
         } else if (mCellIndex.get(1) == isX && mCellIndex.get(4) == isX && mCellIndex.get(7) == isX) {
             isWinner = true;
-            //activityBinding.centerVertical.setVisibility(View.VISIBLE);
+            centerVertical.setValue(true);
             return true;
         } else if (mCellIndex.get(2) == isX && mCellIndex.get(5) == isX && mCellIndex.get(8) == isX) {
             isWinner = true;
-            //activityBinding.rightVertical.setVisibility(View.VISIBLE);
+            rightVertical.setValue(true);
             return true;
         } else {
             return false;
@@ -150,11 +202,11 @@ public class ScoreViewModel extends ViewModel {
     public boolean checkDiagonals() {
         if (mCellIndex.get(0) == isX && mCellIndex.get(4) == isX && mCellIndex.get(8) == isX) {
             isWinner = true;
-            // activityBinding.leftRightDiagonal.setVisibility(View.VISIBLE);
+            leftRightDiagonal.setValue(true);
             return true;
         } else if (mCellIndex.get(2) == isX && mCellIndex.get(4) == isX && mCellIndex.get(6) == isX) {
             isWinner = true;
-            //  activityBinding.rightLeftDiagonal.setVisibility(View.VISIBLE);
+            rightLeftDiagonal.setValue(true);
             return true;
         } else {
             isWinner = true;
@@ -174,8 +226,6 @@ public class ScoreViewModel extends ViewModel {
     }
 
 
-
-
     public boolean checkForWin() {
         if (checkRows() || checkColumns() || checkDiagonals()) {
             setGameOver(true);
@@ -190,6 +240,8 @@ public class ScoreViewModel extends ViewModel {
     public boolean resetBoard() {
 
         setCellIndex(new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0)));
+
+        topHorizontalLine.setValue(false);
         return true;
     }
 
