@@ -6,6 +6,10 @@
         <variable
             name="viewModel"
             type="com.example.xvso.viewmodel.ScoreViewModel" />
+
+        <variable
+            name="player1Text"
+            type="com.example.xvso.viewmodel.ScoreViewModel" />
     </data>
 
     <FrameLayout

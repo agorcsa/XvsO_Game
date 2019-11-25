@@ -45,25 +45,6 @@ public class MainActivity extends BaseActivity {
         activityBinding.setViewModel(mScoreViewModel);
     }
 
-    // UI related
-    // used at device rotation
-    protected void onResume() {
-        super.onResume();
-
-        if (getFirebaseUser() != null) {
-            mScoreViewModel.setDisplayName(getFirebaseUser().getDisplayName());
-
-            if (mScoreViewModel.getDisplayName() != null && !mScoreViewModel.getDisplayName().isEmpty()) {
-                activityBinding.player1Text.setText(mScoreViewModel.getDisplayName() + " X:");
-            } else {
-                String userString = getFirebaseUser().getEmail().substring(0, getFirebaseUser().getEmail().indexOf("@"));
-                activityBinding.player1Text.setText(userString + " X:");
-            }
-            updateCounters();
-            preserveBoard();
-        }
-    }
-
     public void dropIn(View view) {
         // Animate view
         ImageView counter = (ImageView) view;

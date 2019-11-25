@@ -1,12 +1,12 @@
 package com.example.xvso.viewmodel;
 
 
-import android.util.Log;
-
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.xvso.Team;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -123,6 +123,23 @@ public class ScoreViewModel extends ViewModel {
         this.tag = tag;
     }
 
+    public void updateDisplayName() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (user != null) {
+            teamX.setDisplayNameX(user.getDisplayName());
+
+            if (user.getDisplayName() != null && user.getDisplayName().isEmpty()) {
+                //player1Text.setText(user.getDisplayName() + " X:");
+            } else {
+                String userString = user.getEmail().substring(0, user.getEmail().indexOf("@"));
+                //player1Text.setText(userString + " X:");
+            }
+            //updateCounters();
+            //preserveBoard();
+        }
+    }
+
 
     public boolean checkRows() {
 
@@ -225,11 +242,5 @@ public class ScoreViewModel extends ViewModel {
         int newScore = teamO.getScoreTeamO() + 1;
         // write to VM
         teamO.setScoreTeamO(newScore);
-    }
-
-    @Override
-    protected void onCleared() {
-        super.onCleared();
-        Log.i(LOG_TAG, "ViewModel was destroyed");
     }
 }
