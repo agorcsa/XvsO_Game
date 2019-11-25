@@ -16,9 +16,11 @@ public class ScoreViewModel extends ViewModel {
     private final String LOG_TAG = this.getClass().getSimpleName();
 
 
-    private Team teamX = new Team(Team.TEAM_X);
+    public Team team = new Team();
 
-    private Team teamO = new Team(Team.TEAM_O);
+    public Team teamX = new Team(Team.TEAM_X);
+
+    public Team teamO = new Team(Team.TEAM_O);
 
 
     private final MutableLiveData<Boolean> topHorizontalLine = new MutableLiveData<>(false);
@@ -70,15 +72,8 @@ public class ScoreViewModel extends ViewModel {
         return rightLeftDiagonal;
     }
 
-    private int isX = 1;
     private boolean isWinner;
-    private int counterPlayer1 = 0;
-    private int counterPlayer2 = 0;
-    // Tracks the score of player X
-    private int scorePlayerX = 0;
-    // Tracks the score of player O
-    private int scorePlayerO = 0;
-    // takes values from 0 -> 8
+
     // represents the tag of each cell of the grid
     // (0, 1, 2)
     // (3, 4, 5)
@@ -87,14 +82,6 @@ public class ScoreViewModel extends ViewModel {
     private String displayName;
     private ArrayList<Integer> mCellIndex = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0));
     private boolean gameOver;
-
-    public int getIsX() {
-        return isX;
-    }
-
-    public void setIsX(int isX) {
-        this.isX = isX;
-    }
 
     public boolean isWinner() {
         return isWinner;
@@ -120,45 +107,12 @@ public class ScoreViewModel extends ViewModel {
         this.mCellIndex = mCellIndex;
     }
 
-    public int getCounterPlayer1() {
-        return counterPlayer1;
-    }
-
-    public void setCounterPlayer1(int counterPlayer1) {
-        this.counterPlayer1 = counterPlayer1;
-    }
-
-    public int getCounterPlayer2() {
-        return counterPlayer2;
-    }
-
-    public void setCounterPlayer2(int counterPlayer2) {
-        this.counterPlayer2 = counterPlayer2;
-    }
-
     public String getDisplayName() {
         return displayName;
     }
 
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
-    }
-
-
-    public int getScorePlayerX() {
-        return scorePlayerX;
-    }
-
-    public void setScorePlayerX(int scorePlayerX) {
-        this.scorePlayerX = scorePlayerX;
-    }
-
-    public int getScorePlayerO() {
-        return scorePlayerO;
-    }
-
-    public void setScorePlayerO(int scorePlayerO) {
-        this.scorePlayerO = scorePlayerO;
     }
 
     public int getTag() {
@@ -176,11 +130,11 @@ public class ScoreViewModel extends ViewModel {
             isWinner = true;
             topHorizontalLine.setValue(true);
             return true;
-        } else if (mCellIndex.get(3) == isX && mCellIndex.get(4) == isX && mCellIndex.get(5) == isX) {
+        } else if (mCellIndex.get(3) == teamX.getCurrentTeam() && mCellIndex.get(4) == teamX.getCurrentTeam()&& mCellIndex.get(5) == teamX.getCurrentTeam()) {
             isWinner = true;
             centerHorizontal.setValue(true);
             return true;
-        } else if (mCellIndex.get(6) == isX && mCellIndex.get(7) == isX && mCellIndex.get(8) == isX) {
+        } else if (mCellIndex.get(6) == teamX.getCurrentTeam() && mCellIndex.get(7) == teamX.getCurrentTeam() && mCellIndex.get(8) == teamX.getCurrentTeam()) {
             isWinner = true;
             bottomHorizontal.setValue(true);
             return true;
@@ -191,15 +145,15 @@ public class ScoreViewModel extends ViewModel {
     }
 
     public boolean checkColumns() {
-        if (mCellIndex.get(0) == isX && mCellIndex.get(3) == isX && mCellIndex.get(6) == isX) {
+        if (mCellIndex.get(0) == teamX.getCurrentTeam() && mCellIndex.get(3) == teamX.getCurrentTeam() && mCellIndex.get(6) == teamX.getCurrentTeam()) {
             isWinner = true;
             leftVertical.setValue(true);
             return true;
-        } else if (mCellIndex.get(1) == isX && mCellIndex.get(4) == isX && mCellIndex.get(7) == isX) {
+        } else if (mCellIndex.get(1) == teamX.getCurrentTeam() && mCellIndex.get(4) == teamX.getCurrentTeam() && mCellIndex.get(7) == teamX.getCurrentTeam()) {
             isWinner = true;
             centerVertical.setValue(true);
             return true;
-        } else if (mCellIndex.get(2) == isX && mCellIndex.get(5) == isX && mCellIndex.get(8) == isX) {
+        } else if (mCellIndex.get(2) == teamX.getCurrentTeam() && mCellIndex.get(5) == teamX.getCurrentTeam() && mCellIndex.get(8) == teamX.getCurrentTeam()) {
             isWinner = true;
             rightVertical.setValue(true);
             return true;
@@ -210,11 +164,11 @@ public class ScoreViewModel extends ViewModel {
     }
 
     public boolean checkDiagonals() {
-        if (mCellIndex.get(0) == isX && mCellIndex.get(4) == isX && mCellIndex.get(8) == isX) {
+        if (mCellIndex.get(0) == teamX.getCurrentTeam() && mCellIndex.get(4) == teamX.getCurrentTeam() && mCellIndex.get(8) == teamX.getCurrentTeam()) {
             isWinner = true;
             leftRightDiagonal.setValue(true);
             return true;
-        } else if (mCellIndex.get(2) == isX && mCellIndex.get(4) == isX && mCellIndex.get(6) == isX) {
+        } else if (mCellIndex.get(2) == teamX.getCurrentTeam() && mCellIndex.get(4) == teamX.getCurrentTeam() && mCellIndex.get(6) == teamX.getCurrentTeam()) {
             isWinner = true;
             rightLeftDiagonal.setValue(true);
             return true;
@@ -249,38 +203,28 @@ public class ScoreViewModel extends ViewModel {
 
     public boolean initializePlayers() {
 
-        counterPlayer1 = 0;
-        counterPlayer2 = 0;
+        teamX.setScoreTeamX(0);
+        teamO.setScoreTeamO(0);
 
         return true;
     }
 
-    public void readFromViewModelX() {
-        setCounterPlayer1(getScorePlayerX());
-    }
-
-    public void writeToViewModelX() {
-        setScorePlayerX(getCounterPlayer1());
-    }
-
-    public void readFromViewModelO() {
-        setCounterPlayer2(getScorePlayerO());
-    }
-
-    public void writeToViewModelO() {
-        setScorePlayerO(getCounterPlayer2());
-    }
-
     public void viewModelX() {
-        readFromViewModelX();
-        counterPlayer1++;
-        writeToViewModelX();
+        // read from VM
+        teamX.getScoreTeamX();
+        // update score + 1;
+        teamX.scoreTeamX = teamX.scoreTeamX + 1;
+        // write to VM
+        teamX.setScoreTeamX(teamX.scoreTeamX);
     }
 
     public void viewModelO() {
-        readFromViewModelX();
-        counterPlayer2++;
-        writeToViewModelO();
+        // read from VM
+        teamO.getScoreTeamO();
+        // update score + 1;
+        int newScore = teamO.getScoreTeamO() + 1;
+        // write to VM
+        teamO.setScoreTeamO(newScore);
     }
 
     @Override

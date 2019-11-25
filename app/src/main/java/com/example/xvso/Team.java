@@ -9,7 +9,7 @@ public class Team extends ViewModel {
     // team X
     public static final int TEAM_X = 1;
     private int teamNameX;
-    private int scoreTeamX;
+    public int scoreTeamX;
     private String displayNameX;
 
     // team O
@@ -17,6 +17,9 @@ public class Team extends ViewModel {
     private int teamNameO;
     private int scoreTeamO;
     private String displayNameO;
+
+    // empty constructor
+    public Team() {}
 
     // constructor
     public Team(int currentTeam) {
