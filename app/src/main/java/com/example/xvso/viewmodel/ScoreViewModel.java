@@ -1,9 +1,12 @@
 package com.example.xvso.viewmodel;
 
+
 import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+
+import com.example.xvso.Team;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,6 +14,12 @@ import java.util.Arrays;
 public class ScoreViewModel extends ViewModel {
 
     private final String LOG_TAG = this.getClass().getSimpleName();
+
+
+    private Team teamX = new Team(Team.TEAM_X);
+
+    private Team teamO = new Team(Team.TEAM_O);
+
 
     private final MutableLiveData<Boolean> topHorizontalLine = new MutableLiveData<>(false);
 
@@ -61,7 +70,6 @@ public class ScoreViewModel extends ViewModel {
         return rightLeftDiagonal;
     }
 
-    // if variable isX = 2, the cell stores a "O" not an "X"
     private int isX = 1;
     private boolean isWinner;
     private int counterPlayer1 = 0;
@@ -80,7 +88,13 @@ public class ScoreViewModel extends ViewModel {
     private ArrayList<Integer> mCellIndex = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0));
     private boolean gameOver;
 
+    public int getIsX() {
+        return isX;
+    }
 
+    public void setIsX(int isX) {
+        this.isX = isX;
+    }
 
     public boolean isWinner() {
         return isWinner;
@@ -130,13 +144,6 @@ public class ScoreViewModel extends ViewModel {
         this.displayName = displayName;
     }
 
-    public int getIsX() {
-        return isX;
-    }
-
-    public void setIsX(int isX) {
-        this.isX = isX;
-    }
 
     public int getScorePlayerX() {
         return scorePlayerX;
@@ -162,8 +169,10 @@ public class ScoreViewModel extends ViewModel {
         this.tag = tag;
     }
 
+
     public boolean checkRows() {
-        if (mCellIndex.get(0) == isX && mCellIndex.get(1) == isX && mCellIndex.get(2) == isX) {
+
+        if (mCellIndex.get(0) == teamX.getCurrentTeam() && mCellIndex.get(1) == teamX.getCurrentTeam() && mCellIndex.get(2) == teamX.getCurrentTeam()) {
             isWinner = true;
             topHorizontalLine.setValue(true);
             return true;
@@ -176,7 +185,7 @@ public class ScoreViewModel extends ViewModel {
             bottomHorizontal.setValue(true);
             return true;
         } else {
-            isWinner = true;
+            isWinner = false;
             return false;
         }
     }
@@ -195,6 +204,7 @@ public class ScoreViewModel extends ViewModel {
             rightVertical.setValue(true);
             return true;
         } else {
+            isWinner = false;
             return false;
         }
     }
@@ -209,7 +219,7 @@ public class ScoreViewModel extends ViewModel {
             rightLeftDiagonal.setValue(true);
             return true;
         } else {
-            isWinner = true;
+            isWinner = false;
             return false;
         }
     }
@@ -235,14 +245,6 @@ public class ScoreViewModel extends ViewModel {
             setGameOver(false);
             return false;
         }
-    }
-
-    public boolean resetBoard() {
-
-        setCellIndex(new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0)));
-
-        topHorizontalLine.setValue(false);
-        return true;
     }
 
     public boolean initializePlayers() {

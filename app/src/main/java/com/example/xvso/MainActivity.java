@@ -1,5 +1,6 @@
 package com.example.xvso;
 
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,6 +21,8 @@ import com.example.xvso.firebase.ProfileActivity;
 import com.example.xvso.viewmodel.ScoreViewModel;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class MainActivity extends BaseActivity {
 
@@ -79,26 +82,24 @@ public class MainActivity extends BaseActivity {
         }
 
         if (mScoreViewModel.checkForWin()) {
-            // Game finished
-            // resetBoardUI();
-            // Announce winner
+            setClickableFalse();
             announceWinner();
+            resetBoard();
         } else if (mScoreViewModel.fullBoard()) {
             showToast("It's a draw");
         } else {
-            // Toggle player
-            mScoreViewModel.setIsX(2);
+            // toggle player
         }
     }
 
     // UI related
     // empties the board
-    public void resetBoardUI() {
+    public void resetBoard() {
 
-        if (mScoreViewModel.resetBoard()) {
+        mScoreViewModel.setCellIndex(new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0)));
 
             hideWinningLines();
-            mScoreViewModel.checkForWin();
+            //mScoreViewModel.checkForWin();
 
             for (int i = 0; i < activityBinding.gridLayout.getChildCount(); i++) {
                 ImageView imageView = (ImageView) activityBinding.gridLayout.getChildAt(i);
@@ -106,7 +107,7 @@ public class MainActivity extends BaseActivity {
                 imageView.setClickable(true);
             }
         }
-    }
+
 
     // UI related
     // displays a toast on the screen in case of draw
@@ -147,7 +148,7 @@ public class MainActivity extends BaseActivity {
 
     // UI related
     public void showToast(String message) {
-        Toast toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT);
+        Toast toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG);
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
     }
@@ -166,10 +167,10 @@ public class MainActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_new_round) {
 
-            resetBoardUI();
+            resetBoard();
         } else if (item.getItemId() == R.id.action_new_game) {
 
-            resetBoardUI();
+            resetBoard();
             initializePlayersUI();
 
         } else if (item.getItemId() == R.id.action_watch_video) {

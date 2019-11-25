@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
         <variable
@@ -198,7 +199,7 @@
             android:layout_height="250dp"
             android:layout_gravity="center"
             android:background="@color/grid_background"
-            android:visibility="@{viewModel.centerVertical}" />
+            app:visibility="@{viewModel.centerVertical}" />
         ​
 
         <View
@@ -209,7 +210,7 @@
             android:layout_marginEnd="70dp"
             android:layout_marginRight="70dp"
             android:background="@color/grid_background"
-            android:visibility="@{viewModel.leftVertical}" />
+            app:visibility="@{viewModel.leftVertical}" />
         ​
 
         <View
@@ -220,7 +221,7 @@
             android:layout_marginStart="70dp"
             android:layout_marginLeft="70dp"
             android:background="@color/grid_background"
-            android:visibility="@{viewModel.rightVertical}" />
+            app:visibility="@{viewModel.rightVertical}" />
         ​
 
         <View
@@ -229,7 +230,7 @@
             android:layout_height="5dp"
             android:layout_gravity="center"
             android:background="@color/grid_background"
-            android:visibility="@{viewModel.centerHorizontal}" />
+            app:visibility="@{viewModel.centerHorizontal}" />
         ​
 
         <View
@@ -239,7 +240,7 @@
             android:layout_gravity="center"
             android:layout_marginTop="70dp"
             android:background="@color/grid_background"
-            android:visibility="@{viewModel.bottomHorizontal}" />
+            app:visibility="@{viewModel.bottomHorizontal}" />
         ​
 
         <View
@@ -249,7 +250,7 @@
             android:layout_gravity="center"
             android:layout_marginBottom="70dp"
             android:background="@color/grid_background"
-            android:visibility="@{viewModel.topHorizontalLine}"/>
+            app:visibility="@{viewModel.topHorizontalLine}"/>
 
 
         <View
@@ -259,7 +260,7 @@
             android:layout_gravity="center"
             android:background="@color/grid_background"
             android:rotation="45"
-            android:visibility="@{viewModel.rightLeftDiagonal}" />
+            app:visibility="@{viewModel.rightLeftDiagonal}" />
         ​
 
         <View
@@ -269,6 +270,6 @@
             android:layout_gravity="center"
             android:background="@color/grid_background"
             android:rotation="135"
-            android:visibility="@{viewModel.leftRightDiagonal}" />
+            app:visibility="@{viewModel.leftRightDiagonal}" />
     </FrameLayout>
 </layout>
