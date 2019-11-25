@@ -74,8 +74,12 @@ public class MainActivity extends BaseActivity {
         } else if (mScoreViewModel.fullBoard()) {
             showToast("It's a draw");
         } else {
-            // toggle player
+            togglePlayer();
         }
+    }
+
+    public void togglePlayer(){
+
     }
 
     // UI related
@@ -85,7 +89,6 @@ public class MainActivity extends BaseActivity {
         mScoreViewModel.setCellIndex(new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0)));
 
             hideWinningLines();
-            //mScoreViewModel.checkForWin();
 
             for (int i = 0; i < activityBinding.gridLayout.getChildCount(); i++) {
                 ImageView imageView = (ImageView) activityBinding.gridLayout.getChildAt(i);
