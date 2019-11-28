@@ -1,89 +1,47 @@
 package com.example.xvso;
 
-import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.MutableLiveData;
 
-public class Team extends ViewModel {
+public class Team extends MutableLiveData<Team> {
 
-    private int currentTeam;
-
-    // team X
     public static final int TEAM_X = 1;
-    private int teamNameX;
-    public int scoreTeamX;
-    private String displayNameX;
-
-    // team O
     public static final int TEAM_O = 2;
-    private int teamNameO;
-    private int scoreTeamO;
-    private String displayNameO;
+
+    private int teamType;
+    private int teamScore;
+    private String displayName;
 
     // empty constructor
-    public Team() {}
+    public Team() {
+    }
 
     // constructor
-    public Team(int currentTeam) {
-        this.currentTeam = currentTeam;
+    public Team(int teamType) {
+        this.teamType = teamType;
     }
 
-    // getters and setters
-    public int getCurrentTeam() {
-        return currentTeam;
+    // getters and setters for the generic variables
+    public int getTeamType() {
+        return teamType;
     }
 
-    public void setCurrentTeam(int currentTeam) {
-
-        if (currentTeam != 1 && currentTeam != 2) {
-            throw new IllegalArgumentException();
-        }
-        this.currentTeam = currentTeam;
+    public void setTeamType(int teamType) {
+        this.teamType = teamType;
     }
 
-    public int getTeamNameX() {
-        return teamNameX;
+    public int getTeamScore() {
+        return teamScore;
     }
 
-    public void setTeamNameX(int teamNameX) {
-        this.teamNameX = teamNameX;
+    public void setTeamScore(int teamScore) {
+        this.teamScore = teamScore;
     }
 
-    public int getTeamNameO() {
-        return teamNameO;
+    public String getDisplayName() {
+        return displayName;
     }
 
-    public void setTeamNameO(int teamNameO) {
-        this.teamNameO = teamNameO;
-    }
-
-    public int getScoreTeamX() {
-        return scoreTeamX;
-    }
-
-    public void setScoreTeamX(int scoreTeamX) {
-        this.scoreTeamX = scoreTeamX;
-    }
-
-    public int getScoreTeamO() {
-        return scoreTeamO;
-    }
-
-    public void setScoreTeamO(int scoreTeamO) {
-        this.scoreTeamO = scoreTeamO;
-    }
-
-    public String getDisplayNameX() {
-        return displayNameX;
-    }
-
-    public void setDisplayNameX(String displayNameX) {
-        this.displayNameX = displayNameX;
-    }
-
-    public String getDisplayNameO() {
-        return displayNameO;
-    }
-
-    public void setDisplayNameO(String displayNameO) {
-        this.displayNameO = displayNameO;
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 }

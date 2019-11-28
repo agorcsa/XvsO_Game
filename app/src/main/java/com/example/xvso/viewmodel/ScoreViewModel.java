@@ -16,12 +16,20 @@ public class ScoreViewModel extends ViewModel {
     private final String LOG_TAG = this.getClass().getSimpleName();
 
 
-    public Team team = new Team();
+    private MutableLiveData<Team> teamX;
 
-    public Team teamX = new Team(Team.TEAM_X);
+    private MutableLiveData<Team> teamO;
 
-    public Team teamO = new Team(Team.TEAM_O);
+    private MutableLiveData<Team> currentTeam;
 
+    // constructor
+    // will be called when MainActivity starts
+    public ScoreViewModel() {
+
+        teamX.setValue(new Team(Team.TEAM_X));
+        teamO.setValue(new Team(Team.TEAM_O));
+        currentTeam = teamX.getValue();
+    }
 
     private final MutableLiveData<Boolean> topHorizontalLine = new MutableLiveData<>(false);
 
@@ -123,11 +131,12 @@ public class ScoreViewModel extends ViewModel {
         this.tag = tag;
     }
 
+
     public void updateDisplayName() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         if (user != null) {
-            teamX.setDisplayNameX(user.getDisplayName());
+            currentTeam.setDisplayNameX(user.getDisplayName());
 
             if (user.getDisplayName() != null && user.getDisplayName().isEmpty()) {
                 //player1Text.setText(user.getDisplayName() + " X:");
@@ -140,18 +149,26 @@ public class ScoreViewModel extends ViewModel {
         }
     }
 
+    public void togglePlayer() {
+        if (currentTeam == teamO) {
+                currentTeam = teamX;
+        } else {
+            currentTeam = teamO;
+        }
+    }
+
 
     public boolean checkRows() {
 
-        if (mCellIndex.get(0) == teamX.getCurrentTeam() && mCellIndex.get(1) == teamX.getCurrentTeam() && mCellIndex.get(2) == teamX.getCurrentTeam()) {
+        if (mCellIndex.get(0) == currentTeam.getValue() && mCellIndex.get(1) == currentTeam.getValue() && mCellIndex.get(2) == currentTeam.getValue()) {
             isWinner = true;
             topHorizontalLine.setValue(true);
             return true;
-        } else if (mCellIndex.get(3) == teamX.getCurrentTeam() && mCellIndex.get(4) == teamX.getCurrentTeam()&& mCellIndex.get(5) == teamX.getCurrentTeam()) {
+        } else if (mCellIndex.get(3) == currentTeam.getValue() && mCellIndex.get(4) == currentTeam.getValue() && mCellIndex.get(5) == currentTeam.getValue()) {
             isWinner = true;
             centerHorizontal.setValue(true);
             return true;
-        } else if (mCellIndex.get(6) == teamX.getCurrentTeam() && mCellIndex.get(7) == teamX.getCurrentTeam() && mCellIndex.get(8) == teamX.getCurrentTeam()) {
+        } else if (mCellIndex.get(6) == currentTeam.getValue() && mCellIndex.get(7) == currentTeam.getValue() && mCellIndex.get(8) == currentTeam.getValue()) {
             isWinner = true;
             bottomHorizontal.setValue(true);
             return true;
@@ -162,15 +179,15 @@ public class ScoreViewModel extends ViewModel {
     }
 
     public boolean checkColumns() {
-        if (mCellIndex.get(0) == teamX.getCurrentTeam() && mCellIndex.get(3) == teamX.getCurrentTeam() && mCellIndex.get(6) == teamX.getCurrentTeam()) {
+        if (mCellIndex.get(0) == currentTeam.getValue() && mCellIndex.get(3) == currentTeam.getValue() && mCellIndex.get(6) == currentTeam.getValue()) {
             isWinner = true;
             leftVertical.setValue(true);
             return true;
-        } else if (mCellIndex.get(1) == teamX.getCurrentTeam() && mCellIndex.get(4) == teamX.getCurrentTeam() && mCellIndex.get(7) == teamX.getCurrentTeam()) {
+        } else if (mCellIndex.get(1) == currentTeam.getValue()) && mCellIndex.get(4) == currentTeam.getValue() && mCellIndex.get(7) == currentTeam.getValue()) {
             isWinner = true;
             centerVertical.setValue(true);
             return true;
-        } else if (mCellIndex.get(2) == teamX.getCurrentTeam() && mCellIndex.get(5) == teamX.getCurrentTeam() && mCellIndex.get(8) == teamX.getCurrentTeam()) {
+        } else if (mCellIndex.get(2) == currentTeam.getValue() && mCellIndex.get(5) == currentTeam.getValue() && mCellIndex.get(8) == currentTeam.getValue()) {
             isWinner = true;
             rightVertical.setValue(true);
             return true;
@@ -181,11 +198,11 @@ public class ScoreViewModel extends ViewModel {
     }
 
     public boolean checkDiagonals() {
-        if (mCellIndex.get(0) == teamX.getCurrentTeam() && mCellIndex.get(4) == teamX.getCurrentTeam() && mCellIndex.get(8) == teamX.getCurrentTeam()) {
+        if (mCellIndex.get(0) == currentTeam.getValue() && mCellIndex.get(4) == currentTeam.getValue()) && mCellIndex.get(8) == currentTeam.getValue()) {
             isWinner = true;
             leftRightDiagonal.setValue(true);
             return true;
-        } else if (mCellIndex.get(2) == teamX.getCurrentTeam() && mCellIndex.get(4) == teamX.getCurrentTeam() && mCellIndex.get(6) == teamX.getCurrentTeam()) {
+        } else if (mCellIndex.get(2) == currentTeam.getValue() && mCellIndex.get(4) == currentTeam.getValue() && mCellIndex.get(6) == currentTeam.getValue()) {
             isWinner = true;
             rightLeftDiagonal.setValue(true);
             return true;
@@ -220,27 +237,25 @@ public class ScoreViewModel extends ViewModel {
 
     public boolean initializePlayers() {
 
-        teamX.setScoreTeamX(0);
-        teamO.setScoreTeamO(0);
+        teamX.setValue(new Team());
+        teamO.setValue(new Team());
 
         return true;
     }
 
-    public void viewModelX() {
-        // read from VM
-        teamX.getScoreTeamX();
-        // update score + 1;
-        teamX.scoreTeamX = teamX.scoreTeamX + 1;
-        // write to VM
-        teamX.setScoreTeamX(teamX.scoreTeamX);
+    public void viewModel() {
+        // read teamScore from VM
+        currentTeam.getValue();
+
+        // increment teamScore with + 1
+        // no matter if teamX or teamO
+        currentTeam.incrementScore();
+
+        // write the the previous incremented teamScore back to the VM
+        currentTeam.setValue();
     }
 
-    public void viewModelO() {
-        // read from VM
-        teamO.getScoreTeamO();
-        // update score + 1;
-        int newScore = teamO.getScoreTeamO() + 1;
-        // write to VM
-        teamO.setScoreTeamO(newScore);
+    public void incrementScore(){
+        //getTeamScore() = getTeamScore + 1;
     }
 }

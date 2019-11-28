@@ -32,10 +32,6 @@ public class MainActivity extends BaseActivity {
 
     private ActivityMainBinding activityBinding;
 
-    private Team teamX = new Team(Team.TEAM_X);
-    private Team teamO = new Team(Team.TEAM_O);
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +39,8 @@ public class MainActivity extends BaseActivity {
         activityBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         mScoreViewModel = ViewModelProviders.of(this).get(ScoreViewModel.class);
         activityBinding.setViewModel(mScoreViewModel);
+
+        mScoreViewModel = new ScoreViewModel();
     }
 
     public void dropIn(View view) {
@@ -74,13 +72,11 @@ public class MainActivity extends BaseActivity {
         } else if (mScoreViewModel.fullBoard()) {
             showToast("It's a draw");
         } else {
-            togglePlayer();
+            mScoreViewModel.togglePlayer();
         }
     }
 
-    public void togglePlayer(){
 
-    }
 
     // UI related
     // empties the board
