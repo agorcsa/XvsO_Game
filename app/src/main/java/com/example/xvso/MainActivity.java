@@ -74,7 +74,7 @@ public class MainActivity extends BaseActivity {
         } else if (mScoreViewModel.fullBoard()) {
             showToast("It's a draw");
         } else {
-            mScoreViewModel.togglePlayer();
+           // mScoreViewModel.togglePlayer();
         }
     }
 
