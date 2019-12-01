@@ -52,16 +52,18 @@ public class MainActivity extends BaseActivity {
         // Play move
         mScoreViewModel.setTag(Integer.parseInt((String) counter.getTag()));
 
-        if (teamX.getCurrentTeam() == 1 && !mScoreViewModel.checkForWin()) {
+        int teamType = mScoreViewModel.getCurrentTeam().getTeamType();
+
+        if (teamType == 1 && !mScoreViewModel.checkForWin()) {
             counter.setImageResource(R.drawable.ic_cross);
-            mScoreViewModel.getCellIndex().set(mScoreViewModel.getTag(), teamX.getCurrentTeam());
+            mScoreViewModel.getCellIndex().set(mScoreViewModel.getTag(), teamType);
             Log.i(LOG_TAG, "mCellIndex: " + mScoreViewModel.getCellIndex());
-            teamX.setCurrentTeam(2);
+            mScoreViewModel.getCurrentTeam().setTeamType(Team.TEAM_O);
             view.setClickable(false);
-        } else if (teamX.getCurrentTeam() == 2 && !mScoreViewModel.checkForWin()) {
+        } else if (teamType == 2 && !mScoreViewModel.checkForWin()) {
             counter.setImageResource(R.drawable.ic_zero);
-            mScoreViewModel.getCellIndex().set(mScoreViewModel.getTag(), teamX.getCurrentTeam());
-            teamX.setCurrentTeam(1);
+            mScoreViewModel.getCellIndex().set(mScoreViewModel.getTag(), teamType);
+            mScoreViewModel.getCurrentTeam().setTeamType(Team.TEAM_X);
             view.setClickable(false);
         }
 
@@ -75,8 +77,6 @@ public class MainActivity extends BaseActivity {
             mScoreViewModel.togglePlayer();
         }
     }
-
-
 
     // UI related
     // empties the board
@@ -120,14 +120,16 @@ public class MainActivity extends BaseActivity {
     // UI related
     // displays the winner on the screen
     public void announceWinner() {
-        if (mScoreViewModel.isWinner()) {
-            showToast("Player 1 has won! (X)");
-            mScoreViewModel.viewModelX();
-            activityBinding.player1Result.setText(String.valueOf(mScoreViewModel.teamX.getScoreTeamX()));
-        } else {
-            showToast("Player 2 has won! (O)");
-            mScoreViewModel.viewModelO();
-            activityBinding.player2Result.setText(String.valueOf(mScoreViewModel.teamO.getScoreTeamO()));
+        int team = mScoreViewModel.getCurrentTeam().getTeamType();
+
+        if (mScoreViewModel.checkForWin()) {
+            if (team == Team.TEAM_X) {
+                showToast("Player 1 has won! (X)");
+                activityBinding.player1Result.setText(String.valueOf(mScoreViewModel.getCurrentTeam().getTeamScore()));
+            } else {
+                showToast("Player 2 has won! (O)");
+                activityBinding.player2Result.setText(String.valueOf(mScoreViewModel.getCurrentTeam().getTeamScore()));
+            }
         }
     }
 
@@ -209,8 +211,10 @@ public class MainActivity extends BaseActivity {
     // updates the counters
     public void updateCounters() {
 
-        activityBinding.player1Result.setText(String.valueOf(teamX.getScoreTeamX()));
-        activityBinding.player2Result.setText(String.valueOf(teamO.getScoreTeamO()));
+        mScoreViewModel.updateScore();
+
+        activityBinding.player1Result.setText(String.valueOf(mScoreViewModel.getCurrentTeam().getTeamScore()));
+        activityBinding.player2Result.setText(String.valueOf(mScoreViewModel.getCurrentTeam().getTeamScore()));
     }
 
     // UI related

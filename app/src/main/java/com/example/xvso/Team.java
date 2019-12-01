@@ -1,8 +1,6 @@
 package com.example.xvso;
 
-import androidx.lifecycle.MutableLiveData;
-
-public class Team extends MutableLiveData<Team> {
+public class Team {
 
     public static final int TEAM_X = 1;
     public static final int TEAM_O = 2;
@@ -43,5 +41,9 @@ public class Team extends MutableLiveData<Team> {
 
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
+    }
+
+    public void incrementScore(){
+        teamScore++;
     }
 }
