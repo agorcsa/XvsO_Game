@@ -70,6 +70,7 @@ public class MainActivity extends BaseActivity {
         if (mScoreViewModel.checkForWin()) {
             setClickableFalse();
             announceWinner();
+            updateCounters();
             resetBoard();
         } else if (mScoreViewModel.fullBoard()) {
             showToast("It's a draw");
@@ -213,8 +214,11 @@ public class MainActivity extends BaseActivity {
 
         mScoreViewModel.updateScore();
 
-        activityBinding.player1Result.setText(String.valueOf(mScoreViewModel.getCurrentTeam().getTeamScore()));
-        activityBinding.player2Result.setText(String.valueOf(mScoreViewModel.getCurrentTeam().getTeamScore()));
+        if (mScoreViewModel.getCurrentTeam().getTeamType() == Team.TEAM_X) {
+            activityBinding.player1Result.setText(String.valueOf(mScoreViewModel.getCurrentTeam().getTeamScore()));
+        } else if (mScoreViewModel.getCurrentTeam().getTeamType() == Team.TEAM_O) {
+            activityBinding.player2Result.setText(String.valueOf(mScoreViewModel.getCurrentTeam().getTeamScore()));
+        }
     }
 
     // UI related

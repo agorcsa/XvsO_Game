@@ -20,7 +20,6 @@ public class ScoreViewModel extends ViewModel {
     private final MutableLiveData<Boolean> rightVertical = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> leftRightDiagonal = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> rightLeftDiagonal = new MutableLiveData<>(false);
-
     private MutableLiveData<Team> teamX = new MutableLiveData<>();
     private MutableLiveData<Team> teamO = new MutableLiveData<>();
     private Team currentTeam;
@@ -32,7 +31,6 @@ public class ScoreViewModel extends ViewModel {
     private String displayName;
     private ArrayList<Integer> mCellIndex = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0));
     private boolean gameOver;
-
     // constructor
     // will be called when MainActivity starts
     public ScoreViewModel() {
@@ -40,6 +38,22 @@ public class ScoreViewModel extends ViewModel {
         teamX.setValue(new Team(Team.TEAM_X));
         teamO.setValue(new Team(Team.TEAM_O));
         currentTeam = teamX.getValue();
+    }
+
+    public MutableLiveData<Team> getTeamX() {
+        return teamX;
+    }
+
+    public void setTeamX(MutableLiveData<Team> teamX) {
+        this.teamX = teamX;
+    }
+
+    public MutableLiveData<Team> getTeamO() {
+        return teamO;
+    }
+
+    public void setTeamO(MutableLiveData<Team> teamO) {
+        this.teamO = teamO;
     }
 
     public Team getCurrentTeam() {
