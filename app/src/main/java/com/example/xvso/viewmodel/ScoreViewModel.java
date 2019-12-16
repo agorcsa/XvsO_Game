@@ -33,6 +33,7 @@ public class ScoreViewModel extends ViewModel {
     private boolean gameOver;
     // constructor
     // will be called when MainActivity starts
+
     public ScoreViewModel() {
 
         teamX.setValue(new Team(Team.TEAM_X));

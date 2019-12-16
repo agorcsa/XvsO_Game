@@ -147,6 +147,8 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <!-- Player1 -->
+            <!-- name and score result-->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -159,6 +161,7 @@
                     android:layout_marginLeft="10dp"
                     android:layout_marginTop="20dp"
                     android:hint="Player X: "
+                    android:text="@{viewModel.userLiveData.firstName}"
                     android:textColor="@color/color_blue"
                     android:textSize="@dimen/text_size_large" />
 
@@ -172,6 +175,8 @@
                     android:textSize="@dimen/text_size_large" />
             </LinearLayout>
 
+            <!-- Player2 -->
+            <!-- name and score result-->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -197,6 +202,7 @@
 
         </LinearLayout>
 
+        <!-- Winning lines -->
         <View
             android:id="@+id/center_vertical"
             android:layout_width="5dp"
