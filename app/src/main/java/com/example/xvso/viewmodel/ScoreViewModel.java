@@ -248,4 +248,18 @@ public class ScoreViewModel extends ViewModel {
             teamO.setValue(currentTeam);
         }
     }
-}
+
+    public void play(int position){
+
+        int teamType = currentTeam.getTeamType();
+
+        // update the array of cells, assigning the current team type for the given position
+        if (teamType == 1 && checkForWin()) {
+            mCellIndex.set(position, teamType);
+            currentTeam.setTeamType(Team.TEAM_O);
+        } else if (teamType == 2 && checkForWin()){
+            mCellIndex.set(position, teamType);
+            currentTeam.setTeamType(Team.TEAM_X);
+            }
+        }
+    }

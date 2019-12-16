@@ -14,22 +14,17 @@ import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.example.xvso.databinding.ActivityMainBinding;
 import com.example.xvso.firebase.BaseActivity;
 import com.example.xvso.firebase.LoginActivity;
 import com.example.xvso.firebase.ProfileActivity;
-import com.example.xvso.firebaseutils.FirebaseQueryLiveData;
 import com.example.xvso.viewmodel.ScoreViewModel;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.function.Function;
 
 public class MainActivity extends BaseActivity {
 
@@ -52,9 +47,8 @@ public class MainActivity extends BaseActivity {
 
         // creates an instance of the FirebaseQueryLiveData class, running our own query
         // query = extract the display name from the LiveData<User>
-        FirebaseQueryLiveData resultLiveData = new FirebaseQueryLiveData(query);
-
-        LiveData<User> userLiveData = Transformations.map(userProfileLiveData, new Deserializer());
+        // FirebaseQueryLiveData resultLiveData = new FirebaseQueryLiveData(query);
+        // LiveData<User> userLiveData = Transformations.map(userProfileLiveData, new Deserializer());
     }
 
     public void dropIn(View view) {
@@ -243,11 +237,11 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
+    /*@RequiresApi(api = Build.VERSION_CODES.N)
     private class Deserializer implements Function<DataSnapshot, User> {
         @Override
         public User apply(DataSnapshot dataSnapshot) {
             return dataSnapshot.getValue(User.class);
         }
-    }
+    }*/
 }
