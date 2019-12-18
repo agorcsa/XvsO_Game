@@ -44,11 +44,6 @@ public class MainActivity extends BaseActivity {
         activityBinding.setViewModel(mScoreViewModel);
 
         mScoreViewModel = new ScoreViewModel();
-
-        // creates an instance of the FirebaseQueryLiveData class, running our own query
-        // query = extract the display name from the LiveData<User>
-        // FirebaseQueryLiveData resultLiveData = new FirebaseQueryLiveData(query);
-        // LiveData<User> userLiveData = Transformations.map(userProfileLiveData, new Deserializer());
     }
 
     public void dropIn(View view) {
@@ -236,12 +231,4 @@ public class MainActivity extends BaseActivity {
             activityBinding.gridLayout.getChildAt(i).setClickable(false);
         }
     }
-
-    /*@RequiresApi(api = Build.VERSION_CODES.N)
-    private class Deserializer implements Function<DataSnapshot, User> {
-        @Override
-        public User apply(DataSnapshot dataSnapshot) {
-            return dataSnapshot.getValue(User.class);
-        }
-    }*/
 }

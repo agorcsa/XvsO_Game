@@ -1,12 +1,23 @@
 package com.example.xvso.viewmodel;
 
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
 import com.example.xvso.Team;
+import com.example.xvso.User;
+import com.example.xvso.firebaseutils.FirebaseQueryLiveData;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.function.Function;
 
 public class ScoreViewModel extends ViewModel {
 
@@ -31,14 +42,22 @@ public class ScoreViewModel extends ViewModel {
     private String displayName;
     private ArrayList<Integer> mCellIndex = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0));
     private boolean gameOver;
+
+    private DatabaseReference query;
+
+    private LiveData<User> userLiveData;
+
     // constructor
     // will be called when MainActivity starts
-
     public ScoreViewModel() {
 
         teamX.setValue(new Team(Team.TEAM_X));
         teamO.setValue(new Team(Team.TEAM_O));
         currentTeam = teamX.getValue();
+
+        query = FirebaseDatabase.getInstance().getReference("users").child(getDisplayName());
+        FirebaseQueryLiveData resultLiveData = new FirebaseQueryLiveData(query);
+        userLiveData = Transformations.map(resultLiveData, (androidx.arch.core.util.Function<DataSnapshot, User>) new Deserializer());
     }
 
     public MutableLiveData<Team> getTeamX() {
@@ -247,6 +266,22 @@ public class ScoreViewModel extends ViewModel {
         } else {
             teamO.setValue(currentTeam);
         }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private class Deserializer implements Function<DataSnapshot, User> {
+        @Override
+        public User apply(DataSnapshot dataSnapshot) {
+            return dataSnapshot.getValue(User.class);
+        }
+    }
+
+    public LiveData<User> getUserLiveData() {
+        return userLiveData;
+    }
+
+    public void setUserLiveData(LiveData<User> userLiveData) {
+        this.userLiveData = userLiveData;
     }
 
     public void play(int position){
