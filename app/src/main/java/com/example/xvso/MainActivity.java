@@ -4,7 +4,6 @@ package com.example.xvso;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -43,59 +42,53 @@ public class MainActivity extends BaseActivity {
         activityBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         mScoreViewModel = ViewModelProviders.of(this).get(ScoreViewModel.class);
         activityBinding.setViewModel(mScoreViewModel);
-
-        mScoreViewModel = new ScoreViewModel();
+        activityBinding.setLifecycleOwner(this);
     }
 
     public void dropIn(View view) {
-        // Animate view
+
+        // animate
         ImageView counter = (ImageView) view;
         counter.setTranslationY(-1000f);
         counter.animate().translationYBy(1000f).setDuration(300);
 
-        // Play move
-        //mScoreViewModel.setTag(Integer.parseInt((String) counter.getTag()));
-
+        // play
         mScoreViewModel.play(Integer.parseInt((String) view.getTag()));
 
-        int teamType = mScoreViewModel.getCurrentTeam().getTeamType();
-
-        if (teamType == 1 && !mScoreViewModel.checkForWin()) {
-            counter.setImageResource(R.drawable.ic_cross);
-            mScoreViewModel.getCellIndex().set(mScoreViewModel.getTag(), teamType);
-            Log.i(LOG_TAG, "mCellIndex: " + mScoreViewModel.getCellIndex());
-            mScoreViewModel.getCurrentTeam().setTeamType(Team.TEAM_O);
-            view.setClickable(false);
-        } else if (teamType == 2 && !mScoreViewModel.checkForWin()) {
-            counter.setImageResource(R.drawable.ic_zero);
-            mScoreViewModel.getCellIndex().set(mScoreViewModel.getTag(), teamType);
-            mScoreViewModel.getCurrentTeam().setTeamType(Team.TEAM_X);
-            view.setClickable(false);
-        }
-
         if (mScoreViewModel.checkForWin()) {
-            setClickableFalse();
+            // round finished
+            roundFinished(view);
             announceWinner();
-            updateCounters();
-            resetBoard();
         } else if (mScoreViewModel.fullBoard()) {
+            // it's a draw
             showToast("It's a draw");
         } else {
-           // mScoreViewModel.togglePlayer();
+            // switch to the other player
+            mScoreViewModel.togglePlayer();
         }
+    }
+
+    public void roundFinished(View view){
+        view.setClickable(false);
     }
 
     @BindingAdapter("state")
     public static void setCellState(ImageView imageView, int state) {
         if (state == Team.TEAM_O) {
             // set image O
+            imageView.setImageResource(R.drawable.ic_zero);
             // set clickable false
+            imageView.setClickable(false);
         } else if (state == Team.TEAM_X) {
             // set image X
+            imageView.setImageResource(R.drawable.ic_cross);
             // set clickable false
+            imageView.setClickable(false);
         } else {
             // set no image
+            imageView.setImageResource(0);
             // set clickable true
+            imageView.setClickable(true);
         }
     }
 

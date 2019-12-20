@@ -32,8 +32,10 @@ public class ScoreViewModel extends ViewModel {
     private final MutableLiveData<Boolean> rightVertical = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> leftRightDiagonal = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> rightLeftDiagonal = new MutableLiveData<>(false);
+
     private MutableLiveData<Team> teamX = new MutableLiveData<>();
     private MutableLiveData<Team> teamO = new MutableLiveData<>();
+
     private Team currentTeam;
     // represents the tag of each cell of the grid
     // (0, 1, 2)
@@ -41,7 +43,10 @@ public class ScoreViewModel extends ViewModel {
     // (6, 7, 8)
     private int tag;
     private String displayName;
-    private ArrayList<Integer> mCellIndex = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0));
+    private ArrayList<Integer> board = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0));
+
+    private MutableLiveData<ArrayList<Integer>> boardLiveData = new MutableLiveData<>();
+
     private boolean gameOver;
 
     private DatabaseReference query;
@@ -133,11 +138,11 @@ public class ScoreViewModel extends ViewModel {
     }
 
     public ArrayList<Integer> getCellIndex() {
-        return mCellIndex;
+        return board;
     }
 
     public void setCellIndex(ArrayList<Integer> mCellIndex) {
-        this.mCellIndex = mCellIndex;
+        this.board = mCellIndex;
     }
 
     public String getDisplayName() {
@@ -187,13 +192,13 @@ public class ScoreViewModel extends ViewModel {
 
         int team = currentTeam.getTeamType();
 
-        if (mCellIndex.get(0) == team && mCellIndex.get(1) == team && mCellIndex.get(2) == team) {
+        if (board.get(0) == team && board.get(1) == team && board.get(2) == team) {
             topHorizontalLine.setValue(true);
             return true;
-        } else if (mCellIndex.get(3) == team && mCellIndex.get(4) == team && mCellIndex.get(5) == team) {
+        } else if (board.get(3) == team && board.get(4) == team && board.get(5) == team) {
             centerHorizontal.setValue(true);
             return true;
-        } else if (mCellIndex.get(6) == team && mCellIndex.get(7) == team && mCellIndex.get(8) == team) {
+        } else if (board.get(6) == team && board.get(7) == team && board.get(8) == team) {
             bottomHorizontal.setValue(true);
             return true;
         } else {
@@ -205,13 +210,13 @@ public class ScoreViewModel extends ViewModel {
 
         int team = currentTeam.getTeamType();
 
-        if (mCellIndex.get(0) == team && mCellIndex.get(3) == team && mCellIndex.get(6) == team) {
+        if (board.get(0) == team && board.get(3) == team && board.get(6) == team) {
             leftVertical.setValue(true);
             return true;
-        } else if (mCellIndex.get(1) == team && mCellIndex.get(4) == team && mCellIndex.get(7) == team) {
+        } else if (board.get(1) == team && board.get(4) == team && board.get(7) == team) {
             centerVertical.setValue(true);
             return true;
-        } else if (mCellIndex.get(2) == team && mCellIndex.get(5) == team && mCellIndex.get(8) == team) {
+        } else if (board.get(2) == team && board.get(5) == team && board.get(8) == team) {
             rightVertical.setValue(true);
             return true;
         } else {
@@ -223,10 +228,10 @@ public class ScoreViewModel extends ViewModel {
 
         int team = currentTeam.getTeamType();
 
-        if (mCellIndex.get(0) == team && mCellIndex.get(4) == team && mCellIndex.get(8) == team) {
+        if (board.get(0) == team && board.get(4) == team && board.get(8) == team) {
             leftRightDiagonal.setValue(true);
             return true;
-        } else if (mCellIndex.get(2) == team && mCellIndex.get(4) == team && mCellIndex.get(6) == team) {
+        } else if (board.get(2) == team && board.get(4) == team && board.get(6) == team) {
             rightLeftDiagonal.setValue(true);
             return true;
         } else {
@@ -237,8 +242,8 @@ public class ScoreViewModel extends ViewModel {
     public boolean fullBoard() {
         // iterate in the whole list and read the mCellStatus of the mCellIndex
 
-        for (int i = 0; i < mCellIndex.size(); i++) {
-            if (mCellIndex.get(i) == 0) {
+        for (int i = 0; i < board.size(); i++) {
+            if (board.get(i) == 0) {
                 return false;
             }
         }
@@ -284,18 +289,16 @@ public class ScoreViewModel extends ViewModel {
         this.userLiveData = userLiveData;
     }
 
-    // updates the array of cells(mCellIndex), assigning the current team type for the given position
+
     public void play(int position) {
+        // set the current team for the specified position on the board
+        // we can have a boardLiveData and call boardLiveData.setValue(board),
 
-        int teamType = currentTeam.getTeamType();
+        // sets the current team for the specified position on the board
+        boardLiveData.setValue(board);
 
-        if (teamType == 1 && checkForWin()) {
-            mCellIndex.set(position, teamType);
-            currentTeam.setTeamType(Team.TEAM_O);
-        } else if (teamType == 2 && checkForWin()) {
-            mCellIndex.set(position, teamType);
-            currentTeam.setTeamType(Team.TEAM_X);
-        }
+        // so we can use this boardLiveData in the XML to update the value for each cell
+        // Don't switch the player here !! Use togglePlayer() instead
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
