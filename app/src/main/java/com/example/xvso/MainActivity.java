@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
+import androidx.databinding.BindingAdapter;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -79,6 +80,20 @@ public class MainActivity extends BaseActivity {
             showToast("It's a draw");
         } else {
            // mScoreViewModel.togglePlayer();
+        }
+    }
+
+    @BindingAdapter("state")
+    public static void setCellState(ImageView imageView, int state) {
+        if (state == Team.TEAM_O) {
+            // set image O
+            // set clickable false
+        } else if (state == Team.TEAM_X) {
+            // set image X
+            // set clickable false
+        } else {
+            // set no image
+            // set clickable true
         }
     }
 

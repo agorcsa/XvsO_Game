@@ -268,14 +268,6 @@ public class ScoreViewModel extends ViewModel {
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    private class Deserializer implements Function<DataSnapshot, User> {
-        @Override
-        public User apply(DataSnapshot dataSnapshot) {
-            return dataSnapshot.getValue(User.class);
-        }
-    }
-
     public LiveData<User> getUserLiveData() {
         return userLiveData;
     }
@@ -284,7 +276,7 @@ public class ScoreViewModel extends ViewModel {
         this.userLiveData = userLiveData;
     }
 
-    public void play(int position){
+    public void play(int position) {
 
         int teamType = currentTeam.getTeamType();
 
@@ -292,9 +284,17 @@ public class ScoreViewModel extends ViewModel {
         if (teamType == 1 && checkForWin()) {
             mCellIndex.set(position, teamType);
             currentTeam.setTeamType(Team.TEAM_O);
-        } else if (teamType == 2 && checkForWin()){
+        } else if (teamType == 2 && checkForWin()) {
             mCellIndex.set(position, teamType);
             currentTeam.setTeamType(Team.TEAM_X);
-            }
         }
     }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private class Deserializer implements Function<DataSnapshot, User> {
+        @Override
+        public User apply(DataSnapshot dataSnapshot) {
+            return dataSnapshot.getValue(User.class);
+        }
+    }
+}
