@@ -3,6 +3,7 @@ package com.example.xvso.viewmodel;
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
+import androidx.arch.core.util.Function;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
@@ -11,13 +12,13 @@ import androidx.lifecycle.ViewModel;
 import com.example.xvso.Team;
 import com.example.xvso.User;
 import com.example.xvso.firebaseutils.FirebaseQueryLiveData;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.function.Function;
 
 public class ScoreViewModel extends ViewModel {
 
@@ -47,6 +48,8 @@ public class ScoreViewModel extends ViewModel {
 
     private LiveData<User> userLiveData;
 
+    private FirebaseAuth auth;
+
     // constructor
     // will be called when MainActivity starts
     public ScoreViewModel() {
@@ -55,7 +58,12 @@ public class ScoreViewModel extends ViewModel {
         teamO.setValue(new Team(Team.TEAM_O));
         currentTeam = teamX.getValue();
 
-        query = FirebaseDatabase.getInstance().getReference("users").child(getDisplayName());
+        auth = FirebaseAuth.getInstance();
+
+        if (auth.getUid() != null) {
+            query = FirebaseDatabase.getInstance().getReference("users").child((auth.getUid()));
+        }
+
         FirebaseQueryLiveData resultLiveData = new FirebaseQueryLiveData(query);
         userLiveData = Transformations.map(resultLiveData, (androidx.arch.core.util.Function<DataSnapshot, User>) new Deserializer());
     }
@@ -276,11 +284,11 @@ public class ScoreViewModel extends ViewModel {
         this.userLiveData = userLiveData;
     }
 
+    // updates the array of cells(mCellIndex), assigning the current team type for the given position
     public void play(int position) {
 
         int teamType = currentTeam.getTeamType();
 
-        // update the array of cells, assigning the current team type for the given position
         if (teamType == 1 && checkForWin()) {
             mCellIndex.set(position, teamType);
             currentTeam.setTeamType(Team.TEAM_O);

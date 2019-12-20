@@ -54,7 +54,9 @@ public class MainActivity extends BaseActivity {
         counter.animate().translationYBy(1000f).setDuration(300);
 
         // Play move
-        mScoreViewModel.setTag(Integer.parseInt((String) counter.getTag()));
+        //mScoreViewModel.setTag(Integer.parseInt((String) counter.getTag()));
+
+        mScoreViewModel.play(Integer.parseInt((String) view.getTag()));
 
         int teamType = mScoreViewModel.getCurrentTeam().getTeamType();
 
