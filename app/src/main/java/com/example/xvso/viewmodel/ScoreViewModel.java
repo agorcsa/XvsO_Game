@@ -44,15 +44,10 @@ public class ScoreViewModel extends ViewModel {
     private int tag;
     private String displayName;
     private ArrayList<Integer> board = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0));
-
     private MutableLiveData<ArrayList<Integer>> boardLiveData = new MutableLiveData<>();
-
     private boolean gameOver;
-
     private DatabaseReference query;
-
     private LiveData<User> userLiveData;
-
     private FirebaseAuth auth;
 
     // constructor
@@ -161,7 +156,6 @@ public class ScoreViewModel extends ViewModel {
         this.tag = tag;
     }
 
-
     /* public void updateDisplayName() {
          FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -186,7 +180,6 @@ public class ScoreViewModel extends ViewModel {
             currentTeam = teamO.getValue();
         }
     }
-
 
     public boolean checkRows() {
 
@@ -250,7 +243,6 @@ public class ScoreViewModel extends ViewModel {
         return true;
     }
 
-
     public boolean checkForWin() {
         if (checkRows() || checkColumns() || checkDiagonals()) {
             setGameOver(true);
@@ -270,7 +262,6 @@ public class ScoreViewModel extends ViewModel {
         return true;
     }
 
-
     public void updateScore() {
         currentTeam.incrementScore();
 
@@ -289,14 +280,28 @@ public class ScoreViewModel extends ViewModel {
         this.userLiveData = userLiveData;
     }
 
+    public MutableLiveData<ArrayList<Integer>> getBoardLiveData() {
+        return boardLiveData;
+    }
+
+    public void setBoardLiveData(MutableLiveData<ArrayList<Integer>> boardLiveData) {
+        this.boardLiveData = boardLiveData;
+    }
 
     public void play(int position) {
         // set the current team for the specified position on the board
         // we can have a boardLiveData and call boardLiveData.setValue(board),
 
         // sets the current team for the specified position on the board
-        boardLiveData.setValue(board);
+        int teamType = currentTeam.getTeamType();
 
+        if (teamType == 1) {
+            board.set(position, Team.TEAM_X);
+            boardLiveData.setValue(board);
+        } else if (teamType == 2) {
+            board.set(position, Team.TEAM_O);
+            boardLiveData.setValue(board);
+        }
         // so we can use this boardLiveData in the XML to update the value for each cell
         // Don't switch the player here !! Use togglePlayer() instead
     }
