@@ -12,7 +12,6 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
-import androidx.databinding.BindingAdapter;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -72,35 +71,6 @@ public class MainActivity extends BaseActivity {
         view.setClickable(false);
     }
 
-    @BindingAdapter("state")
-    public static void setCellState(ImageView imageView, int state) {
-        if (state == Team.TEAM_O) {
-            // set image O
-            imageView.setImageResource(R.drawable.ic_zero);
-            // set clickable false
-            imageView.setClickable(false);
-        } else if (state == Team.TEAM_X) {
-            // set image X
-            imageView.setImageResource(R.drawable.ic_cross);
-            // set clickable false
-            imageView.setClickable(false);
-        } else {
-            // set no image
-            imageView.setImageResource(0);
-            // set clickable true
-            imageView.setClickable(true);
-        }
-    }
-
-    @BindingAdapter("isGameInProgress")
-    public static void checkGameInProgress(ImageView imageView, boolean isGameInProgress) {
-        if (isGameInProgress == true) {
-            imageView.setClickable(true);
-        } else {
-            imageView.setClickable(false);
-        }
-    }
-
 
     // UI related
     // empties the board
@@ -148,12 +118,9 @@ public class MainActivity extends BaseActivity {
 
         if (mScoreViewModel.checkForWin()) {
             if (team == Team.TEAM_X) {
-                checkGameInProgress();
                 showToast("Player 1 has won! (X)");
                 updateCounters();
-
             } else {
-                checkGameInProgress();
                 showToast("Player 2 has won! (O)");
                 updateCounters();
             }
