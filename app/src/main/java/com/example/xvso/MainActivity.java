@@ -92,11 +92,21 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+    @BindingAdapter("isGameInProgress")
+    public static void checkGameInProgress(ImageView imageView, boolean isGameInProgress) {
+        if (isGameInProgress == true) {
+            imageView.setClickable(true);
+        } else {
+            imageView.setClickable(false);
+        }
+    }
+
+
     // UI related
     // empties the board
     public void resetBoard() {
 
-        mScoreViewModel.setCellIndex(new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0)));
+        mScoreViewModel.setBoard(new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0)));
 
             hideWinningLines();
 
@@ -119,12 +129,12 @@ public class MainActivity extends BaseActivity {
 
     // used in case of device rotation
     public void preserveBoard() {
-        for (int i = 0; i < mScoreViewModel.getCellIndex().size(); i++) {
+        for (int i = 0; i < mScoreViewModel.getBoard().size(); i++) {
             ImageView cell = (ImageView) activityBinding.gridLayout.getChildAt(i);
-            if (mScoreViewModel.getCellIndex().get(i) == 1) {
+            if (mScoreViewModel.getBoard().get(i) == 1) {
                 cell.setImageResource(R.drawable.ic_cross);
                 cell.setClickable(false);
-            } else if ((mScoreViewModel.getCellIndex().get(i) == 2)) {
+            } else if ((mScoreViewModel.getBoard().get(i) == 2)) {
                 cell.setImageResource(R.drawable.ic_zero);
                 cell.setClickable(false);
             }
@@ -138,11 +148,14 @@ public class MainActivity extends BaseActivity {
 
         if (mScoreViewModel.checkForWin()) {
             if (team == Team.TEAM_X) {
+                checkGameInProgress();
                 showToast("Player 1 has won! (X)");
-                activityBinding.player1Result.setText(String.valueOf(mScoreViewModel.getCurrentTeam().getTeamScore()));
+                updateCounters();
+
             } else {
+                checkGameInProgress();
                 showToast("Player 2 has won! (O)");
-                activityBinding.player2Result.setText(String.valueOf(mScoreViewModel.getCurrentTeam().getTeamScore()));
+                updateCounters();
             }
         }
     }

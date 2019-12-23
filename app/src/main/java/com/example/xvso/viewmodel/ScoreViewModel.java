@@ -36,6 +36,16 @@ public class ScoreViewModel extends ViewModel {
     private MutableLiveData<Team> teamX = new MutableLiveData<>();
     private MutableLiveData<Team> teamO = new MutableLiveData<>();
 
+    public MutableLiveData<Boolean> getIsGameInProgress() {
+        return isGameInProgress;
+    }
+
+    public void setIsGameInProgress(MutableLiveData<Boolean> isGameInProgress) {
+        this.isGameInProgress = isGameInProgress;
+    }
+
+    private MutableLiveData<Boolean> isGameInProgress = new MutableLiveData<>();
+
     private Team currentTeam;
     // represents the tag of each cell of the grid
     // (0, 1, 2)
@@ -49,7 +59,6 @@ public class ScoreViewModel extends ViewModel {
     private DatabaseReference query;
     private LiveData<User> userLiveData;
     private FirebaseAuth auth;
-
     // constructor
     // will be called when MainActivity starts
     public ScoreViewModel() {
@@ -66,6 +75,14 @@ public class ScoreViewModel extends ViewModel {
 
         FirebaseQueryLiveData resultLiveData = new FirebaseQueryLiveData(query);
         userLiveData = Transformations.map(resultLiveData, (androidx.arch.core.util.Function<DataSnapshot, User>) new Deserializer());
+    }
+
+    public ArrayList<Integer> getBoard() {
+        return board;
+    }
+
+    public void setBoard(ArrayList<Integer> board) {
+        this.board = board;
     }
 
     public MutableLiveData<Team> getTeamX() {
@@ -132,13 +149,6 @@ public class ScoreViewModel extends ViewModel {
         this.gameOver = gameOver;
     }
 
-    public ArrayList<Integer> getCellIndex() {
-        return board;
-    }
-
-    public void setCellIndex(ArrayList<Integer> mCellIndex) {
-        this.board = mCellIndex;
-    }
 
     public String getDisplayName() {
         return displayName;
@@ -156,23 +166,6 @@ public class ScoreViewModel extends ViewModel {
         this.tag = tag;
     }
 
-    /* public void updateDisplayName() {
-         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-         if (user != null) {
-             currentTeam.setDisplayNameX(user.getDisplayName());
-
-             if (user.getDisplayName() != null && user.getDisplayName().isEmpty()) {
-                 //player1Text.setText(user.getDisplayName() + " X:");
-             } else {
-                 String userString = user.getEmail().substring(0, user.getEmail().indexOf("@"));
-                 //player1Text.setText(userString + " X:");
-             }
-             updateCounters();
-             preserveBoard();
-         }
-     }
- */
     public void togglePlayer() {
         if (currentTeam == teamO.getValue()) {
             currentTeam = teamX.getValue();
@@ -289,21 +282,8 @@ public class ScoreViewModel extends ViewModel {
     }
 
     public void play(int position) {
-        // set the current team for the specified position on the board
-        // we can have a boardLiveData and call boardLiveData.setValue(board),
-
-        // sets the current team for the specified position on the board
-        int teamType = currentTeam.getTeamType();
-
-        if (teamType == 1) {
-            board.set(position, Team.TEAM_X);
-            boardLiveData.setValue(board);
-        } else if (teamType == 2) {
-            board.set(position, Team.TEAM_O);
-            boardLiveData.setValue(board);
-        }
-        // so we can use this boardLiveData in the XML to update the value for each cell
-        // Don't switch the player here !! Use togglePlayer() instead
+        board.set(position, currentTeam.getTeamType());
+        boardLiveData.setValue(board);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
