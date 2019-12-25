@@ -4,7 +4,7 @@ import android.widget.ImageView;
 
 import androidx.databinding.BindingAdapter;
 
-public class XvsOBindingAdapter extends BindingAdapters{
+public class XvsOBindingAdapter {
 
     @BindingAdapter("state")
     public static void setCellState(ImageView imageView, int state) {

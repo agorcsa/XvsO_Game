@@ -44,7 +44,7 @@ public class ScoreViewModel extends ViewModel {
         this.isGameInProgress = isGameInProgress;
     }
 
-    private MutableLiveData<Boolean> isGameInProgress = new MutableLiveData<>();
+    public MutableLiveData<Boolean> isGameInProgress = new MutableLiveData<>(true);
 
     private Team currentTeam;
     // represents the tag of each cell of the grid

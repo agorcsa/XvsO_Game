@@ -56,6 +56,7 @@ public class MainActivity extends BaseActivity {
 
         if (mScoreViewModel.checkForWin()) {
             // round finished
+            mScoreViewModel.isGameInProgress.postValue(false);
             roundFinished(view);
             announceWinner();
         } else if (mScoreViewModel.fullBoard()) {
@@ -67,7 +68,7 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    public void roundFinished(View view){
+    public void roundFinished(View view) {
         view.setClickable(false);
     }
 
@@ -78,27 +79,27 @@ public class MainActivity extends BaseActivity {
 
         mScoreViewModel.setBoard(new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0)));
 
-            hideWinningLines();
+        hideWinningLines();
 
-            for (int i = 0; i < activityBinding.gridLayout.getChildCount(); i++) {
-                ImageView imageView = (ImageView) activityBinding.gridLayout.getChildAt(i);
-                imageView.setImageResource(0);
-                imageView.setClickable(true);
-            }
+        for (int i = 0; i < activityBinding.gridLayout.getChildCount(); i++) {
+            ImageView imageView = (ImageView) activityBinding.gridLayout.getChildAt(i);
+            imageView.setImageResource(0);
+            imageView.setClickable(true);
         }
+    }
 
 
     // UI related
     // displays a toast on the screen in case of draw
-    public boolean fullBoardUI() {
+/*    public boolean fullBoardUI() {
         if (mScoreViewModel.fullBoard()) {
             showToast("It's a draw");
         }
         return true;
-    }
+    }*/
 
     // used in case of device rotation
-    public void preserveBoard() {
+   /* public void preserveBoard() {
         for (int i = 0; i < mScoreViewModel.getBoard().size(); i++) {
             ImageView cell = (ImageView) activityBinding.gridLayout.getChildAt(i);
             if (mScoreViewModel.getBoard().get(i) == 1) {
@@ -109,7 +110,7 @@ public class MainActivity extends BaseActivity {
                 cell.setClickable(false);
             }
         }
-    }
+    }*/
 
     // UI related
     // displays the winner on the screen
@@ -216,9 +217,9 @@ public class MainActivity extends BaseActivity {
 
     // UI related
     // could be used to make the grid cells not clickable
-    public void setClickableFalse() {
+   /* public void setClickableFalse() {
         for (int i = 0; i < activityBinding.gridLayout.getChildCount(); i++) {
             activityBinding.gridLayout.getChildAt(i).setClickable(false);
         }
-    }
+    }*/
 }
