@@ -57,7 +57,7 @@ public class MainActivity extends BaseActivity {
         if (mScoreViewModel.checkForWin()) {
             // round finished
             mScoreViewModel.isGameInProgress.postValue(false);
-            roundFinished(view);
+            //roundFinished(view);
             announceWinner();
         } else if (mScoreViewModel.fullBoard()) {
             // it's a draw
@@ -68,9 +68,9 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    public void roundFinished(View view) {
+    /*public void roundFinished(View view) {
         view.setClickable(false);
-    }
+    }*/
 
 
     // UI related
@@ -199,6 +199,8 @@ public class MainActivity extends BaseActivity {
 
             activityBinding.player1Result.setText("0");
             activityBinding.player2Result.setText("0");
+
+            mScoreViewModel.setBoard(new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0)));
         }
     }
 
