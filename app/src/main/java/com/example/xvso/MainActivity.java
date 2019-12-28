@@ -1,6 +1,5 @@
 package com.example.xvso;
 
-
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,9 +20,6 @@ import com.example.xvso.firebase.LoginActivity;
 import com.example.xvso.firebase.ProfileActivity;
 import com.example.xvso.viewmodel.ScoreViewModel;
 import com.google.firebase.auth.FirebaseAuth;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 
 public class MainActivity extends BaseActivity {
 
@@ -55,62 +51,17 @@ public class MainActivity extends BaseActivity {
         mScoreViewModel.play(Integer.parseInt((String) view.getTag()));
 
         if (mScoreViewModel.checkForWin()) {
-            // round finished
-            mScoreViewModel.isGameInProgress.postValue(false);
-            //roundFinished(view);
+
+            mScoreViewModel.gameEnded();
             announceWinner();
         } else if (mScoreViewModel.fullBoard()) {
-            // it's a draw
+
             showToast("It's a draw");
         } else {
-            // switch to the other player
+
             mScoreViewModel.togglePlayer();
         }
     }
-
-    /*public void roundFinished(View view) {
-        view.setClickable(false);
-    }*/
-
-
-    // UI related
-    // empties the board
-    public void resetBoard() {
-
-        mScoreViewModel.setBoard(new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0)));
-
-        hideWinningLines();
-
-        for (int i = 0; i < activityBinding.gridLayout.getChildCount(); i++) {
-            ImageView imageView = (ImageView) activityBinding.gridLayout.getChildAt(i);
-            imageView.setImageResource(0);
-            imageView.setClickable(true);
-        }
-    }
-
-
-    // UI related
-    // displays a toast on the screen in case of draw
-/*    public boolean fullBoardUI() {
-        if (mScoreViewModel.fullBoard()) {
-            showToast("It's a draw");
-        }
-        return true;
-    }*/
-
-    // used in case of device rotation
-   /* public void preserveBoard() {
-        for (int i = 0; i < mScoreViewModel.getBoard().size(); i++) {
-            ImageView cell = (ImageView) activityBinding.gridLayout.getChildAt(i);
-            if (mScoreViewModel.getBoard().get(i) == 1) {
-                cell.setImageResource(R.drawable.ic_cross);
-                cell.setClickable(false);
-            } else if ((mScoreViewModel.getBoard().get(i) == 2)) {
-                cell.setImageResource(R.drawable.ic_zero);
-                cell.setClickable(false);
-            }
-        }
-    }*/
 
     // UI related
     // displays the winner on the screen
@@ -120,10 +71,10 @@ public class MainActivity extends BaseActivity {
         if (mScoreViewModel.checkForWin()) {
             if (team == Team.TEAM_X) {
                 showToast("Player 1 has won! (X)");
-                updateCounters();
+                mScoreViewModel.updateScore();
             } else {
                 showToast("Player 2 has won! (O)");
-                updateCounters();
+                mScoreViewModel.updateScore();
             }
         }
     }
@@ -149,11 +100,13 @@ public class MainActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_new_round) {
 
-            resetBoard();
+            mScoreViewModel.resetGame();
+            hideChips();
+
         } else if (item.getItemId() == R.id.action_new_game) {
 
-            resetBoard();
-            initializePlayersUI();
+            mScoreViewModel.resetGame();
+            hideChips();
 
         } else if (item.getItemId() == R.id.action_watch_video) {
 
@@ -178,50 +131,11 @@ public class MainActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    // UI related
-    // hides each winning line
-    public void hideWinningLines() {
-        activityBinding.topHorizontal.setVisibility(View.INVISIBLE);
-        activityBinding.centerHorizontal.setVisibility(View.INVISIBLE);
-        activityBinding.bottomHorizontal.setVisibility(View.INVISIBLE);
-        activityBinding.leftVertical.setVisibility(View.INVISIBLE);
-        activityBinding.centerVertical.setVisibility(View.INVISIBLE);
-        activityBinding.rightVertical.setVisibility(View.INVISIBLE);
-        activityBinding.leftRightDiagonal.setVisibility(View.INVISIBLE);
-        activityBinding.rightLeftDiagonal.setVisibility(View.INVISIBLE);
-    }
-
-    // UO related
-    // initializes the players' result
-    public void initializePlayersUI() {
-
-        if (mScoreViewModel.initializePlayers()) {
-
-            activityBinding.player1Result.setText("0");
-            activityBinding.player2Result.setText("0");
-
-            mScoreViewModel.setBoard(new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0)));
-        }
-    }
-
-    // UI related
-    // updates the counters
-    public void updateCounters() {
-
-        mScoreViewModel.updateScore();
-
-        if (mScoreViewModel.getCurrentTeam().getTeamType() == Team.TEAM_X) {
-            activityBinding.player1Result.setText(String.valueOf(mScoreViewModel.getCurrentTeam().getTeamScore()));
-        } else if (mScoreViewModel.getCurrentTeam().getTeamType() == Team.TEAM_O) {
-            activityBinding.player2Result.setText(String.valueOf(mScoreViewModel.getCurrentTeam().getTeamScore()));
-        }
-    }
-
-    // UI related
-    // could be used to make the grid cells not clickable
-   /* public void setClickableFalse() {
+    public void hideChips() {
         for (int i = 0; i < activityBinding.gridLayout.getChildCount(); i++) {
-            activityBinding.gridLayout.getChildAt(i).setClickable(false);
+            ImageView imageView = (ImageView) activityBinding.gridLayout.getChildAt(i);
+            imageView.setImageResource(0);
+            imageView.setClickable(true);
         }
-    }*/
+    }
 }

@@ -40,7 +40,7 @@ public class ScoreViewModel extends ViewModel {
         return isGameInProgress;
     }
 
-    public void setIsGameInProgress(MutableLiveData<Boolean> isGameInProgress) {
+    private void setIsGameInProgress(MutableLiveData<Boolean> isGameInProgress) {
         this.isGameInProgress = isGameInProgress;
     }
 
@@ -284,6 +284,39 @@ public class ScoreViewModel extends ViewModel {
     public void play(int position) {
         board.set(position, currentTeam.getTeamType());
         boardLiveData.setValue(board);
+    }
+
+    public void resetGame(){
+
+        clearBoard();
+
+        // creates new instances of teamX and teamO
+        teamX.setValue(new Team(Team.TEAM_X));
+        teamO.setValue(new Team(Team.TEAM_O));
+
+        board = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0));
+    }
+
+    // hide winning lines
+    public void clearBoard() {
+
+        // hides horizontal lines
+        topHorizontalLine.setValue(false);
+        centerHorizontal.setValue(false);
+        bottomHorizontal.setValue(false);
+
+        // hides vertical lines
+        leftVertical.setValue(false);
+        centerVertical.setValue(false);
+        rightVertical.setValue(false);
+
+        // hides diagonals
+        leftRightDiagonal.setValue(false);
+        rightLeftDiagonal.setValue(false);
+    }
+
+    public void gameEnded(){
+        isGameInProgress.postValue(false);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
