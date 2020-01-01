@@ -58,7 +58,6 @@ public class MainActivity extends BaseActivity {
 
             showToast("It's a draw");
         } else {
-
             mScoreViewModel.togglePlayer();
         }
     }
@@ -72,9 +71,11 @@ public class MainActivity extends BaseActivity {
             if (team == Team.TEAM_X) {
                 showToast("Player 1 has won! (X)");
                 mScoreViewModel.updateScore();
+                activityBinding.player1Result.setText(String.valueOf(mScoreViewModel.getCurrentTeam().getTeamScore()));
             } else {
                 showToast("Player 2 has won! (O)");
                 mScoreViewModel.updateScore();
+                activityBinding.player2Result.setText(String.valueOf(mScoreViewModel.getCurrentTeam().getTeamScore()));
             }
         }
     }
@@ -107,6 +108,7 @@ public class MainActivity extends BaseActivity {
 
             mScoreViewModel.resetGame();
             hideChips();
+            // no need to reset the score, as boardLiveData.setValue is being called on an empty board
 
         } else if (item.getItemId() == R.id.action_watch_video) {
 

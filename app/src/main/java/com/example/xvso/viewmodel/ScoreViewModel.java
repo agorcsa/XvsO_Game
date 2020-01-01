@@ -247,20 +247,23 @@ public class ScoreViewModel extends ViewModel {
         }
     }
 
-    public boolean initializePlayers() {
+   /* public boolean initializePlayers() {
 
         teamX.setValue(new Team());
         teamO.setValue(new Team());
 
         return true;
     }
-
+*/
     public void updateScore() {
+        // the score for the winning team would be increased after one round
         currentTeam.incrementScore();
 
         if (currentTeam.getTeamType() == Team.TEAM_X) {
+            // the winning team (team X) takes the current team instance
             teamX.setValue(currentTeam);
         } else {
+            // the winning team (team O) takes the current team instance
             teamO.setValue(currentTeam);
         }
     }
@@ -297,6 +300,13 @@ public class ScoreViewModel extends ViewModel {
         board = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0));
     }
 
+    public void newRound() {
+
+        clearBoard();
+
+        isGameInProgress.setValue(true);
+    }
+
     // hide winning lines
     public void clearBoard() {
 
@@ -326,4 +336,6 @@ public class ScoreViewModel extends ViewModel {
             return dataSnapshot.getValue(User.class);
         }
     }
+
+
 }
