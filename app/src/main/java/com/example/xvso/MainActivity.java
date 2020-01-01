@@ -101,7 +101,7 @@ public class MainActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_new_round) {
 
-            mScoreViewModel.resetGame();
+            mScoreViewModel.newRound();
             hideChips();
 
         } else if (item.getItemId() == R.id.action_new_game) {

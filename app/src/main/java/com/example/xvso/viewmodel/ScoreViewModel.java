@@ -298,11 +298,17 @@ public class ScoreViewModel extends ViewModel {
         teamO.setValue(new Team(Team.TEAM_O));
 
         board = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0));
+
+        boardLiveData.setValue(board);
+
+        isGameInProgress.setValue(true);
     }
 
     public void newRound() {
 
         clearBoard();
+
+        board = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0));
 
         isGameInProgress.setValue(true);
     }
@@ -336,6 +342,4 @@ public class ScoreViewModel extends ViewModel {
             return dataSnapshot.getValue(User.class);
         }
     }
-
-
 }
