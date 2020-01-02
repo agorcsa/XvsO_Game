@@ -11,7 +11,6 @@ public class User {
 
     // empty constructor used for saving the user to database
     public User() {
-
     }
 
     public User(String firstName, String lastName, String email, String password) {
