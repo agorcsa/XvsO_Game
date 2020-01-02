@@ -38,6 +38,7 @@ public class MainActivity extends BaseActivity {
         mScoreViewModel = ViewModelProviders.of(this).get(ScoreViewModel.class);
         activityBinding.setViewModel(mScoreViewModel);
         activityBinding.setLifecycleOwner(this);
+        initializeScore();
     }
 
     public void dropIn(View view) {
@@ -103,11 +104,15 @@ public class MainActivity extends BaseActivity {
 
             mScoreViewModel.newRound();
             hideChips();
+            mScoreViewModel.togglePlayer();
 
         } else if (item.getItemId() == R.id.action_new_game) {
 
             mScoreViewModel.resetGame();
             hideChips();
+            mScoreViewModel.togglePlayer();
+
+            initializeScore();
             // no need to reset the score, as boardLiveData.setValue is being called on an empty board
 
         } else if (item.getItemId() == R.id.action_watch_video) {
@@ -139,5 +144,10 @@ public class MainActivity extends BaseActivity {
             imageView.setImageResource(0);
             imageView.setClickable(true);
         }
+    }
+
+    public void initializeScore(){
+        activityBinding.player1Result.setText("0");
+        activityBinding.player2Result.setText("0");
     }
 }

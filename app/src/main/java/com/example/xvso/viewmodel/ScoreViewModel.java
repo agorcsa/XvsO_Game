@@ -239,7 +239,6 @@ public class ScoreViewModel extends ViewModel {
     public boolean checkForWin() {
         if (checkRows() || checkColumns() || checkDiagonals()) {
             setGameOver(true);
-            //setClickableFalse();
             return true;
         } else {
             setGameOver(false);
@@ -247,14 +246,6 @@ public class ScoreViewModel extends ViewModel {
         }
     }
 
-   /* public boolean initializePlayers() {
-
-        teamX.setValue(new Team());
-        teamO.setValue(new Team());
-
-        return true;
-    }
-*/
     public void updateScore() {
         // the score for the winning team would be increased after one round
         currentTeam.incrementScore();
