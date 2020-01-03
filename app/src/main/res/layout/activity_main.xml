@@ -190,6 +190,7 @@
                     android:layout_marginLeft="10dp"
                     android:layout_marginTop="20dp"
                     android:textColor="@color/color_red"
+                    android:text="@{String.valueOf(viewModel.teamX.teamScore)}"
                     android:textSize="@dimen/text_size_large" />
             </LinearLayout>
 
@@ -215,6 +216,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:textColor="@color/color_red"
+                    android:text="@{String.valueOf(viewModel.teamO.teamScore)}"
                     android:textSize="@dimen/text_size_large" />
             </LinearLayout>
 

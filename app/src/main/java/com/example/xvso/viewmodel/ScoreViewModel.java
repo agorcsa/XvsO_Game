@@ -301,6 +301,8 @@ public class ScoreViewModel extends ViewModel {
 
         board = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0));
 
+        boardLiveData.setValue(board);
+
         isGameInProgress.setValue(true);
     }
 
@@ -324,6 +326,7 @@ public class ScoreViewModel extends ViewModel {
 
     public void gameEnded(){
         isGameInProgress.postValue(false);
+        updateScore();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)

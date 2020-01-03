@@ -9,15 +9,25 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <activity
-            android:name=".firebase.LoginActivity"
-            android:label="@string/app_name"
+            android:name=".WelcomeActivity"
+            android:label="X vs. O in Space"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".firebase.LoginActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleTop">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".WelcomeActivity" />
         </activity>
 
         <activity
@@ -65,11 +75,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".firebase.LoginActivity" />
         </activity>
-
-
     </application>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-
     <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>

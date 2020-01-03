@@ -36,17 +36,6 @@ public class MainActivity extends BaseActivity {
         mScoreViewModel = ViewModelProviders.of(this).get(ScoreViewModel.class);
         activityBinding.setViewModel(mScoreViewModel);
         activityBinding.setLifecycleOwner(this);
-        initializeScore();
-    }
-
-    /**
-     * method used when the game starts and when the board is reset
-     * sets the score for player1(teamX) to "0"
-     * sets the score for player2(teamO) to "0"
-     */
-    public void initializeScore() {
-        activityBinding.player1Result.setText("0");
-        activityBinding.player2Result.setText("0");
     }
 
     /**
@@ -80,29 +69,11 @@ public class MainActivity extends BaseActivity {
 
         int team = mScoreViewModel.getCurrentTeam().getTeamType();
 
-        if (mScoreViewModel.checkForWin()) {
             if (team == Team.TEAM_X) {
                 showToast("Player 1 has won! (X)");
-                mScoreViewModel.updateScore();
-                activityBinding.player1Result.setText(String.valueOf(mScoreViewModel.getCurrentTeam().getTeamScore()));
             } else {
                 showToast("Player 2 has won! (O)");
-                mScoreViewModel.updateScore();
-                activityBinding.player2Result.setText(String.valueOf(mScoreViewModel.getCurrentTeam().getTeamScore()));
             }
-        }
-    }
-
-    /**
-     * hides the chips of the board
-     * method used when a new round is started or when the game is reset
-     */
-    public void hideChips() {
-        for (int i = 0; i < activityBinding.gridLayout.getChildCount(); i++) {
-            ImageView imageView = (ImageView) activityBinding.gridLayout.getChildAt(i);
-            imageView.setImageResource(0);
-            imageView.setClickable(true);
-        }
     }
 
     /**
@@ -125,14 +96,11 @@ public class MainActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_new_round) {
             mScoreViewModel.newRound();
-            hideChips();
             mScoreViewModel.togglePlayer();
         } else if (item.getItemId() == R.id.action_new_game) {
             mScoreViewModel.resetGame();
-            hideChips();
             mScoreViewModel.togglePlayer();
             // no need to reset the score, as boardLiveData.setValue is being called on an empty board
-            initializeScore();
         } else if (item.getItemId() == R.id.action_watch_video) {
             Intent intent = new Intent(MainActivity.this, VideoActivity.class);
             startActivity(intent);
