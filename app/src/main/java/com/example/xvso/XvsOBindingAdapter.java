@@ -34,4 +34,14 @@ public class XvsOBindingAdapter {
             imageView.setClickable(false);
         }
     }
+
+    @BindingAdapter("name")
+    public static void displayUserName(String name, String firstName) {
+        // which using an if-else condition, you can display the firstName (if any), or else show the name field.
+        if (!firstName.isEmpty() || firstName != null)  {
+            // display firstName
+        } else {
+            // display name
+        }
+    }
 }

@@ -70,11 +70,12 @@ public class ScoreViewModel extends ViewModel {
         auth = FirebaseAuth.getInstance();
 
         if (auth.getUid() != null) {
-            query = FirebaseDatabase.getInstance().getReference("users").child((auth.getUid()));
-        }
 
-        FirebaseQueryLiveData resultLiveData = new FirebaseQueryLiveData(query);
-        userLiveData = Transformations.map(resultLiveData, (androidx.arch.core.util.Function<DataSnapshot, User>) new Deserializer());
+            query = FirebaseDatabase.getInstance().getReference("users").child((auth.getUid()));
+
+            FirebaseQueryLiveData resultLiveData = new FirebaseQueryLiveData(query);
+            userLiveData = Transformations.map(resultLiveData, new Deserializer());
+        }
     }
 
     public ArrayList<Integer> getBoard() {

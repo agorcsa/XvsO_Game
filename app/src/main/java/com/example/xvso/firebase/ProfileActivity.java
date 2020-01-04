@@ -355,7 +355,7 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
                             profileBinding.userNameTextview.setText(fullName);
                             profileBinding.emailAddressTextview.setText(email);
 
-                        }  else {
+                        } else {
 
                             Glide.with(getApplicationContext())
                                     .load(R.drawable.tictactoe)
@@ -424,7 +424,6 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
                 });
     }
 
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -447,7 +446,6 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
                 break;
         }
     }
-
 
     public void showMessage(String message) {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();

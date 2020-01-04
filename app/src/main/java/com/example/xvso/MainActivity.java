@@ -117,7 +117,7 @@ public class MainActivity extends BaseActivity {
     }
 
     /**
-     * method which displays a toast message only by giving the message as String parameter
+     * auxiliary method which displays a toast message only by giving the message as String parameter
      * @param message
      */
     public void showToast(String message) {
