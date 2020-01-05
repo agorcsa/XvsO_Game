@@ -2,15 +2,22 @@ package com.example.xvso;
 
 public class User {
 
+    private String mName;
     private String mFirstName;
     private String mLastName;
     private String mEmailAddress;
     private String mPassword;
     private String mImageUrl;
-    private String mName;
+
 
     // empty constructor used for saving the user to database
     public User() {
+    }
+
+    public User(String name, String email, String password) {
+        mName = name;
+        mEmailAddress =  email;
+        mPassword = password;
     }
 
     public User(String firstName, String lastName, String email, String password) {

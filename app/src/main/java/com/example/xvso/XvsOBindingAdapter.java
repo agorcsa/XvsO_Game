@@ -1,6 +1,7 @@
 package com.example.xvso;
 
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.databinding.BindingAdapter;
 
@@ -36,12 +37,13 @@ public class XvsOBindingAdapter {
     }
 
     @BindingAdapter("name")
-    public static void displayUserName(String name, String firstName) {
-        // which using an if-else condition, you can display the firstName (if any), or else show the name field.
+    public static void displayUserName(TextView textView, String name, String firstName) {
         if (!firstName.isEmpty() || firstName != null)  {
             // display firstName
+            textView.setText(firstName);
         } else {
             // display name
+            textView.setText(name);
         }
     }
 }
