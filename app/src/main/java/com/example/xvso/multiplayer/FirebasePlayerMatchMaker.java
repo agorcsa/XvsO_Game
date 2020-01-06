@@ -16,8 +16,8 @@ import com.google.firebase.database.annotations.Nullable;
 
 public class FirebasePlayerMatchMaker {
 
-    public static interface OnMatchMadeCallback {
-        public void run(FirebasePlayerMatchMaker c);
+    public interface OnMatchMadeCallback {
+        void run(FirebasePlayerMatchMaker c);
     }
 
     public static final String RANDOM_ROOM_ID = "/Globl";
