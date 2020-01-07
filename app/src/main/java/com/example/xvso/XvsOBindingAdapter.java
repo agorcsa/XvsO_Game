@@ -1,6 +1,7 @@
 package com.example.xvso;
 
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.databinding.BindingAdapter;
 
@@ -35,7 +36,7 @@ public class XvsOBindingAdapter {
         }
     }
 
-   /* @BindingAdapter("name")
+    @BindingAdapter("name")
     public static void displayUserName(TextView textView, String name, String firstName) {
         if (!firstName.isEmpty() || firstName != null)  {
             // display firstName
@@ -44,5 +45,5 @@ public class XvsOBindingAdapter {
             // display name
             textView.setText(name);
         }
-    }*/
+    }
 }
