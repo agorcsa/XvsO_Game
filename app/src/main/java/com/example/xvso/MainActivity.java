@@ -24,6 +24,7 @@ import com.google.firebase.auth.FirebaseAuth;
 public class MainActivity extends BaseActivity {
 
     private static final String LOG_TAG = "MainActivity";
+
     private ScoreViewModel mScoreViewModel;
     private ActivityMainBinding activityBinding;
 

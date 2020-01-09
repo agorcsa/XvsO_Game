@@ -1,5 +1,7 @@
 package com.example.xvso;
 
+import androidx.lifecycle.MutableLiveData;
+
 public class User {
 
     private String mName;
@@ -11,7 +13,7 @@ public class User {
 
 
     // empty constructor used for saving the user to database
-    public User() {
+    public User(String name, MutableLiveData<String> email, MutableLiveData<String> password) {
     }
 
     public User(String name, String email, String password) {
