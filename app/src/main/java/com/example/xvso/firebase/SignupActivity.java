@@ -9,13 +9,11 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.ViewModelProviders;
 
 import com.example.xvso.MainActivity;
 import com.example.xvso.R;
 import com.example.xvso.User;
 import com.example.xvso.databinding.ActivitySignupBinding;
-import com.example.xvso.viewmodel.SignUpViewModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -28,7 +26,7 @@ import java.util.regex.Pattern;
 public class SignupActivity extends BaseActivity {
 
     private ActivitySignupBinding signupBinding;
-    private SignUpViewModel signUpViewModel;
+    //private SignUpViewModel signUpViewModel;
 
     private static final Pattern PASSWORD_PATTERN =
             Pattern.compile("^" +           // beginning of the String
@@ -51,7 +49,7 @@ public class SignupActivity extends BaseActivity {
         setContentView(R.layout.activity_signup);
 
         signupBinding = DataBindingUtil.setContentView(this, R.layout.activity_signup);
-        signUpViewModel = ViewModelProviders.of(this).get(SignUpViewModel.class);
+        //signUpViewModel = ViewModelProviders.of(this).get(SignUpViewModel.class);
 
         //Get Firebase auth instance
         auth = FirebaseAuth.getInstance();
@@ -74,30 +72,30 @@ public class SignupActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
 
-             signUpViewModel.getEmail().setValue(signupBinding.inputEmail.getText().toString().trim());
-             signUpViewModel.getPassword().setValue(signupBinding.inputPassword.getText().toString().trim());
+                final String email = signupBinding.inputEmail.getText().toString().trim();
+                final String password = signupBinding.inputPassword.getText().toString().trim();
 
-                if (TextUtils.isEmpty((CharSequence) signUpViewModel.getEmail())) {
+                if (TextUtils.isEmpty(email)) {
                     Toast.makeText(getApplicationContext(), "Enter email address!", Toast.LENGTH_SHORT).show();
                     return;
 
-                } else if (!Patterns.EMAIL_ADDRESS.matcher((CharSequence) signUpViewModel.getEmail()).matches()) {
+                } else if (!Patterns.EMAIL_ADDRESS.matcher(email)) {
                     signupBinding.inputEmail.setError("Please enter a valid e-mail address");
                 }
 
-                if (TextUtils.isEmpty((CharSequence) signUpViewModel.getPassword())) {
+                if (TextUtils.isEmpty(password)) {
                     Toast.makeText(getApplicationContext(), "Enter password!", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                if (((CharSequence) signUpViewModel.getPassword()).length() < 6) {
+                if (password.length() < 6) {
                     Toast.makeText(getApplicationContext(), "Password too short, enter minimum 6 characters!", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 signupBinding.progressBar.setVisibility(View.VISIBLE);
                 //create user
-                auth.createUserWithEmailAndPassword(signUpViewModel.getEmail().toString(), signUpViewModel.getPassword().toString())
+                auth.createUserWithEmailAndPassword(email, password)
                         .addOnCompleteListener(SignupActivity.this, new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -115,7 +113,7 @@ public class SignupActivity extends BaseActivity {
                                     String firstName = "";
                                     String lastName = "";
 
-                                    User user = new User(name, signUpViewModel.getEmail(), signUpViewModel.getPassword());
+                                    User user = new User(name, email, password);
 
                                     databaseReference = FirebaseDatabase.getInstance().getReference("users");
                                     databaseReference.child(getFirebaseUser().getUid()).setValue(user);
