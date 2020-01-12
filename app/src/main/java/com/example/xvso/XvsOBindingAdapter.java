@@ -52,7 +52,7 @@ public class XvsOBindingAdapter {
     private boolean errorFirstName(TextInputEditText view, Boolean isValid) {
         if (isValid) {
             view.setError(null);
-        } else if (view.getText().toString().toString().isEmpty()) {
+        } else if (view.getText().toString().isEmpty()) {
             view.setError(view.getContext().getString(R.string.invalid_field));
         } else if (Integer.valueOf(view.getText().toString()) > 10) {
             view.setError(view.getContext().getString(R.string.first_name_too_long));
