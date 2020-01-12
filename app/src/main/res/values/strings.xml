@@ -35,4 +35,9 @@
     <string name="forgot_password_msg">We just need your registered Email Id to sent you password reset instructions.</string>
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
+
+    <!-- ProfileActivity and ProfileViewModel-->
+    <string name="invalid_field">Field can\'t be empty</string>
+    <string name="last_name_too_long">Last name too long</string>
+    <string name="first_name_too_long">First name too long</string>
 </resources>

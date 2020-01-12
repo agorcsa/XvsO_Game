@@ -5,6 +5,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.example.xvso.firebase.ProfileActivity">
 
+    <data>
+        <variable
+            name="viewModelProfile"
+            type="com.example.xvso.viewmodel.ProfileViewModel" />
+    </data>
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -83,6 +89,8 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:inputType="text"
+                                android:text="@={viewModelProfile.userLiveData.firstName}"
+                                app:errorEmail="@{viewModelProfile.isFirstNameValid}"
                                 android:maxLines="1"
                                 android:textSize="@dimen/text_size_medium" />
                         </com.google.android.material.textfield.TextInputLayout>
@@ -117,6 +125,8 @@
                                 android:layout_height="wrap_content"
                                 android:inputType="text"
                                 android:maxLines="1"
+                                android:text="@={viewModelProfile.userLiveData.lastName}"
+                                app:errorEmail="@{viewModelProfile.isLastNameValid}"
                                 android:textSize="@dimen/text_size_medium" />
                         </com.google.android.material.textfield.TextInputLayout>
 
@@ -150,6 +160,8 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:inputType="textEmailAddress"
+                                android:text="@={viewModelProfile.userLiveData.emailAddress}"
+                                app:errorEmail="@{viewModelProfile.isEmailValid}"
                                 android:maxLines="1"
                                 android:textSize="@dimen/text_size_medium" />
                         </com.google.android.material.textfield.TextInputLayout>
@@ -183,6 +195,8 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:inputType="textPassword"
+                                android:text="@={viewModelProfile.userLiveData.password}"
+                                app:errorEmail="@{viewModelProfile.isPasswordValid"
                                 android:maxLines="1"
                                 android:textSize="@dimen/text_size_medium" />
                         </com.google.android.material.textfield.TextInputLayout>
@@ -191,7 +205,6 @@
                 </LinearLayout>
 
     </LinearLayout>
-
 
         <Button
             android:id="@+id/submit_button"

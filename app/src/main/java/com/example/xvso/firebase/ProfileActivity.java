@@ -5,6 +5,7 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
@@ -13,12 +14,14 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.xvso.R;
 import com.example.xvso.User;
 import com.example.xvso.databinding.ActivityProfileBinding;
+import com.example.xvso.viewmodel.ProfileViewModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -44,7 +47,10 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
 
     // number of images to select
     private static final int PICK_IMAGE = 1;
+
     ActivityProfileBinding profileBinding;
+
+    private ProfileViewModel profileViewModel;
 
     // represents the substring of the email address, the first part before "@"
     private String name;
@@ -69,12 +75,19 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
         super.onCreate(savedInstanceState);
 
         profileBinding = DataBindingUtil.setContentView(this, R.layout.activity_profile);
+        profileViewModel = ViewModelProviders.of(this).get(ProfileViewModel.class);
+
         profileBinding.submitButton.setOnClickListener(this);
         profileBinding.profilePicture.setOnClickListener(this);
+
+        profileBinding.setViewModelProfile(profileViewModel);
+
+        profileBinding.setLifecycleOwner(this);
 
         mStorageRef = FirebaseStorage.getInstance().getReference("users");
         mDatabaseRef = FirebaseDatabase.getInstance().getReference("users");
 
+        // not needed, because at first log-in the user is empty
         //globalUser = new User(firstName, lastName, email, password, imageUrl);
         globalUser = new User();
     }
@@ -95,7 +108,6 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
             uploadUserImage();
         }
     }
-
 
     private void uploadUserImage() {
 
@@ -149,7 +161,7 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
             @Override
             public void onSuccess(final Uri uri) {
 
-                getEditTextData();
+                // 2. getEditTextData();
 
                 //globalUser = new User(firstName, lastName, email, password, imageUrl);
 
@@ -174,99 +186,24 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
         });
     }
 
-
-    public void getEditTextData() {
-        firstName = profileBinding.firstNameEditview.getText().toString();
-        lastName = profileBinding.lastNameEditview.getText().toString();
-        password = profileBinding.passwordEditview.getText().toString();
-        email = profileBinding.emailEditview.getText().toString();
-    }
-
-    private void setEditTextData(String firstName, String lastName, String password, String email) {
+    /*private void setEditTextData(String firstName, String lastName, String password, String email) {
         profileBinding.firstNameEditview.setText(firstName);
         profileBinding.lastNameEditview.setText(lastName);
         profileBinding.passwordEditview.setText(password);
         profileBinding.emailEditview.setText(email);
-    }
+    }*/
 
 
-    private boolean validateFirstName() {
-        String firstNameInput = profileBinding.firstNameEditview.getText().toString().trim();
-        if (firstNameInput.isEmpty()) {
-            profileBinding.firstNameEditview.setError("Field can't be empty");
-            return false;
-        } else if (firstNameInput.length() > 10) {
-            profileBinding.firstNameEditview.setError("First name too long");
-            return false;
-        } else {
-            profileBinding.emailEditview.setError(null);
-            return true;
-        }
-    }
-
-
-    private boolean validateLastName() {
-        String lastNameInput = profileBinding.lastNameEditview.getText().toString().trim();
-        if (lastNameInput.isEmpty()) {
-            profileBinding.lastNameEditview.setError("Field can't be empty");
-            return false;
-        } else if (lastNameInput.length() > 10) {
-            profileBinding.lastNameEditview.setError("Last name too long");
-            return false;
-        } else {
-            profileBinding.lastNameEditview.setError(null);
-            return true;
-        }
-    }
-
-    private boolean validateEmail() {
-
-        String emailInput = profileBinding.emailEditview.getText().toString().trim();
-
-        if (emailInput.isEmpty()) {
-            profileBinding.emailEditview.setError("Field can't be empty");
-            return false;
-        } else {
-            profileBinding.emailEditview.setError(null);
-            return true;
-        }
-    }
-
-
-    private boolean validatePassword() {
-
-        String passwordInput = profileBinding.passwordEditview.getText().toString().trim();
-
-        if (passwordInput.isEmpty()) {
-            profileBinding.passwordEditview.setError("Field can't be empty");
-            return false;
-        } else {
-            profileBinding.passwordEditview.setError(null);
-            return true;
-        }
-    }
-
-    private boolean confirmInput() {
-        if (!validateFirstName() | !validateLastName() | !validateEmail() | !validatePassword()) {
-            return false;
-        }
-
-        String input = "First name: " + profileBinding.firstNameEditview.getText().toString();
-        input += "\n";
-        input += "Last name: " + profileBinding.lastNameEditview.getText().toString();
-        input += "\n";
-        input += "Email: " + profileBinding.emailEditview.getText().toString();
-        input += "\n";
-        input += "Password: " + profileBinding.passwordEditview.getText().toString();
-
-        showMessage(input);
-        return true;
-    }
-
+    /*public void getEditTextData() {
+        firstName = profileBinding.firstNameEditview.getText().toString();
+        lastName = profileBinding.lastNameEditview.getText().toString();
+        password = profileBinding.passwordEditview.getText().toString();
+        email = profileBinding.emailEditview.getText().toString();
+    }*/
 
     public void updateUserData() {
 
-        getEditTextData();
+        // 2. getEditTextData();
 
         if (imagePath != null) {
 
@@ -348,7 +285,7 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
                             String password = globalUser.getPassword();
                             String email = globalUser.getEmailAddress();
 
-                            setEditTextData(firstName, lastName, password, email);
+                            // 1. setEditTextData(firstName, lastName, password, email);
 
                             String fullName = firstName + " " + lastName;
 
@@ -361,13 +298,13 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
                                     .load(R.drawable.tictactoe)
                                     .into(profileBinding.profilePicture);
 
-                            if (globalUser.getFirstName().isEmpty() || globalUser.getFirstName() == null) {
+                            if (TextUtils.isEmpty(globalUser.getFirstName())) {
                                 firstName = "";
                             } else {
                                 firstName = globalUser.getFirstName();
                             }
 
-                            if (globalUser.getLastName().isEmpty() || globalUser.getLastName() == null) {
+                            if (TextUtils.isEmpty(globalUser.getFirstName())) {
                                 lastName = "";
                             } else {
                                 lastName = globalUser.getLastName();
@@ -376,7 +313,7 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
                             String password = globalUser.getPassword();
                             String email = globalUser.getEmailAddress();
 
-                            setEditTextData(firstName, lastName, password, email);
+                            // 1. setEditTextData(firstName, lastName, password, email);
 
                             String fullName = firstName + " " + lastName;
 
@@ -407,7 +344,7 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
 
         FirebaseUser user = getFirebaseUser();
 
-        getEditTextData();
+        // 2. getEditTextData();
 
         UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                 .setDisplayName(firstName + " " + lastName)
@@ -439,9 +376,9 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
                     // readFromDatabase();
                     updateUserProfile();
                     updateUserData();
-                    if (confirmInput()) {
+                    /*if (confirmInput()) {
                         showMessage("Changes have been saved");
-                    }
+                    }*/
                 }
                 break;
         }

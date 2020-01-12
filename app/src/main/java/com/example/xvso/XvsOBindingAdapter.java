@@ -6,6 +6,8 @@ import android.widget.TextView;
 
 import androidx.databinding.BindingAdapter;
 
+import com.google.android.material.textfield.TextInputEditText;
+
 public class XvsOBindingAdapter {
 
     @BindingAdapter("state")
@@ -39,12 +41,56 @@ public class XvsOBindingAdapter {
 
     @BindingAdapter({"name", "firstName"})
     public static void displayUserName(TextView textView, String name, String firstName) {
-        if (TextUtils.isEmpty(firstName))  {
-            // display name
+        if (TextUtils.isEmpty(firstName)) {
             textView.setText(name);
         } else {
-            // display firstName
             textView.setText(firstName);
+        }
+    }
+
+    @BindingAdapter("errorFirstName")
+    private boolean errorFirstName(TextInputEditText view, Boolean isValid) {
+        if (isValid) {
+            view.setError(null);
+        } else if (view.getText().toString().toString().isEmpty()) {
+            view.setError(view.getContext().getString(R.string.invalid_field));
+        } else if (Integer.valueOf(view.getText().toString()) > 10) {
+            view.setError(view.getContext().getString(R.string.first_name_too_long));
+        }
+        return true;
+    }
+
+    @BindingAdapter("errorLastName")
+    private boolean errorLastName(TextInputEditText view, Boolean isValid) {
+        if (isValid) {
+            view.setError(null);
+        } else if (view.getText().toString().isEmpty()) {
+            view.setError(view.getContext().getString(R.string.invalid_field));
+        } else if (Integer.valueOf(view.getText().toString()) > 10) {
+            view.setError(view.getContext().getString(R.string.last_name_too_long));
+        }
+        return true;
+    }
+
+    @BindingAdapter("errorEmail")
+    public static void errorEmail(TextInputEditText view, Boolean isValid) {
+        if (isValid) {
+            // hide the error
+            view.setError(null);
+        } else {
+            // show the error
+            view.setError(view.getContext().getString(R.string.invalid_field));
+        }
+    }
+
+    @BindingAdapter("errorPassword")
+    public static void errorPassword(TextInputEditText view, Boolean isValid) {
+        if (isValid) {
+            // hide the error
+            view.setError(null);
+        } else {
+            // show the error
+            view.setError(view.getContext().getString(R.string.invalid_field));
         }
     }
 }
