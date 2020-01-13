@@ -86,79 +86,97 @@ public class User {
     }
 
     public boolean isFirstNameValid() {
-       if (!isFirstNameEmpty() || isFirstNameGreaterThanTen()) {
+       if (!isFieldEmpty(getFirstName()) || isFieldLengthGreaterThan(getFirstName(), 10)) {
            return true;
        } else {
            return false;
        }
     }
 
-    public boolean isFirstNameEmpty() {
+    /*public boolean isFirstNameEmpty() {
        if (getFirstName().isEmpty()) {
             return true;
         } else {
            return false;
        }
-    }
+    }*/
 
-    public boolean isFirstNameGreaterThanTen() {
+    /*public boolean isFirstNameGreaterThanTen() {
        if (getFirstName().length() > 10) {
            return true;
        } else {
            return false;
        }
-    }
+    }*/
 
     public boolean isLastNameValid() {
-        if (!isLastNameEmpty() || isLastNameGreaterThanTen()) {
+        if (!isFieldEmpty(getLastName()) || isFieldLengthGreaterThan(getLastName(), 10)) {
             return true;
         } else {
             return false;
         }
     }
 
-    public boolean isLastNameEmpty() {
+    /*public boolean isLastNameEmpty() {
         if (getLastName().isEmpty()) {
             return true;
         } else {
             return false;
         }
-    }
+    }*/
 
-    public boolean isLastNameGreaterThanTen() {
+    /*public boolean isLastNameGreaterThanTen() {
         if (getLastName().length() > 10) {
             return true;
         } else {
             return false;
         }
     }
-
+*/
     public boolean isEmailValid() {
         return Patterns.EMAIL_ADDRESS.matcher(getEmailAddress()).matches();
     }
 
     public boolean isPasswordValid() {
 
-       if (!isPasswordEmpty() || isPasswordLengthGraterThanFive()) {
+       if (!isFieldEmpty(getPassword()) || isFieldLengthGreaterThan(getPassword(), 5)) {
            return true;
        } else {
            return false;
        }
     }
 
-    public boolean isPasswordLengthGraterThanFive() {
+   /* public boolean isPasswordLengthGreaterThanFive() {
         if (getPassword().length() > 5) {
             return true;
         } else {
             return false;
         }
-    }
+    }*/
 
-    public boolean isPasswordEmpty() {
+    /*public boolean isPasswordEmpty() {
        if (getPassword().isEmpty()) {
            return true;
        } else {
            return false;
+       }
+    }*/
+
+    // generic method for checking if a field is empty
+    public boolean isFieldEmpty(String field) {
+       if (field.isEmpty()) {
+           return true;
+       } else {
+           return false;
+       }
+    }
+
+    // generic method for checking the length is greater than a given number
+    public boolean isFieldLengthGreaterThan(String field, int number) {
+       if (field.length() > number) {
+           return true;
+       } else {
+           return  false;
        }
     }
 }

@@ -153,17 +153,15 @@ public class ProfileViewModel extends ViewModel {
             return false;
         }
 
-        /*String input = "First name: " + profileBinding.firstNameEditview.getText().toString();
+        String input = "First name: " + getFirstName();
         input += "\n";
-        input += "Last name: " + profileBinding.lastNameEditview.getText().toString();
+        input += "Last name: " + getLastName();
         input += "\n";
-        input += "Email: " + profileBinding.emailEditview.getText().toString();
+        input += "Email: " + getEmail();
         input += "\n";
-        input += "Password: " + profileBinding.passwordEditview.getText().toString();
+        input += "Password: " + getPassword();
 
-        showMessage(input);*/
-
-        //Toast.makeText(context, "User Input Confirmed", Toast.LENGTH_SHORT).show();
+        //showMessage(input);
 
         return true;
     }
