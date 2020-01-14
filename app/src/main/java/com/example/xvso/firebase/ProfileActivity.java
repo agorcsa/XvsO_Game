@@ -22,12 +22,8 @@ import com.example.xvso.R;
 import com.example.xvso.User;
 import com.example.xvso.databinding.ActivityProfileBinding;
 import com.example.xvso.viewmodel.ProfileViewModel;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -209,7 +205,7 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
 
             String imageUrl = imagePath.toString();
 
-            setDatabaseReference(imageUrl);
+            //setDatabaseReference(imageUrl);
 
         } else {
 
@@ -217,25 +213,8 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
 
             String placeholderUrl = uri.toString();
 
-            setDatabaseReference(placeholderUrl);
+            //setDatabaseReference(placeholderUrl);
         }
-    }
-
-    public void setDatabaseReference(String url) {
-
-        globalUser.setFirstName(firstName);
-
-        globalUser.setLastName(lastName);
-
-        globalUser.setPassword(password);
-
-        globalUser.setEmailAddress(email);
-
-        FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
-
-        DatabaseReference mDbRef = mDatabase.getReference("users").child(getFirebaseUser().getUid());
-
-        mDbRef.setValue(globalUser);
     }
 
 
@@ -340,27 +319,6 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
     }
 
 
-    public void updateUserProfile() {
-
-        FirebaseUser user = getFirebaseUser();
-
-        // 2. getEditTextData();
-
-        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                .setDisplayName(firstName + " " + lastName)
-                .build();
-
-        user.updateProfile(profileUpdates)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Log.d(LOG_TAG, "User profile updated.");
-                        }
-                    }
-                });
-    }
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -374,11 +332,11 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
                     Toast.makeText(getApplicationContext(), "Upload is already in progress", Toast.LENGTH_SHORT).show();
                 } else {
                     // readFromDatabase();
-                    updateUserProfile();
+                    profileViewModel.updateUserProfile();
                     updateUserData();
-                    /*if (confirmInput()) {
-                        showMessage("Changes have been saved");
-                    }*/
+                    if (profileViewModel.confirmInput()) {
+                        showMessage(profileViewModel.createInputText());
+                    }
                 }
                 break;
         }

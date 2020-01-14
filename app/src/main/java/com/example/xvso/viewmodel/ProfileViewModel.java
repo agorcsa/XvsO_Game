@@ -1,11 +1,21 @@
 package com.example.xvso.viewmodel;
 
+import android.util.Log;
+
+import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.xvso.User;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 
 public class ProfileViewModel extends ViewModel {
+
+    private static final String LOG_TAG = "ProfileViewModel";
 
     private User user = new User();
     private MutableLiveData<User> userLiveData = new MutableLiveData<>();
@@ -13,8 +23,6 @@ public class ProfileViewModel extends ViewModel {
     private String lastName;
     private String email;
     private String password;
-
-    private boolean isValid;
 
     private MutableLiveData<Boolean> isFirstNameValid = new MutableLiveData<>(true);
     private MutableLiveData<Boolean> isLastNameValid = new MutableLiveData<>(true);
@@ -83,75 +91,70 @@ public class ProfileViewModel extends ViewModel {
 
     private boolean validateInputFields() {
 
-        if (!user.isFirstNameValid() || !user.isLastNameValid() || !user.isEmailValid() || !user.isPasswordValid()) {
-
-            isFirstNameValid.setValue(false);
-            isLastNameValid.setValue(false);
-            isEmailValid.setValue(false);
-            isPasswordValid.setValue(false);
-
-            isValid = false;
-
-        } else {
-            isFirstNameValid.setValue(true);
-            isLastNameValid.setValue(true);
-            isEmailValid.setValue(true);
-            isPasswordValid.setValue(true);
-        }
-
-        return true;
-    }
-
-    private boolean validateFirstName() {
+        boolean isValid = true;
 
         if (!user.isFirstNameValid()) {
+            // error
             isFirstNameValid.setValue(false);
             isValid = false;
+            return isValid;
         } else {
+            // no error
             isFirstNameValid.setValue(true);
         }
-        return true;
-    }
-
-
-    private boolean validateLastName() {
 
         if (!user.isLastNameValid()) {
+            // error
             isLastNameValid.setValue(false);
             isValid = false;
+            return isValid;
         } else {
+            // no error
             isLastNameValid.setValue(true);
         }
-        return true;
-    }
-
-    private boolean validateEmail() {
 
         if (!user.isEmailValid()) {
+            // error
             isEmailValid.setValue(false);
             isValid = false;
+            return isValid;
         } else {
+            // no error
             isEmailValid.setValue(true);
         }
-        return true;
-    }
-
-
-    private boolean validatePassword() {
 
         if (!user.isPasswordValid()) {
+            // error
             isPasswordValid.setValue(false);
             isValid = false;
+            return isValid;
         } else {
+            // no error
             isPasswordValid.setValue(true);
         }
+        // if only one of the above fields fails to validate, it prevents us from sending the data to the database
+        return false;
+    }
+
+    public boolean confirmInput() {
+        if (!validateInputFields()) {
+            return false;
+        }
+
+        /*String input = "First name: " + getFirstName();
+        input += "\n";
+        input += "Last name: " + getLastName();
+        input += "\n";
+        input += "Email: " + getEmail();
+        input += "\n";
+        input += "Password: " + getPassword();*/
+
+        //showMessage(input);
+
         return true;
     }
 
-    private boolean confirmInput() {
-        if (!validateFirstName() | !validateLastName() | !validateEmail() | !validatePassword()) {
-            return false;
-        }
+    public String createInputText() {
 
         String input = "First name: " + getFirstName();
         input += "\n";
@@ -161,8 +164,32 @@ public class ProfileViewModel extends ViewModel {
         input += "\n";
         input += "Password: " + getPassword();
 
-        //showMessage(input);
+        return input;
+    }
 
-        return true;
+
+    public void updateUserProfile() {
+
+        //FirebaseUser user = getFirebaseUser();
+
+        // 2. getEditTextData();
+
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+
+        FirebaseUser user = auth.getCurrentUser();
+
+        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                .setDisplayName(firstName + " " + lastName)
+                .build();
+
+        user.updateProfile(profileUpdates)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d(LOG_TAG, "User profile updated.");
+                        }
+                    }
+                });
     }
 }
