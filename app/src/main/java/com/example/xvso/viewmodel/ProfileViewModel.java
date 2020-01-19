@@ -1,17 +1,35 @@
 package com.example.xvso.viewmodel;
 
+import android.app.ProgressDialog;
+import android.net.Uri;
+import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.xvso.R;
 import com.example.xvso.User;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.StorageTask;
+import com.google.firebase.storage.UploadTask;
+
+import java.util.UUID;
 
 public class ProfileViewModel extends ViewModel {
 
@@ -19,15 +37,36 @@ public class ProfileViewModel extends ViewModel {
 
     private User user = new User();
     private MutableLiveData<User> userLiveData = new MutableLiveData<>();
+
+    // represents the substring of the email address, the first part before "@"
+    private String name;
     private String firstName;
     private String lastName;
     private String email;
     private String password;
+    private Uri imagePath;
+    private String imageUrl;
+    private String fileName = "";
 
     private MutableLiveData<Boolean> isFirstNameValid = new MutableLiveData<>(true);
     private MutableLiveData<Boolean> isLastNameValid = new MutableLiveData<>(true);
     private MutableLiveData<Boolean> isEmailValid = new MutableLiveData<>(true);
     private MutableLiveData<Boolean> isPasswordValid = new MutableLiveData<>(true);
+
+    private FirebaseUser firebaseUser;
+    private FirebaseAuth firebaseAuth;
+    private StorageReference mStorageRef;
+    private DatabaseReference mDatabaseRef;
+    private StorageTask mUploadTask;
+
+    public ProfileViewModel() {
+
+        firebaseAuth = FirebaseAuth.getInstance();
+        firebaseUser = firebaseAuth.getCurrentUser();
+
+        mStorageRef = FirebaseStorage.getInstance().getReference("users");
+        mDatabaseRef = FirebaseDatabase.getInstance().getReference("users");
+    }
 
     public MutableLiveData<Boolean> getIsFirstNameValid() {
         return isFirstNameValid;
@@ -89,70 +128,46 @@ public class ProfileViewModel extends ViewModel {
         return user;
     }
 
-    private boolean validateInputFields() {
+    public boolean validateInputFields() {
 
         boolean isValid = true;
 
         if (!user.isFirstNameValid()) {
-            // error
             isFirstNameValid.setValue(false);
             isValid = false;
-            return isValid;
+
         } else {
-            // no error
             isFirstNameValid.setValue(true);
         }
 
         if (!user.isLastNameValid()) {
-            // error
             isLastNameValid.setValue(false);
             isValid = false;
-            return isValid;
+
         } else {
-            // no error
             isLastNameValid.setValue(true);
         }
 
         if (!user.isEmailValid()) {
-            // error
             isEmailValid.setValue(false);
             isValid = false;
-            return isValid;
+
         } else {
-            // no error
             isEmailValid.setValue(true);
         }
 
         if (!user.isPasswordValid()) {
-            // error
             isPasswordValid.setValue(false);
             isValid = false;
-            return isValid;
+
         } else {
-            // no error
             isPasswordValid.setValue(true);
         }
+
         // if only one of the above fields fails to validate, it prevents us from sending the data to the database
-        return false;
+        return isValid;
     }
 
-    public boolean confirmInput() {
-        if (!validateInputFields()) {
-            return false;
-        }
-
-        /*String input = "First name: " + getFirstName();
-        input += "\n";
-        input += "Last name: " + getLastName();
-        input += "\n";
-        input += "Email: " + getEmail();
-        input += "\n";
-        input += "Password: " + getPassword();*/
-
-        //showMessage(input);
-
-        return true;
-    }
 
     public String createInputText() {
 
@@ -167,22 +182,107 @@ public class ProfileViewModel extends ViewModel {
         return input;
     }
 
+    public void uploadUserImage() {
+
+        if (imagePath != null) {
+
+            // TO DO: move the progress bar maybe to ProfileActivity and handle with boolean variables when to show/hide the ProgressBar
+            // then, also the Context problem will be solved.
+
+            final ProgressDialog progressDialog = new ProgressDialog(this);
+            progressDialog.setTitle("Uploading...");
+            progressDialog.show();
+
+            imageUrl = imagePath.toString();
+
+            fileName = UUID.randomUUID().toString();
+
+            // TO DO: solve the getFileExtension() problem from ProfileActivity
+            final StorageReference storageReference = mStorageRef.child(firebaseUser.getUid()).child(fileName + "." + getFileExtension(imagePath));
+
+            mUploadTask = storageReference.putFile(imagePath)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            progressDialog.dismiss();
+                            // Toast.makeText(ProfileActivity.this, "Uploaded", Toast.LENGTH_SHORT).show();
+
+                            uploadImage();
+
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            progressDialog.dismiss();
+                            // Toast.makeText(ProfileActivity.this, "Failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onProgress(@NonNull UploadTask.TaskSnapshot taskSnapshot) {
+                            double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot
+                                    .getTotalByteCount());
+                            progressDialog.setMessage("Uploaded " + (int) progress + "%");
+                        }
+                    });
+        } else {
+            //showMessage("No image selected");
+        }
+    }
+
+
+    // TO DO: solve the getFileExtension() problem from ProfileActivity
+
+    public void uploadImage() {
+        final StorageReference storageReference = mStorageRef.child(firebaseUser.getUid()).child(fileName + "." + getFileExtension(imagePath));
+
+        storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(final Uri uri) {
+
+                // TO DO
+                // getEditTextData();
+
+                //user = new User(firstName, lastName, email, password, imageUrl);
+
+                user.setImageUrl(uri.toString());
+
+                mDatabaseRef.child(firebaseUser.getUid()).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+
+                        //showMessage("Image successfully saved to database");
+
+                        if (user.getImageUrl() != null) {
+
+                            // TO DO: replace Glide
+/*
+                            Glide.with(getApplicationContext())
+                                    .load(user.getImageUrl())
+                                    .apply(new RequestOptions().error(R.drawable.tictactoe))
+                                    .into(profileBinding.profilePicture);*/
+                        }
+                    }
+                });
+            }
+        });
+    }
+
 
     public void updateUserProfile() {
 
-        //FirebaseUser user = getFirebaseUser();
-
         // 2. getEditTextData();
 
-        FirebaseAuth auth = FirebaseAuth.getInstance();
-
-        FirebaseUser user = auth.getCurrentUser();
+        // firebaseAuth = FirebaseAuth.getInstance();
+        // firebaseUser = firebaseAuth.getCurrentUser();
 
         UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                 .setDisplayName(firstName + " " + lastName)
                 .build();
 
-        user.updateProfile(profileUpdates)
+        firebaseUser.updateProfile(profileUpdates)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
@@ -191,5 +291,119 @@ public class ProfileViewModel extends ViewModel {
                         }
                     }
                 });
+    }
+
+    public void updateUserData() {
+
+        // 2. getEditTextData();
+
+        if (imagePath != null) {
+
+            String imageUrl = imagePath.toString();
+
+            //setDatabaseReference(imageUrl);
+
+        } else {
+
+            Uri uri = Uri.parse("android.resource://com.example.xvso.firebase/" + R.drawable.tictactoe);
+
+            String placeholderUrl = uri.toString();
+
+            //setDatabaseReference(placeholderUrl);
+        }
+    }
+
+    private void readFromDatabase() {
+
+        mDatabaseRef = FirebaseDatabase.getInstance().getReference("users/");
+
+        // Read from the database
+        mDatabaseRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+                if (firebaseUser != null) {
+
+                    user = dataSnapshot.child(firebaseUser.getUid()).getValue(User.class);
+
+                    if (user != null) {
+                        // picture part
+                        String uri = user.getImageUrl();
+
+                        if (user.getImageUrl() != null) {
+
+                            // TO DO: replace Glide
+                            /*Glide.with(getApplicationContext())
+                                    .load(user.getImageUrl())
+                                    .apply(new RequestOptions().error(R.drawable.tictactoe))
+                                    .into(profileBinding.profilePicture);*/
+
+                            Log.d(LOG_TAG, "Value is: " + uri);
+
+                            String firstName = user.getFirstName();
+                            String lastName = user.getLastName();
+                            String password = user.getPassword();
+                            String email = user.getEmailAddress();
+
+                            // TO DO from the xml
+                            // setEditTextData(firstName, lastName, password, email);
+
+                            String fullName = firstName + " " + lastName;
+
+                            // TO DO from the xml
+                            //profileBinding.userNameTextview.setText(fullName);
+                            //profileBinding.emailAddressTextview.setText(email);
+
+                        } else {
+
+                            // TO DO: replace Glide
+                           /* Glide.with(getApplicationContext())
+                                    .load(R.drawable.tictactoe)
+                                    .into(profileBinding.profilePicture);*/
+
+                            if (TextUtils.isEmpty(user.getFirstName())) {
+                                firstName = "";
+                            } else {
+                                firstName = user.getFirstName();
+                            }
+
+                            if (TextUtils.isEmpty(user.getFirstName())) {
+                                lastName = "";
+                            } else {
+                                lastName = user.getLastName();
+                            }
+
+                            String password = user.getPassword();
+                            String email = user.getEmailAddress();
+
+                            // // TO DO from the xml
+                            // setEditTextData(firstName, lastName, password, email);
+
+                            String fullName = firstName + " " + lastName;
+
+                            // TO DO from the xml
+                            //profileBinding.userNameTextview.setText(fullName);
+                            //profileBinding.emailAddressTextview.setText(email);
+                        }
+
+                    } else {
+
+                        // TO DO: replace Glide
+                        /*Glide.with(getApplicationContext())
+                                .load(R.drawable.tictactoe)
+                                .into(profileBinding.profilePicture);*/
+                    }
+                }
+            }
+
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w(LOG_TAG, "Failed to read value.", error.toException());
+            }
+        });
     }
 }

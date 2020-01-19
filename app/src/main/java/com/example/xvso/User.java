@@ -12,13 +12,13 @@ public class User {
     private String mImageUrl = "";
 
     // empty constructor used for saving the user to database
-   public User() {
+    public User() {
 
-   }
+    }
 
     public User(String name, String email, String password) {
         mName = name;
-        mEmailAddress =  email;
+        mEmailAddress = email;
         mPassword = password;
     }
 
@@ -86,97 +86,40 @@ public class User {
     }
 
     public boolean isFirstNameValid() {
-       if (!isFieldEmpty(getFirstName()) || isFieldLengthGreaterThan(getFirstName(), 10)) {
-           return true;
-       } else {
-           return false;
-       }
-    }
-
-    /*public boolean isFirstNameEmpty() {
-       if (getFirstName().isEmpty()) {
+        if (!getFirstName().isEmpty() || isFieldLengthGreaterThan(getFirstName(), 10)) {
             return true;
         } else {
-           return false;
-       }
-    }*/
-
-    /*public boolean isFirstNameGreaterThanTen() {
-       if (getFirstName().length() > 10) {
-           return true;
-       } else {
-           return false;
-       }
-    }*/
+            return false;
+        }
+    }
 
     public boolean isLastNameValid() {
-        if (!isFieldEmpty(getLastName()) || isFieldLengthGreaterThan(getLastName(), 10)) {
+        if (!getLastName().isEmpty() || isFieldLengthGreaterThan(getLastName(), 10)) {
             return true;
         } else {
             return false;
         }
     }
 
-    /*public boolean isLastNameEmpty() {
-        if (getLastName().isEmpty()) {
-            return true;
-        } else {
-            return false;
-        }
-    }*/
-
-    /*public boolean isLastNameGreaterThanTen() {
-        if (getLastName().length() > 10) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-*/
     public boolean isEmailValid() {
         return Patterns.EMAIL_ADDRESS.matcher(getEmailAddress()).matches();
     }
 
     public boolean isPasswordValid() {
 
-       if (!isFieldEmpty(getPassword()) || isFieldLengthGreaterThan(getPassword(), 5)) {
-           return true;
-       } else {
-           return false;
-       }
-    }
-
-   /* public boolean isPasswordLengthGreaterThanFive() {
-        if (getPassword().length() > 5) {
+        if (!getPassword().isEmpty() || isFieldLengthGreaterThan(getPassword(), 5)) {
             return true;
         } else {
             return false;
         }
-    }*/
-
-    /*public boolean isPasswordEmpty() {
-       if (getPassword().isEmpty()) {
-           return true;
-       } else {
-           return false;
-       }
-    }*/
-
-    // generic method for checking if a field is empty
-    public boolean isFieldEmpty(String field) {
-       if (field.isEmpty()) {
-           return true;
-       } else {
-           return false;
-       }
     }
 
     // generic method for checking the length is greater than a given number
     public boolean isFieldLengthGreaterThan(String field, int number) {
-       if (field.length() > number) {
-           return true;
-       } else {
-           return  false;
-       }
+        if (field.length() > number) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

@@ -1,41 +1,27 @@
 package com.example.xvso.firebase;
 
-import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 import com.example.xvso.R;
 import com.example.xvso.User;
 import com.example.xvso.databinding.ActivityProfileBinding;
 import com.example.xvso.viewmodel.ProfileViewModel;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
-import com.google.firebase.storage.UploadTask;
 
-import java.util.UUID;
 
 public class ProfileActivity extends BaseActivity implements View.OnClickListener {
 
@@ -44,27 +30,19 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
     // number of images to select
     private static final int PICK_IMAGE = 1;
 
-    ActivityProfileBinding profileBinding;
+    private ActivityProfileBinding profileBinding;
 
     private ProfileViewModel profileViewModel;
 
-    // represents the substring of the email address, the first part before "@"
-    private String name;
-    private String firstName;
-    private String lastName;
-    private String email;
-    private String password;
-    private Uri imagePath;
-    private String imageUrl;
-
     private StorageReference mStorageRef;
     private DatabaseReference mDatabaseRef;
+
     // used for checking if an upload is already running
     private StorageTask mUploadTask;
 
     private User globalUser;
 
-    private String fileName = "";
+    private Uri imagePath;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -83,8 +61,6 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
         mStorageRef = FirebaseStorage.getInstance().getReference("users");
         mDatabaseRef = FirebaseDatabase.getInstance().getReference("users");
 
-        // not needed, because at first log-in the user is empty
-        //globalUser = new User(firstName, lastName, email, password, imageUrl);
         globalUser = new User();
     }
 
@@ -101,221 +77,14 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
 
             imagePath = data.getData();
 
-            uploadUserImage();
+            profileViewModel.uploadUserImage();
         }
     }
-
-    private void uploadUserImage() {
-
-        if (imagePath != null) {
-
-            final ProgressDialog progressDialog = new ProgressDialog(this);
-            progressDialog.setTitle("Uploading...");
-            progressDialog.show();
-
-            imageUrl = imagePath.toString();
-
-            fileName = UUID.randomUUID().toString();
-            final StorageReference storageReference = mStorageRef.child(getFirebaseUser().getUid()).child(fileName + "." + getFileExtension(imagePath));
-
-            mUploadTask = storageReference.putFile(imagePath)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            progressDialog.dismiss();
-                            Toast.makeText(ProfileActivity.this, "Uploaded", Toast.LENGTH_SHORT).show();
-
-                            uploadImage();
-
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            progressDialog.dismiss();
-                            Toast.makeText(ProfileActivity.this, "Failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onProgress(@NonNull UploadTask.TaskSnapshot taskSnapshot) {
-                            double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot
-                                    .getTotalByteCount());
-                            progressDialog.setMessage("Uploaded " + (int) progress + "%");
-                        }
-                    });
-        } else {
-            showMessage("No image selected");
-        }
-    }
-
-    public void uploadImage() {
-        final StorageReference storageReference = mStorageRef.child(getFirebaseUser().getUid()).child(fileName + "." + getFileExtension(imagePath));
-
-        storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(final Uri uri) {
-
-                // 2. getEditTextData();
-
-                //globalUser = new User(firstName, lastName, email, password, imageUrl);
-
-                globalUser.setImageUrl(uri.toString());
-
-                mDatabaseRef.child(getFirebaseUser().getUid()).setValue(globalUser).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-
-                        showMessage("Image successfully saved to database");
-
-                        if (globalUser.getImageUrl() != null) {
-
-                            Glide.with(getApplicationContext())
-                                    .load(globalUser.getImageUrl())
-                                    .apply(new RequestOptions().error(R.drawable.tictactoe))
-                                    .into(profileBinding.profilePicture);
-                        }
-                    }
-                });
-            }
-        });
-    }
-
-    /*private void setEditTextData(String firstName, String lastName, String password, String email) {
-        profileBinding.firstNameEditview.setText(firstName);
-        profileBinding.lastNameEditview.setText(lastName);
-        profileBinding.passwordEditview.setText(password);
-        profileBinding.emailEditview.setText(email);
-    }*/
-
-
-    /*public void getEditTextData() {
-        firstName = profileBinding.firstNameEditview.getText().toString();
-        lastName = profileBinding.lastNameEditview.getText().toString();
-        password = profileBinding.passwordEditview.getText().toString();
-        email = profileBinding.emailEditview.getText().toString();
-    }*/
-
-    public void updateUserData() {
-
-        // 2. getEditTextData();
-
-        if (imagePath != null) {
-
-            String imageUrl = imagePath.toString();
-
-            //setDatabaseReference(imageUrl);
-
-        } else {
-
-            Uri uri = Uri.parse("android.resource://com.example.xvso.firebase/" + R.drawable.tictactoe);
-
-            String placeholderUrl = uri.toString();
-
-            //setDatabaseReference(placeholderUrl);
-        }
-    }
-
 
     private String getFileExtension(Uri uri) {
         ContentResolver contentResolver = getContentResolver();
         MimeTypeMap mime = MimeTypeMap.getSingleton();
         return mime.getExtensionFromMimeType(contentResolver.getType(uri));
-    }
-
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        readFromDatabase();
-    }
-
-    private void readFromDatabase() {
-
-        mDatabaseRef = FirebaseDatabase.getInstance().getReference("users/");
-
-        // Read from the database
-        mDatabaseRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                if (getFirebaseUser() != null) {
-
-                    globalUser = dataSnapshot.child(getFirebaseUser().getUid()).getValue(User.class);
-
-                    if (globalUser != null) {
-                        // picture part
-                        String uri = globalUser.getImageUrl();
-
-                        if (globalUser.getImageUrl() != null) {
-
-                            Glide.with(getApplicationContext())
-                                    .load(globalUser.getImageUrl())
-                                    .apply(new RequestOptions().error(R.drawable.tictactoe))
-                                    .into(profileBinding.profilePicture);
-
-                            Log.d(LOG_TAG, "Value is: " + uri);
-
-                            String firstName = globalUser.getFirstName();
-                            String lastName = globalUser.getLastName();
-                            String password = globalUser.getPassword();
-                            String email = globalUser.getEmailAddress();
-
-                            // 1. setEditTextData(firstName, lastName, password, email);
-
-                            String fullName = firstName + " " + lastName;
-
-                            profileBinding.userNameTextview.setText(fullName);
-                            profileBinding.emailAddressTextview.setText(email);
-
-                        } else {
-
-                            Glide.with(getApplicationContext())
-                                    .load(R.drawable.tictactoe)
-                                    .into(profileBinding.profilePicture);
-
-                            if (TextUtils.isEmpty(globalUser.getFirstName())) {
-                                firstName = "";
-                            } else {
-                                firstName = globalUser.getFirstName();
-                            }
-
-                            if (TextUtils.isEmpty(globalUser.getFirstName())) {
-                                lastName = "";
-                            } else {
-                                lastName = globalUser.getLastName();
-                            }
-
-                            String password = globalUser.getPassword();
-                            String email = globalUser.getEmailAddress();
-
-                            // 1. setEditTextData(firstName, lastName, password, email);
-
-                            String fullName = firstName + " " + lastName;
-
-                            profileBinding.userNameTextview.setText(fullName);
-                            profileBinding.emailAddressTextview.setText(email);
-                        }
-
-                    } else {
-
-                        Glide.with(getApplicationContext())
-                                .load(R.drawable.tictactoe)
-                                .into(profileBinding.profilePicture);
-                    }
-                }
-            }
-
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w(LOG_TAG, "Failed to read value.", error.toException());
-            }
-        });
     }
 
 
@@ -333,8 +102,8 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
                 } else {
                     // readFromDatabase();
                     profileViewModel.updateUserProfile();
-                    updateUserData();
-                    if (profileViewModel.confirmInput()) {
+                    profileViewModel.updateUserData();
+                    if (profileViewModel.validateInputFields()) {
                         showMessage(profileViewModel.createInputText());
                     }
                 }
