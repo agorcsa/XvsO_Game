@@ -21,6 +21,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    // Java 8 features
+    compileOptions {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+    }
 }
 
 dependencies {
@@ -56,6 +61,7 @@ dependencies {
 
     // Youtube Android WebView
     implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:core:10.0.5'
+
 }
 
 apply plugin: 'com.google.gms.google-services'

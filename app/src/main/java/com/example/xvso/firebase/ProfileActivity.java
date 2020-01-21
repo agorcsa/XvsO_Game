@@ -28,30 +28,42 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
     public static final String LOG_TAG = "ProfileActivity";
 
     // number of images to select
+    // only one image will be selected
     private static final int PICK_IMAGE = 1;
 
+    // used to bind the views in activity_profile.xml through <layout>...</Layout>
     private ActivityProfileBinding profileBinding;
 
+    // creates an instance of the ViewModel
     private ProfileViewModel profileViewModel;
 
+    // creates an instance of the storage where we will store our user data
     private StorageReference mStorageRef;
+
+    // creates an instance of the database where our user data will be stored
     private DatabaseReference mDatabaseRef;
 
     // used for checking if an upload is already running
     private StorageTask mUploadTask;
 
+    // creates a new user object when the Activity is started
     private User globalUser;
 
+    // the path of the profile image that we are going to store
     private Uri imagePath;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // binds the activity_profile.xml with ProfileActivity.java
         profileBinding = DataBindingUtil.setContentView(this, R.layout.activity_profile);
+        // the profileViewModel instance uses the ProfileViewModel.class
         profileViewModel = ViewModelProviders.of(this).get(ProfileViewModel.class);
 
+        // sets onClickListener on the submitButton in order to be clickable and run some code
         profileBinding.submitButton.setOnClickListener(this);
+        // sets onClickListener on the profilePicture in order to be clickable and run some code
         profileBinding.profilePicture.setOnClickListener(this);
 
         profileBinding.setViewModelProfile(profileViewModel);
@@ -64,23 +76,30 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
         globalUser = new User();
     }
 
+    // called when we want to select a picture from the phone's gallery
     private void selectImage() {
         Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(galleryIntent, PICK_IMAGE);
     }
 
+    // if we have an intent and it's not null and contains data,
+    // it takes out the data (picture Uri) from the intent and
+    // uploads the picture as profile
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
         if (requestCode == PICK_IMAGE && resultCode == RESULT_OK
-                && data != null && data.getData() != null) {
+                && intent != null && intent.getData() != null) {
 
-            imagePath = data.getData();
+            // gets the imagePath (Uri) from the intent
+            imagePath = intent.getData();
 
+            // uploads the user's profile picture
             profileViewModel.uploadUserImage();
         }
     }
 
+    // returns the type of a file extension
     private String getFileExtension(Uri uri) {
         ContentResolver contentResolver = getContentResolver();
         MimeTypeMap mime = MimeTypeMap.getSingleton();
@@ -88,6 +107,8 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
     }
 
 
+    // used while clicking on the user's profile picture
+    // used while clicking on the submit button
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -100,9 +121,12 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
                 if (mUploadTask != null && mUploadTask.isInProgress()) {
                     Toast.makeText(getApplicationContext(), "Upload is already in progress", Toast.LENGTH_SHORT).show();
                 } else {
-                    // readFromDatabase();
+                    // readFromDatabase() - not needed anymore if we use ViewModel + MutableLiveData
+                    // displays the the new profile picture
                     profileViewModel.updateUserProfile();
+                    // displays the new user's data
                     profileViewModel.updateUserData();
+                    // if all the input fields are valid, displays a Toast with them
                     if (profileViewModel.validateInputFields()) {
                         showMessage(profileViewModel.createInputText());
                     }
@@ -111,6 +135,7 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
         }
     }
 
+    // auxiliary method for displaying a Toast message, by just giving the message we want to display
     public void showMessage(String message) {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }

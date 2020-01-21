@@ -1,6 +1,7 @@
 package com.example.xvso.viewmodel;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
@@ -40,25 +41,30 @@ public class ProfileViewModel extends ViewModel {
 
     // represents the substring of the email address, the first part before "@"
     private String name;
+    // the 4 fields variables
     private String firstName;
     private String lastName;
     private String email;
     private String password;
+    // the path of the profile picture
     private Uri imagePath;
     private String imageUrl;
     private String fileName = "";
 
+    // MuatableLiveData variables for validating all 4 fields
     private MutableLiveData<Boolean> isFirstNameValid = new MutableLiveData<>(true);
     private MutableLiveData<Boolean> isLastNameValid = new MutableLiveData<>(true);
     private MutableLiveData<Boolean> isEmailValid = new MutableLiveData<>(true);
     private MutableLiveData<Boolean> isPasswordValid = new MutableLiveData<>(true);
 
+    // Firebase variables
     private FirebaseUser firebaseUser;
     private FirebaseAuth firebaseAuth;
     private StorageReference mStorageRef;
     private DatabaseReference mDatabaseRef;
     private StorageTask mUploadTask;
 
+    // constructor
     public ProfileViewModel() {
 
         firebaseAuth = FirebaseAuth.getInstance();
@@ -68,6 +74,7 @@ public class ProfileViewModel extends ViewModel {
         mDatabaseRef = FirebaseDatabase.getInstance().getReference("users");
     }
 
+    // getters and setters of the 4 MutableLiveData Boolean variables
     public MutableLiveData<Boolean> getIsFirstNameValid() {
         return isFirstNameValid;
     }
@@ -92,6 +99,7 @@ public class ProfileViewModel extends ViewModel {
         this.isEmailValid = isEmailValid;
     }
 
+    // getters and setters of the 4 String fields variables
     public String getFirstName() {
         return firstName;
     }
@@ -124,9 +132,13 @@ public class ProfileViewModel extends ViewModel {
         this.password = password;
     }
 
+    // getter of the User object
     public User getUser() {
         return user;
     }
+
+    // returns true if all the 4 String fields are valid
+    // returns false
 
     public boolean validateInputFields() {
 
@@ -169,6 +181,8 @@ public class ProfileViewModel extends ViewModel {
     }
 
 
+    // creates a String from the user's data
+    // used to display a Toast message if fields are validated
     public String createInputText() {
 
         String input = "First name: " + getFirstName();
@@ -232,42 +246,39 @@ public class ProfileViewModel extends ViewModel {
         }
     }
 
-
-    // TO DO: solve the getFileExtension() problem from ProfileActivity
-
-    public void uploadImage() {
-        final StorageReference storageReference = mStorageRef.child(firebaseUser.getUid()).child(fileName + "." + getFileExtension(imagePath));
-
-        storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(final Uri uri) {
-
-                // TO DO
-                // getEditTextData();
-
-                //user = new User(firstName, lastName, email, password, imageUrl);
-
-                user.setImageUrl(uri.toString());
-
-                mDatabaseRef.child(firebaseUser.getUid()).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-
-                        //showMessage("Image successfully saved to database");
-
-                        if (user.getImageUrl() != null) {
-
-                            // TO DO: replace Glide
-/*
-                            Glide.with(getApplicationContext())
-                                    .load(user.getImageUrl())
-                                    .apply(new RequestOptions().error(R.drawable.tictactoe))
-                                    .into(profileBinding.profilePicture);*/
-                        }
-                    }
-                });
-            }
-        });
+    public void uploadPicture(Intent intentData) {
+        Uri imagePath = intentData.getData();
+        String fileName = UUID.randomUUID().toString();
+        StorageReference photoRef = FirebaseStorage.getInstance()
+                .getReference("users")
+                .child(firebaseUser.getUid())
+                .child(fileName);
+        UploadTask uploadTask;
+        if (imagePath != null) {
+            uploadTask = photoRef.putFile(imagePath);
+            uploadTask.addOnSuccessListener(taskSnapshot -> {
+                networkState.setValue(NetworkState.LOADED);
+                final StorageReference storageReference =
+                        mStorageRef
+                                .child(firebaseUser.getUid())
+                                .child(fileName);
+                storageReference.getDownloadUrl().addOnSuccessListener(this::saveImageUrlInDatabase);
+                profileEditState.setProgressDialogShown(false);
+                stateMutableLiveData.setValue(profileEditState);
+            });
+            uploadTask.addOnFailureListener(e -> {
+                networkState.setValue(NetworkState.FAILED);
+                profileEditState.setProgressDialogShown(false);
+                stateMutableLiveData.setValue(profileEditState);
+            });
+            uploadTask.addOnProgressListener(taskSnapshot -> {
+                double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot
+                        .getTotalByteCount());
+                profileEditState.setProgressDialogShown(true);
+                profileEditState.setProgressDialogPercentage(progress);
+                stateMutableLiveData.setValue(profileEditState);
+            });
+        }
     }
 
 
@@ -397,7 +408,6 @@ public class ProfileViewModel extends ViewModel {
                     }
                 }
             }
-
 
             @Override
             public void onCancelled(DatabaseError error) {
