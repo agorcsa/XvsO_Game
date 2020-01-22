@@ -10,10 +10,10 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.example.xvso.R;
-import com.example.xvso.User;
 import com.example.xvso.databinding.ActivityProfileBinding;
 import com.example.xvso.viewmodel.ProfileViewModel;
 import com.google.firebase.database.DatabaseReference;
@@ -46,11 +46,10 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
     // used for checking if an upload is already running
     private StorageTask mUploadTask;
 
-    // creates a new user object when the Activity is started
-    private User globalUser;
-
     // the path of the profile image that we are going to store
     private Uri imagePath;
+
+    private MutableLiveData<Boolean> progressBarVisibility = new MutableLiveData<>(true);
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -72,8 +71,6 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
 
         mStorageRef = FirebaseStorage.getInstance().getReference("users");
         mDatabaseRef = FirebaseDatabase.getInstance().getReference("users");
-
-        globalUser = new User();
     }
 
     // called when we want to select a picture from the phone's gallery
@@ -95,7 +92,7 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
             imagePath = intent.getData();
 
             // uploads the user's profile picture
-            profileViewModel.uploadUserImage();
+            profileViewModel.uploadPicture(intent);
         }
     }
 

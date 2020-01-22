@@ -1,11 +1,13 @@
 package com.example.xvso;
 
+import android.net.Uri;
 import android.text.TextUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.databinding.BindingAdapter;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.textfield.TextInputEditText;
 
 public class XvsOBindingAdapter {
@@ -91,6 +93,23 @@ public class XvsOBindingAdapter {
         } else {
             // show the error
             view.setError(view.getContext().getString(R.string.invalid_field));
+        }
+    }
+
+    @BindingAdapter("profileImage")
+    public static void profileImage(ImageView view, String imageUrl) {
+        if (imageUrl != null) {
+            // load profile image with Glide
+            Glide.with(view.getContext())
+                    .load(imageUrl)
+                    .into(view);
+        } else {
+            // load placeholder with Glide
+            Uri uri = Uri.parse("android.resource://com.example.xvso.firebase/" + R.drawable.tictactoe);
+            String placeholderUrl = uri.toString();
+            Glide.with(view.getContext())
+                    .load(placeholderUrl)
+                    .into(view);
         }
     }
 }

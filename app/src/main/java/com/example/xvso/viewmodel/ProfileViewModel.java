@@ -1,6 +1,5 @@
 package com.example.xvso.viewmodel;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.text.TextUtils;
@@ -10,11 +9,8 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.xvso.R;
 import com.example.xvso.User;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -25,7 +21,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
@@ -46,8 +41,6 @@ public class ProfileViewModel extends ViewModel {
     private String lastName;
     private String email;
     private String password;
-    // the path of the profile picture
-    private Uri imagePath;
     private String imageUrl;
     private String fileName = "";
 
@@ -196,55 +189,6 @@ public class ProfileViewModel extends ViewModel {
         return input;
     }
 
-    public void uploadUserImage() {
-
-        if (imagePath != null) {
-
-            // TO DO: move the progress bar maybe to ProfileActivity and handle with boolean variables when to show/hide the ProgressBar
-            // then, also the Context problem will be solved.
-
-            final ProgressDialog progressDialog = new ProgressDialog(this);
-            progressDialog.setTitle("Uploading...");
-            progressDialog.show();
-
-            imageUrl = imagePath.toString();
-
-            fileName = UUID.randomUUID().toString();
-
-            // TO DO: solve the getFileExtension() problem from ProfileActivity
-            final StorageReference storageReference = mStorageRef.child(firebaseUser.getUid()).child(fileName + "." + getFileExtension(imagePath));
-
-            mUploadTask = storageReference.putFile(imagePath)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            progressDialog.dismiss();
-                            // Toast.makeText(ProfileActivity.this, "Uploaded", Toast.LENGTH_SHORT).show();
-
-                            uploadImage();
-
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            progressDialog.dismiss();
-                            // Toast.makeText(ProfileActivity.this, "Failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onProgress(@NonNull UploadTask.TaskSnapshot taskSnapshot) {
-                            double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot
-                                    .getTotalByteCount());
-                            progressDialog.setMessage("Uploaded " + (int) progress + "%");
-                        }
-                    });
-        } else {
-            //showMessage("No image selected");
-        }
-    }
 
     public void uploadPicture(Intent intentData) {
         Uri imagePath = intentData.getData();
@@ -304,25 +248,6 @@ public class ProfileViewModel extends ViewModel {
                 });
     }
 
-    public void updateUserData() {
-
-        // 2. getEditTextData();
-
-        if (imagePath != null) {
-
-            String imageUrl = imagePath.toString();
-
-            //setDatabaseReference(imageUrl);
-
-        } else {
-
-            Uri uri = Uri.parse("android.resource://com.example.xvso.firebase/" + R.drawable.tictactoe);
-
-            String placeholderUrl = uri.toString();
-
-            //setDatabaseReference(placeholderUrl);
-        }
-    }
 
     private void readFromDatabase() {
 
@@ -345,12 +270,6 @@ public class ProfileViewModel extends ViewModel {
 
                         if (user.getImageUrl() != null) {
 
-                            // TO DO: replace Glide
-                            /*Glide.with(getApplicationContext())
-                                    .load(user.getImageUrl())
-                                    .apply(new RequestOptions().error(R.drawable.tictactoe))
-                                    .into(profileBinding.profilePicture);*/
-
                             Log.d(LOG_TAG, "Value is: " + uri);
 
                             String firstName = user.getFirstName();
@@ -368,11 +287,6 @@ public class ProfileViewModel extends ViewModel {
                             //profileBinding.emailAddressTextview.setText(email);
 
                         } else {
-
-                            // TO DO: replace Glide
-                           /* Glide.with(getApplicationContext())
-                                    .load(R.drawable.tictactoe)
-                                    .into(profileBinding.profilePicture);*/
 
                             if (TextUtils.isEmpty(user.getFirstName())) {
                                 firstName = "";
