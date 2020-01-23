@@ -40,4 +40,7 @@
     <string name="invalid_field">Field can\'t be empty</string>
     <string name="last_name_too_long">Last name too long</string>
     <string name="first_name_too_long">First name too long</string>
+    
+    <string name="uploading_image">Uploading image...</string>
+    <string name="please_wait">Please wait...</string>
 </resources>

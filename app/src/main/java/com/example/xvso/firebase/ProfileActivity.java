@@ -1,5 +1,6 @@
 package com.example.xvso.firebase;
 
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
@@ -10,11 +11,12 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.example.xvso.ProfileEditState;
 import com.example.xvso.R;
 import com.example.xvso.databinding.ActivityProfileBinding;
+import com.example.xvso.eventobserver.NetworkState;
 import com.example.xvso.viewmodel.ProfileViewModel;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -49,7 +51,10 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
     // the path of the profile image that we are going to store
     private Uri imagePath;
 
-    private MutableLiveData<Boolean> progressBarVisibility = new MutableLiveData<>(true);
+    private ProgressDialog progressDialog;
+
+    private ProfileEditState profileEditState;
+    private NetworkState networkState;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -71,6 +76,8 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
 
         mStorageRef = FirebaseStorage.getInstance().getReference("users");
         mDatabaseRef = FirebaseDatabase.getInstance().getReference("users");
+
+        setupProgressDialog();
     }
 
     // called when we want to select a picture from the phone's gallery
@@ -135,5 +142,36 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
     // auxiliary method for displaying a Toast message, by just giving the message we want to display
     public void showMessage(String message) {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
+    private void setupProgressDialog() {
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle(getString(R.string.uploading_image));
+        progressDialog.setMessage(getString(R.string.please_wait));
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progressDialog.setCancelable(false);
+        progressDialog.setMax(100);
+    }
+
+    private void observeState() {
+        profileViewModel.stateLiveData.observe(this, profileEditState -> {
+            int progress = (int) Math.round(profileEditState.getProgressDialogPercentage());
+            if (profileEditState.isProgressDialogShown()) {
+                progressDialog.setProgress(progress);
+                progressDialog.show();
+            } else {
+                progressDialog.hide();
+            }
+        });
+    }
+
+    private void observeNetworkState() {
+        profileViewModel._isUploadSuccessful.observe(this, networkState -> {
+            if (profileViewModel._isUploadSuccessful) {
+                showMessage(NetworkState.LOADED);
+            } else {
+                showMessage((NetworkState.FAILED));
+            }
+        });
     }
 }

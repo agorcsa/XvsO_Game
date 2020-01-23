@@ -2,6 +2,7 @@ package com.example.xvso;
 
 import android.net.Uri;
 import android.text.TextUtils;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -111,5 +112,11 @@ public class XvsOBindingAdapter {
                     .load(placeholderUrl)
                     .into(view);
         }
+    }
+
+
+    @BindingAdapter("visible")
+    public static void setVisibility(View view, Boolean value) {
+          view.setVisibility(value? View.VISIBLE :View.GONE );
     }
 }

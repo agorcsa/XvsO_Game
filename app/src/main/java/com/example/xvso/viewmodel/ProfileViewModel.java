@@ -6,10 +6,16 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.xvso.ProfileEditState;
 import com.example.xvso.User;
+import com.example.xvso.eventobserver.Event;
+import com.example.xvso.eventobserver.NetworkState;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -30,6 +36,8 @@ import java.util.UUID;
 public class ProfileViewModel extends ViewModel {
 
     private static final String LOG_TAG = "ProfileViewModel";
+
+    public MutableLiveData<ProfileEditState> stateLiveData = new MutableLiveData<>();
 
     private User user = new User();
     private MutableLiveData<User> userLiveData = new MutableLiveData<>();
@@ -56,6 +64,23 @@ public class ProfileViewModel extends ViewModel {
     private StorageReference mStorageRef;
     private DatabaseReference mDatabaseRef;
     private StorageTask mUploadTask;
+    private ProfileEditState profileEditState;
+
+    // NetworkState.LOADED / Upload successful
+    // NetworkState.FAILED / Upload error
+    public MutableLiveData<Event<Boolean>> _isUploadSuccessful = new MutableLiveData<>();
+
+    public LiveData<Event<Boolean>> isUploadSuccessful = _isUploadSuccessful;
+
+    private LifecycleOwner lifecycleOwner = new LifecycleOwner() {
+        @NonNull
+        @Override
+        public Lifecycle getLifecycle() {
+            return null;
+        }
+    };
+
+    private NetworkState networkState;
 
     // constructor
     public ProfileViewModel() {
@@ -65,6 +90,20 @@ public class ProfileViewModel extends ViewModel {
 
         mStorageRef = FirebaseStorage.getInstance().getReference("users");
         mDatabaseRef = FirebaseDatabase.getInstance().getReference("users");
+
+        profileEditState = new ProfileEditState();
+        stateLiveData.setValue(profileEditState);
+
+        networkState = new NetworkState();
+       // _isUploadSuccessful.setValue(networkState);
+    }
+
+    public MutableLiveData<ProfileEditState> getStateLiveData() {
+        return stateLiveData;
+    }
+
+    public void setStateLiveData(MutableLiveData<ProfileEditState> stateLiveData) {
+        this.stateLiveData = stateLiveData;
     }
 
     // getters and setters of the 4 MutableLiveData Boolean variables
@@ -125,14 +164,8 @@ public class ProfileViewModel extends ViewModel {
         this.password = password;
     }
 
-    // getter of the User object
-    public User getUser() {
-        return user;
-    }
-
     // returns true if all the 4 String fields are valid
     // returns false
-
     public boolean validateInputFields() {
 
         boolean isValid = true;
@@ -201,26 +234,30 @@ public class ProfileViewModel extends ViewModel {
         if (imagePath != null) {
             uploadTask = photoRef.putFile(imagePath);
             uploadTask.addOnSuccessListener(taskSnapshot -> {
+
                 networkState.setValue(NetworkState.LOADED);
+
                 final StorageReference storageReference =
                         mStorageRef
                                 .child(firebaseUser.getUid())
                                 .child(fileName);
                 storageReference.getDownloadUrl().addOnSuccessListener(this::saveImageUrlInDatabase);
                 profileEditState.setProgressDialogShown(false);
-                stateMutableLiveData.setValue(profileEditState);
+                stateLiveData.setValue(profileEditState);
             });
             uploadTask.addOnFailureListener(e -> {
+
                 networkState.setValue(NetworkState.FAILED);
+
                 profileEditState.setProgressDialogShown(false);
-                stateMutableLiveData.setValue(profileEditState);
+                stateLiveData.setValue(profileEditState);
             });
             uploadTask.addOnProgressListener(taskSnapshot -> {
                 double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot
                         .getTotalByteCount());
                 profileEditState.setProgressDialogShown(true);
                 profileEditState.setProgressDialogPercentage(progress);
-                stateMutableLiveData.setValue(profileEditState);
+                stateLiveData.setValue(profileEditState);
             });
         }
     }
