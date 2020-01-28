@@ -19,7 +19,7 @@ public class EventObserver<T> implements Observer<Event<T>> {
         }
     }
 
-    interface OnEventChange<T> {
+    public interface OnEventChange<T> {
         void onUnhandledContent(T data);
     }
 }

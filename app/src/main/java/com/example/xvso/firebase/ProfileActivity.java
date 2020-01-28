@@ -16,7 +16,7 @@ import androidx.lifecycle.ViewModelProviders;
 import com.example.xvso.ProfileEditState;
 import com.example.xvso.R;
 import com.example.xvso.databinding.ActivityProfileBinding;
-import com.example.xvso.eventobserver.NetworkState;
+import com.example.xvso.eventobserver.EventObserver;
 import com.example.xvso.viewmodel.ProfileViewModel;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -165,13 +165,24 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
         });
     }
 
-    private void observeNetworkState() {
-        profileViewModel._isUploadSuccessful.observe(this, networkState -> {
-            if (profileViewModel._isUploadSuccessful) {
-                showMessage(NetworkState.LOADED);
-            } else {
-                showMessage((NetworkState.FAILED));
-            }
-        });
+    private void observeStatus() {
+        profileViewModel.networkState.observe(this, new EventObserver<>(this::handleStatus));
+    }
+
+
+    public void handleStatus(ProfileViewModel.NetworkState networkState) {
+        switch (networkState) {
+            case LOADED:
+                showMessage("Loaded");
+                break;
+            case LOADING:
+                showMessage("Loading");
+                break;
+            case UPLOADING:
+                showMessage("Uploading");
+            case FAILED:
+                showMessage("Failed");
+                break;
+        }
     }
 }

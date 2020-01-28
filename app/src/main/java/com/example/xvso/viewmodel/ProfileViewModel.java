@@ -6,16 +6,12 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.xvso.ProfileEditState;
 import com.example.xvso.User;
 import com.example.xvso.eventobserver.Event;
-import com.example.xvso.eventobserver.NetworkState;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -43,14 +39,13 @@ public class ProfileViewModel extends ViewModel {
     private MutableLiveData<User> userLiveData = new MutableLiveData<>();
 
     // represents the substring of the email address, the first part before "@"
-    private String name;
-    // the 4 fields variables
-    private String firstName;
-    private String lastName;
-    private String email;
-    private String password;
-    private String imageUrl;
-    private String fileName = "";
+    private MutableLiveData<String> name = new MutableLiveData<>();
+    private MutableLiveData<String> firstName = new MutableLiveData<>();
+    private MutableLiveData<String> lastName = new MutableLiveData<>();
+    private MutableLiveData<String> email = new MutableLiveData<>();
+    private MutableLiveData<String> password = new MutableLiveData<>();
+    private MutableLiveData<String> imageUrl = new MutableLiveData<>();
+    private MutableLiveData<String> fileName = new MutableLiveData<>("");
 
     // MuatableLiveData variables for validating all 4 fields
     private MutableLiveData<Boolean> isFirstNameValid = new MutableLiveData<>(true);
@@ -66,21 +61,7 @@ public class ProfileViewModel extends ViewModel {
     private StorageTask mUploadTask;
     private ProfileEditState profileEditState;
 
-    // NetworkState.LOADED / Upload successful
-    // NetworkState.FAILED / Upload error
-    public MutableLiveData<Event<Boolean>> _isUploadSuccessful = new MutableLiveData<>();
-
-    public LiveData<Event<Boolean>> isUploadSuccessful = _isUploadSuccessful;
-
-    private LifecycleOwner lifecycleOwner = new LifecycleOwner() {
-        @NonNull
-        @Override
-        public Lifecycle getLifecycle() {
-            return null;
-        }
-    };
-
-    private NetworkState networkState;
+    public final MutableLiveData<Event<NetworkState>> networkState = new MutableLiveData<>();
 
     // constructor
     public ProfileViewModel() {
@@ -93,9 +74,6 @@ public class ProfileViewModel extends ViewModel {
 
         profileEditState = new ProfileEditState();
         stateLiveData.setValue(profileEditState);
-
-        networkState = new NetworkState();
-       // _isUploadSuccessful.setValue(networkState);
     }
 
     public MutableLiveData<ProfileEditState> getStateLiveData() {
@@ -206,7 +184,6 @@ public class ProfileViewModel extends ViewModel {
         return isValid;
     }
 
-
     // creates a String from the user's data
     // used to display a Toast message if fields are validated
     public String createInputText() {
@@ -222,6 +199,25 @@ public class ProfileViewModel extends ViewModel {
         return input;
     }
 
+    public enum NetworkState {
+        LOADED,
+        LOADING,
+        UPLOADING,
+        FAILED
+    }
+
+    private void saveImageUrlInDatabase(Uri uri) {
+        user.setImageUrl(uri.toString());
+        mDatabaseRef
+                .child(firebaseUser.getUid())
+                .setValue(user)
+                .addOnSuccessListener(aVoid ->
+                        networkState.setValue(new Event<>(NetworkState.LOADED)))
+                .addOnFailureListener(aVoid ->
+                        networkState.setValue(new Event<>(NetworkState.FAILED)))
+            ;
+    }
+
 
     public void uploadPicture(Intent intentData) {
         Uri imagePath = intentData.getData();
@@ -235,7 +231,7 @@ public class ProfileViewModel extends ViewModel {
             uploadTask = photoRef.putFile(imagePath);
             uploadTask.addOnSuccessListener(taskSnapshot -> {
 
-                networkState.setValue(NetworkState.LOADED);
+                networkState.setValue(new Event<>(NetworkState.LOADED));
 
                 final StorageReference storageReference =
                         mStorageRef
@@ -247,7 +243,7 @@ public class ProfileViewModel extends ViewModel {
             });
             uploadTask.addOnFailureListener(e -> {
 
-                networkState.setValue(NetworkState.FAILED);
+                networkState.setValue(new Event<>(NetworkState.FAILED));
 
                 profileEditState.setProgressDialogShown(false);
                 stateLiveData.setValue(profileEditState);
@@ -285,7 +281,34 @@ public class ProfileViewModel extends ViewModel {
                 });
     }
 
+    private void getDataFromFirebase() {
 
+        mDatabaseRef = FirebaseDatabase.getInstance().getReference("users/");
+
+        mDatabaseRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                if (firebaseUser != null) {
+
+                    user = dataSnapshot.child(firebaseUser.getUid()).getValue(User.class);
+
+                    if (user != null) {
+
+
+                    }
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+// a way to get the data from Firebase and put it in the MutableLiveData. How would it work?
     private void readFromDatabase() {
 
         mDatabaseRef = FirebaseDatabase.getInstance().getReference("users/");
