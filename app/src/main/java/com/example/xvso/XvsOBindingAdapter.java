@@ -52,7 +52,7 @@ public class XvsOBindingAdapter {
     }
 
     @BindingAdapter("errorFirstName")
-    private boolean errorFirstName(TextInputEditText view, Boolean isValid) {
+    public static boolean errorFirstName(TextInputEditText view, Boolean isValid) {
         if (isValid) {
             view.setError(null);
         } else if (view.getText().toString().isEmpty()) {
@@ -64,7 +64,7 @@ public class XvsOBindingAdapter {
     }
 
     @BindingAdapter("errorLastName")
-    private boolean errorLastName(TextInputEditText view, Boolean isValid) {
+    public static boolean errorLastName(TextInputEditText view, Boolean isValid) {
         if (isValid) {
             view.setError(null);
         } else if (view.getText().toString().isEmpty()) {
@@ -96,6 +96,7 @@ public class XvsOBindingAdapter {
             view.setError(view.getContext().getString(R.string.invalid_field));
         }
     }
+
 
     @BindingAdapter("profileImage")
     public static void profileImage(ImageView view, String imageUrl) {

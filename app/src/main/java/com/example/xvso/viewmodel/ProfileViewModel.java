@@ -2,7 +2,6 @@ package com.example.xvso.viewmodel;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -27,6 +26,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 
+import java.util.Objects;
 import java.util.UUID;
 
 public class ProfileViewModel extends ViewModel {
@@ -38,14 +38,13 @@ public class ProfileViewModel extends ViewModel {
     private User user = new User();
     private MutableLiveData<User> userLiveData = new MutableLiveData<>();
 
-    // represents the substring of the email address, the first part before "@"
-    private MutableLiveData<String> name = new MutableLiveData<>();
-    private MutableLiveData<String> firstName = new MutableLiveData<>();
-    private MutableLiveData<String> lastName = new MutableLiveData<>();
-    private MutableLiveData<String> email = new MutableLiveData<>();
-    private MutableLiveData<String> password = new MutableLiveData<>();
-    private MutableLiveData<String> imageUrl = new MutableLiveData<>();
-    private MutableLiveData<String> fileName = new MutableLiveData<>("");
+    private String name;
+    private String firstName;
+    private String lastName;
+    private String email;
+    private String password;
+    private String imageUrl;
+    private String fileName = "";
 
     // MuatableLiveData variables for validating all 4 fields
     private MutableLiveData<Boolean> isFirstNameValid = new MutableLiveData<>(true);
@@ -215,7 +214,7 @@ public class ProfileViewModel extends ViewModel {
                         networkState.setValue(new Event<>(NetworkState.LOADED)))
                 .addOnFailureListener(aVoid ->
                         networkState.setValue(new Event<>(NetworkState.FAILED)))
-            ;
+        ;
     }
 
 
@@ -263,9 +262,6 @@ public class ProfileViewModel extends ViewModel {
 
         // 2. getEditTextData();
 
-        // firebaseAuth = FirebaseAuth.getInstance();
-        // firebaseUser = firebaseAuth.getCurrentUser();
-
         UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                 .setDisplayName(firstName + " " + lastName)
                 .build();
@@ -281,113 +277,19 @@ public class ProfileViewModel extends ViewModel {
                 });
     }
 
-    private void getDataFromFirebase() {
-
-        mDatabaseRef = FirebaseDatabase.getInstance().getReference("users/");
-
-        mDatabaseRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                if (firebaseUser != null) {
-
-                    user = dataSnapshot.child(firebaseUser.getUid()).getValue(User.class);
-
-                    if (user != null) {
-
-
+    public void getUserDetailsFromDatabase() {
+        mDatabaseRef
+                .child(Objects.requireNonNull(firebaseAuth.getUid()))
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        user = dataSnapshot.getValue(User.class);
+                        userLiveData.setValue(user);
                     }
 
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-// a way to get the data from Firebase and put it in the MutableLiveData. How would it work?
-    private void readFromDatabase() {
-
-        mDatabaseRef = FirebaseDatabase.getInstance().getReference("users/");
-
-        // Read from the database
-        mDatabaseRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                if (firebaseUser != null) {
-
-                    user = dataSnapshot.child(firebaseUser.getUid()).getValue(User.class);
-
-                    if (user != null) {
-                        // picture part
-                        String uri = user.getImageUrl();
-
-                        if (user.getImageUrl() != null) {
-
-                            Log.d(LOG_TAG, "Value is: " + uri);
-
-                            String firstName = user.getFirstName();
-                            String lastName = user.getLastName();
-                            String password = user.getPassword();
-                            String email = user.getEmailAddress();
-
-                            // TO DO from the xml
-                            // setEditTextData(firstName, lastName, password, email);
-
-                            String fullName = firstName + " " + lastName;
-
-                            // TO DO from the xml
-                            //profileBinding.userNameTextview.setText(fullName);
-                            //profileBinding.emailAddressTextview.setText(email);
-
-                        } else {
-
-                            if (TextUtils.isEmpty(user.getFirstName())) {
-                                firstName = "";
-                            } else {
-                                firstName = user.getFirstName();
-                            }
-
-                            if (TextUtils.isEmpty(user.getFirstName())) {
-                                lastName = "";
-                            } else {
-                                lastName = user.getLastName();
-                            }
-
-                            String password = user.getPassword();
-                            String email = user.getEmailAddress();
-
-                            // // TO DO from the xml
-                            // setEditTextData(firstName, lastName, password, email);
-
-                            String fullName = firstName + " " + lastName;
-
-                            // TO DO from the xml
-                            //profileBinding.userNameTextview.setText(fullName);
-                            //profileBinding.emailAddressTextview.setText(email);
-                        }
-
-                    } else {
-
-                        // TO DO: replace Glide
-                        /*Glide.with(getApplicationContext())
-                                .load(R.drawable.tictactoe)
-                                .into(profileBinding.profilePicture);*/
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
                     }
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w(LOG_TAG, "Failed to read value.", error.toException());
-            }
-        });
+                });
     }
 }

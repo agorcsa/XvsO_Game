@@ -54,7 +54,7 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
     private ProgressDialog progressDialog;
 
     private ProfileEditState profileEditState;
-    private NetworkState networkState;
+    private ProfileViewModel.NetworkState networkState;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -129,7 +129,7 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
                     // displays the the new profile picture
                     profileViewModel.updateUserProfile();
                     // displays the new user's data
-                    profileViewModel.updateUserData();
+                    profileViewModel.getUserDetailsFromDatabase();
                     // if all the input fields are valid, displays a Toast with them
                     if (profileViewModel.validateInputFields()) {
                         showMessage(profileViewModel.createInputText());

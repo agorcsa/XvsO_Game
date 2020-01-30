@@ -2,25 +2,22 @@ package com.example.xvso.eventobserver;
 
 import androidx.lifecycle.Observer;
 
-public class EventObserver<T> implements Observer<Event<T>> {
-
-    private OnEventChange onEventChange;
-
-    // constructor
-    public EventObserver(OnEventChange onEventChange) {
-        this.onEventChange = onEventChange;
+public class EventObserver<T> implements Observer<Event<? extends T>> {
+    public interface EventUnhandledContent<T> {
+        void onEventUnhandledContent(T t);
     }
-
+    private EventUnhandledContent<T> content;
+    public EventObserver(EventUnhandledContent<T> content) {
+        this.content = content;
+    }
     @Override
-    public void onChanged(Event<T> tEvent) {
-
-        if (tEvent != null && tEvent.getContentIfNotHandled() != null && onEventChange != null) {
-            onEventChange.onUnhandledContent(tEvent.getContentIfNotHandled());
+    public void onChanged(Event<? extends T> event) {
+        if (event != null) {
+            T result = event.getContentIfNotHandled();
+            if (result != null && content != null) {
+                content.onEventUnhandledContent(result);
+            }
         }
-    }
-
-    public interface OnEventChange<T> {
-        void onUnhandledContent(T data);
     }
 }
 
