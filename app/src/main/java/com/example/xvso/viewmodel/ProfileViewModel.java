@@ -205,6 +205,23 @@ public class ProfileViewModel extends ViewModel {
         FAILED
     }
 
+    private void saveUserToDatabase() {
+
+        user.setFirstName(userLiveData.getValue().getFirstName());
+        user.setLastName(userLiveData.getValue().getLastName());
+        user.setPassword(userLiveData.getValue().getPassword());
+        user.setPassword(userLiveData.getValue().getEmailAddress());
+
+        mDatabaseRef
+                .child(firebaseUser.getUid())
+                .setValue(user)
+                .addOnSuccessListener(aVoid ->
+                        networkState.setValue(new Event<>(NetworkState.LOADED)))
+                .addOnFailureListener(aVoid ->
+                        networkState.setValue(new Event<>(NetworkState.FAILED)))
+        ;
+    }
+
     private void saveImageUrlInDatabase(Uri uri) {
         user.setImageUrl(uri.toString());
         mDatabaseRef
@@ -275,6 +292,12 @@ public class ProfileViewModel extends ViewModel {
                         }
                     }
                 });
+    }
+
+    public void submitForm() {
+        if (validateInputFields()) {
+            saveUserToDatabase();
+        }
     }
 
     public void getUserDetailsFromDatabase() {

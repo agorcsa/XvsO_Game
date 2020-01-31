@@ -214,6 +214,6 @@
             android:text="submit"
             android:layout_marginTop="10dp"
             android:layout_alignParentBottom="true"
-            />
+            android:onClick="@{()-> viewModelProfile.submitForm()}"/>
     </RelativeLayout>
 </layout>
