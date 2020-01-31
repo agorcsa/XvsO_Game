@@ -35,7 +35,7 @@ public class XvsOBindingAdapter {
 
     @BindingAdapter("isGameInProgress")
     public static void checkGameInProgress(ImageView imageView, boolean isGameInProgress) {
-        if (isGameInProgress == true) {
+        if (isGameInProgress) {
             imageView.setClickable(true);
         } else {
             imageView.setClickable(false);
@@ -52,27 +52,25 @@ public class XvsOBindingAdapter {
     }
 
     @BindingAdapter("errorFirstName")
-    public static boolean errorFirstName(TextInputEditText view, Boolean isValid) {
+    public static void errorFirstName(TextInputEditText view, Boolean isValid) {
         if (isValid) {
             view.setError(null);
         } else if (view.getText().toString().isEmpty()) {
             view.setError(view.getContext().getString(R.string.invalid_field));
-        } else if (Integer.valueOf(view.getText().toString()) > 10) {
+        } else if (view.getText().length() > 10) {
             view.setError(view.getContext().getString(R.string.first_name_too_long));
         }
-        return true;
     }
 
     @BindingAdapter("errorLastName")
-    public static boolean errorLastName(TextInputEditText view, Boolean isValid) {
+    public static void errorLastName(TextInputEditText view, Boolean isValid) {
         if (isValid) {
             view.setError(null);
         } else if (view.getText().toString().isEmpty()) {
             view.setError(view.getContext().getString(R.string.invalid_field));
-        } else if (Integer.valueOf(view.getText().toString()) > 10) {
+        } else if (view.getText().length() > 10) {
             view.setError(view.getContext().getString(R.string.last_name_too_long));
         }
-        return true;
     }
 
     @BindingAdapter("errorEmail")

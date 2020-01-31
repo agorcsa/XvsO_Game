@@ -145,6 +145,11 @@ public class ProfileViewModel extends ViewModel {
     // returns false
     public boolean validateInputFields() {
 
+        user.setFirstName(userLiveData.getValue().getFirstName());
+        user.setLastName(userLiveData.getValue().getLastName());
+        user.setPassword(userLiveData.getValue().getPassword());
+        user.setPassword(userLiveData.getValue().getEmailAddress());
+
         boolean isValid = true;
 
         if (!user.isFirstNameValid()) {
