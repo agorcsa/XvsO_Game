@@ -78,7 +78,7 @@ public class XvsOBindingAdapter {
         if (isValid) {
             // hide the error
             view.setError(null);
-        } else {
+        } else if (view.getText().toString().isEmpty()) {
             // show the error
             view.setError(view.getContext().getString(R.string.invalid_field));
         }
@@ -89,7 +89,7 @@ public class XvsOBindingAdapter {
         if (isValid) {
             // hide the error
             view.setError(null);
-        } else {
+        } else if (view.getText().toString().isEmpty()){
             // show the error
             view.setError(view.getContext().getString(R.string.invalid_field));
         }

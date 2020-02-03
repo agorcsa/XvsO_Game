@@ -32,12 +32,10 @@ import java.util.UUID;
 public class ProfileViewModel extends ViewModel {
 
     private static final String LOG_TAG = "ProfileViewModel";
-
+    public final MutableLiveData<Event<NetworkState>> networkState = new MutableLiveData<>();
     public MutableLiveData<ProfileEditState> stateLiveData = new MutableLiveData<>();
-
     private User user = new User();
     private MutableLiveData<User> userLiveData = new MutableLiveData<>();
-
     private String name;
     private String firstName;
     private String lastName;
@@ -45,13 +43,11 @@ public class ProfileViewModel extends ViewModel {
     private String password;
     private String imageUrl;
     private String fileName = "";
-
     // MuatableLiveData variables for validating all 4 fields
     private MutableLiveData<Boolean> isFirstNameValid = new MutableLiveData<>(true);
     private MutableLiveData<Boolean> isLastNameValid = new MutableLiveData<>(true);
     private MutableLiveData<Boolean> isEmailValid = new MutableLiveData<>(true);
     private MutableLiveData<Boolean> isPasswordValid = new MutableLiveData<>(true);
-
     // Firebase variables
     private FirebaseUser firebaseUser;
     private FirebaseAuth firebaseAuth;
@@ -59,8 +55,6 @@ public class ProfileViewModel extends ViewModel {
     private DatabaseReference mDatabaseRef;
     private StorageTask mUploadTask;
     private ProfileEditState profileEditState;
-
-    public final MutableLiveData<Event<NetworkState>> networkState = new MutableLiveData<>();
 
     // constructor
     public ProfileViewModel() {
@@ -145,11 +139,6 @@ public class ProfileViewModel extends ViewModel {
     // returns false
     public boolean validateInputFields() {
 
-        user.setFirstName(userLiveData.getValue().getFirstName());
-        user.setLastName(userLiveData.getValue().getLastName());
-        user.setPassword(userLiveData.getValue().getPassword());
-        user.setPassword(userLiveData.getValue().getEmailAddress());
-
         boolean isValid = true;
 
         if (!user.isFirstNameValid()) {
@@ -203,28 +192,25 @@ public class ProfileViewModel extends ViewModel {
         return input;
     }
 
-    public enum NetworkState {
-        LOADED,
-        LOADING,
-        UPLOADING,
-        FAILED
-    }
-
     private void saveUserToDatabase() {
 
-        user.setFirstName(userLiveData.getValue().getFirstName());
-        user.setLastName(userLiveData.getValue().getLastName());
-        user.setPassword(userLiveData.getValue().getPassword());
-        user.setPassword(userLiveData.getValue().getEmailAddress());
+        if (user != null) {
 
-        mDatabaseRef
-                .child(firebaseUser.getUid())
-                .setValue(user)
-                .addOnSuccessListener(aVoid ->
-                        networkState.setValue(new Event<>(NetworkState.LOADED)))
-                .addOnFailureListener(aVoid ->
-                        networkState.setValue(new Event<>(NetworkState.FAILED)))
-        ;
+            user.setFirstName(userLiveData.getValue().getFirstName());
+            user.setLastName(userLiveData.getValue().getLastName());
+            user.setPassword(userLiveData.getValue().getPassword());
+            user.setPassword(userLiveData.getValue().getEmailAddress());
+
+
+            mDatabaseRef
+                    .child(firebaseUser.getUid())
+                    .setValue(user)
+                    .addOnSuccessListener(aVoid ->
+                            networkState.setValue(new Event<>(NetworkState.LOADED)))
+                    .addOnFailureListener(aVoid ->
+                            networkState.setValue(new Event<>(NetworkState.FAILED)))
+            ;
+        }
     }
 
     private void saveImageUrlInDatabase(Uri uri) {
@@ -238,7 +224,6 @@ public class ProfileViewModel extends ViewModel {
                         networkState.setValue(new Event<>(NetworkState.FAILED)))
         ;
     }
-
 
     public void uploadPicture(Intent intentData) {
         Uri imagePath = intentData.getData();
@@ -279,7 +264,6 @@ public class ProfileViewModel extends ViewModel {
         }
     }
 
-
     public void updateUserProfile() {
 
         // 2. getEditTextData();
@@ -306,18 +290,30 @@ public class ProfileViewModel extends ViewModel {
     }
 
     public void getUserDetailsFromDatabase() {
+
         mDatabaseRef
                 .child(Objects.requireNonNull(firebaseAuth.getUid()))
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
                         user = dataSnapshot.getValue(User.class);
-                        userLiveData.setValue(user);
+
+                        if (user != null) {
+                            userLiveData.setValue(user);
+                        }
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
                     }
                 });
+    }
+
+    public enum NetworkState {
+        LOADED,
+        LOADING,
+        UPLOADING,
+        FAILED
     }
 }
