@@ -119,23 +119,6 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
             case R.id.profile_picture:
                 selectImage();
                 break;
-            case R.id.submit_button:
-                // in case the "submit" button is clicked more times for the same picture,
-                // while the upload is already in progress
-                if (mUploadTask != null && mUploadTask.isInProgress()) {
-                    Toast.makeText(getApplicationContext(), "Upload is already in progress", Toast.LENGTH_SHORT).show();
-                } else {
-                    // readFromDatabase() - not needed anymore if we use ViewModel + MutableLiveData
-                    // displays the the new profile picture
-                    profileViewModel.updateUserProfile();
-                    // displays the new user's data
-                    profileViewModel.getUserDetailsFromDatabase();
-                    // if all the input fields are valid, displays a Toast with them
-                    if (profileViewModel.validateInputFields()) {
-                        showMessage(profileViewModel.createInputText());
-                    }
-                }
-                break;
         }
     }
 
@@ -168,7 +151,6 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
     private void observeStatus() {
         profileViewModel.networkState.observe(this, new EventObserver<>(this::handleStatus));
     }
-
 
     public void handleStatus(ProfileViewModel.NetworkState networkState) {
         switch (networkState) {

@@ -32,10 +32,13 @@ import java.util.UUID;
 public class ProfileViewModel extends ViewModel {
 
     private static final String LOG_TAG = "ProfileViewModel";
+
     public final MutableLiveData<Event<NetworkState>> networkState = new MutableLiveData<>();
     public MutableLiveData<ProfileEditState> stateLiveData = new MutableLiveData<>();
+
     private User user = new User();
     private MutableLiveData<User> userLiveData = new MutableLiveData<>();
+
     private String name;
     private String firstName;
     private String lastName;
@@ -43,11 +46,13 @@ public class ProfileViewModel extends ViewModel {
     private String password;
     private String imageUrl;
     private String fileName = "";
+
     // MuatableLiveData variables for validating all 4 fields
     private MutableLiveData<Boolean> isFirstNameValid = new MutableLiveData<>(true);
     private MutableLiveData<Boolean> isLastNameValid = new MutableLiveData<>(true);
     private MutableLiveData<Boolean> isEmailValid = new MutableLiveData<>(true);
     private MutableLiveData<Boolean> isPasswordValid = new MutableLiveData<>(true);
+
     // Firebase variables
     private FirebaseUser firebaseUser;
     private FirebaseAuth firebaseAuth;
@@ -67,6 +72,8 @@ public class ProfileViewModel extends ViewModel {
 
         profileEditState = new ProfileEditState();
         stateLiveData.setValue(profileEditState);
+
+        getUserDetailsFromDatabase();
     }
 
     public MutableLiveData<ProfileEditState> getStateLiveData() {
@@ -177,30 +184,8 @@ public class ProfileViewModel extends ViewModel {
         return isValid;
     }
 
-    // creates a String from the user's data
-    // used to display a Toast message if fields are validated
-    public String createInputText() {
-
-        String input = "First name: " + getFirstName();
-        input += "\n";
-        input += "Last name: " + getLastName();
-        input += "\n";
-        input += "Email: " + getEmail();
-        input += "\n";
-        input += "Password: " + getPassword();
-
-        return input;
-    }
 
     private void saveUserToDatabase() {
-
-        if (user != null) {
-
-            user.setFirstName(userLiveData.getValue().getFirstName());
-            user.setLastName(userLiveData.getValue().getLastName());
-            user.setPassword(userLiveData.getValue().getPassword());
-            user.setPassword(userLiveData.getValue().getEmailAddress());
-
 
             mDatabaseRef
                     .child(firebaseUser.getUid())
@@ -210,7 +195,22 @@ public class ProfileViewModel extends ViewModel {
                     .addOnFailureListener(aVoid ->
                             networkState.setValue(new Event<>(NetworkState.FAILED)))
             ;
-        }
+    }
+
+
+    // creates a String from the user's data
+    // used to display a Toast message if fields are validated
+    public String createInputText() {
+
+        String input = "First name: " + userLiveData.getValue().getFirstName();
+        input += "\n";
+        input += "Last name: " + userLiveData.getValue().getLastName();
+        input += "\n";
+        input += "Email: " + userLiveData.getValue().getEmailAddress();
+        input += "\n";
+        input += "Password: " + userLiveData.getValue().getPassword();
+
+        return input;
     }
 
     private void saveImageUrlInDatabase(Uri uri) {
@@ -284,8 +284,18 @@ public class ProfileViewModel extends ViewModel {
     }
 
     public void submitForm() {
-        if (validateInputFields()) {
-            saveUserToDatabase();
+        //userLiveData.setValue(user);
+        if (user != null && validateInputFields()) {
+
+            user.setFirstName(userLiveData.getValue().getFirstName());
+            user.setLastName((userLiveData.getValue().getLastName()));
+            user.setPassword(userLiveData.getValue().getPassword());
+            user.setPassword(userLiveData.getValue().getEmailAddress());
+
+            if (validateInputFields()) {
+                saveUserToDatabase();
+                createInputText();
+            }
         }
     }
 

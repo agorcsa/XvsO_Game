@@ -60,12 +60,12 @@ public class LoginActivity extends BaseActivity {
                 loginViewModel.getEmail().setValue(loginBinding.email.getText().toString());
                 loginViewModel.getPassword().setValue(loginBinding.password.getText().toString());
 
-                if (TextUtils.isEmpty((CharSequence) loginViewModel.getEmail())) {
+                if (TextUtils.isEmpty(( loginViewModel.getEmail().toString()))) {
                     Toast.makeText(getApplicationContext(), "Enter email address!", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                if (TextUtils.isEmpty((CharSequence) loginViewModel.getPassword())) {
+                if (TextUtils.isEmpty((loginViewModel.getPassword().toString()))) {
                     Toast.makeText(getApplicationContext(), "Enter password!", Toast.LENGTH_SHORT).show();
                     return;
                 }

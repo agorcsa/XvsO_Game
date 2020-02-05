@@ -79,7 +79,7 @@ public class SignupActivity extends BaseActivity {
                     Toast.makeText(getApplicationContext(), "Enter email address!", Toast.LENGTH_SHORT).show();
                     return;
 
-                }else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                     signupBinding.inputEmail.setError("Please enter a valid e-mail address");
                 }
 
