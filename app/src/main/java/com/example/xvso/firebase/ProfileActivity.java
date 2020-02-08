@@ -65,6 +65,7 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
         // the profileViewModel instance uses the ProfileViewModel.class
         profileViewModel = ViewModelProviders.of(this).get(ProfileViewModel.class);
 
+        observeStatus();
         // sets onClickListener on the submitButton in order to be clickable and run some code
         profileBinding.submitButton.setOnClickListener(this);
         // sets onClickListener on the profilePicture in order to be clickable and run some code
@@ -124,7 +125,7 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
 
     // auxiliary method for displaying a Toast message, by just giving the message we want to display
     public void showMessage(String message) {
-        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
     }
 
     private void setupProgressDialog() {
@@ -149,13 +150,13 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
     }
 
     private void observeStatus() {
-        profileViewModel.networkState.observe(this, new EventObserver<>(this::handleStatus));
+        profileViewModel.getNetworkState().observe(this, new EventObserver<>(this::handleStatus));
     }
 
     public void handleStatus(ProfileViewModel.NetworkState networkState) {
         switch (networkState) {
             case LOADED:
-                showMessage("Loaded");
+                showMessage(profileViewModel.createInputText());
                 break;
             case LOADING:
                 showMessage("Loading");

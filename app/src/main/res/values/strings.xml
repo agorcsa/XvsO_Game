@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">X vs. 0</string>
+    <string name="app_label">X vs. O in Space</string>
     <string name="log_in_activity">Log In</string>
     <string name="sign_up_activity">Sign Up</string>
     <string name="reset_password_activity">Reset Password</string>
@@ -14,16 +15,16 @@
     <string name="send_password_reset_email">Send Password reset email</string>
     <string name="remove_user">Remove user</string>
     <string name="new_pass">New Password</string>
-    <string name="title_activity_profile">Firebase</string>
+    <string name="title_activity_profile" translatable="false">Firebase</string>
     <string name="title_activity_login">Sign in</string>
-    <string name="hint_email">Email</string>
-    <string name="hint_password">Password</string>
+
+
     <string name="hint_name">Fullname</string>
-    <string name="btn_login">LOGIN</string>
-    <string name="btn_link_to_register">Not a member? Get registered in Firebase now!</string>
+
+
     <string name="btn_link_to_login">Already registered. Login Me!</string>
     <string name="title_activity_reset_password">ResetPasswordActivity</string>
-    <string name="btn_forgot_password">Forgot your password?</string>
+
     <string name="btn_reset_password">Reset Password</string>
     <string name="btn_back"><![CDATA[<< Back]]></string>
     <string name="hint_new_email">New Email</string>
@@ -43,4 +44,22 @@
     
     <string name="uploading_image">Uploading image...</string>
     <string name="please_wait">Please wait...</string>
+
+    <!-- activity_login.xml -->
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Password</string>
+    <string name="btn_login">LOGIN</string>
+    <string name="btn_forgot_password">Forgot your password?</string>
+    <string name="btn_link_to_register">Not a member? Get registered in Firebase now!</string>
+
+
+    <!-- activity_signup.xml -->
+   <string name="single_player">Single Player</string>
+   <string name="multi_player">Multi Player</string>
+
+   <string name="first_name">First Name</string>
+   <string name="last_name">Last Name</string>
+    <string name="e_mail">E-mail</string>
+    <string name="password">Password</string>
+    <string name="submit_button">Submit</string>
 </resources>

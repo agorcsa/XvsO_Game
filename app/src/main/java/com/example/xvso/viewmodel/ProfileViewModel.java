@@ -33,7 +33,16 @@ public class ProfileViewModel extends ViewModel {
 
     private static final String LOG_TAG = "ProfileViewModel";
 
-    public final MutableLiveData<Event<NetworkState>> networkState = new MutableLiveData<>();
+    private MutableLiveData<Event<NetworkState>> networkState = new MutableLiveData<>();
+
+    public void setNetworkState(MutableLiveData<Event<NetworkState>> networkState) {
+        this.networkState = networkState;
+    }
+
+    public MutableLiveData<Event<NetworkState>> getNetworkState() {
+        return networkState;
+    }
+
     public MutableLiveData<ProfileEditState> stateLiveData = new MutableLiveData<>();
 
     private User user = new User();
@@ -289,8 +298,8 @@ public class ProfileViewModel extends ViewModel {
 
             user.setFirstName(userLiveData.getValue().getFirstName());
             user.setLastName((userLiveData.getValue().getLastName()));
+            user.setEmailAddress(userLiveData.getValue().getEmailAddress());
             user.setPassword(userLiveData.getValue().getPassword());
-            user.setPassword(userLiveData.getValue().getEmailAddress());
 
             if (validateInputFields()) {
                 saveUserToDatabase();

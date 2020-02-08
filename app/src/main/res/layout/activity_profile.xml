@@ -75,7 +75,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginRight="20dp"
-                            android:text="First Name"
+                            android:text="@string/first_name"
                             android:textSize="@dimen/text_size_medium" />
 
                         <com.google.android.material.textfield.TextInputLayout
@@ -110,7 +110,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginRight="20dp"
-                            android:text="Last Name"
+                            android:text="@string/last_name"
                             android:textSize="@dimen/text_size_medium" />
 
                         <com.google.android.material.textfield.TextInputLayout
@@ -145,7 +145,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginRight="20dp"
-                            android:text="E-Mail"
+                            android:text="@string/e_mail"
                             android:textSize="@dimen/text_size_medium" />
 
                         <com.google.android.material.textfield.TextInputLayout
@@ -180,7 +180,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginRight="20dp"
-                            android:text="Password"
+                            android:text="@string/password"
                             android:textSize="@dimen/text_size_medium" />
 
                         <com.google.android.material.textfield.TextInputLayout
@@ -211,7 +211,7 @@
             android:id="@+id/submit_button"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:text="submit"
+            android:text="@string/submit_button"
             android:layout_marginTop="10dp"
             android:layout_alignParentBottom="true"
             android:onClick="@{()-> viewModelProfile.submitForm()}"/>
