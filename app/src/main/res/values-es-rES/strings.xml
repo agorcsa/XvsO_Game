@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">X vs. 0</string>
+    <string name="app_name">X vs. 0 en el Espacio</string>
     <string name="hint_email">Correo electrónico</string>
     <string name="email">Correo electrónico</string>
     <string name="log_in_activity">Acceder</string>
@@ -46,4 +46,19 @@
     <string name="e_mail">Correo electrónico</string>
     <string name="password">Contraseña</string>
     <string name="submit_button">Enviar</string>
+    <string name="profile_label">Tu perfil</string>
+    <string name="player_x">Jugador X:</string>
+    <string name="player_y">Jugador Y:</string>
+    <string name="player_x_won">¡El jugador 1 ha ganado! (X)</string>
+    <string name="player_y_won">¡El jugador 2 ha ganado! (Y)</string>
+    <string name="draw">Es un empate!</string>
+    <string name="reset_game_menu">Reiniciar el juego</string>
+    <string name="always_win_menu">Siempre gana</string>
+    <string name="settings_menu">Ajustes</string>
+    <string name="new_round_menu">Nueva ronda</string>
+    <string name="log_out_menu">Cerrar sesión</string>
+    <string name="send_request">Enviar solicitud a</string>
+    <string name="accept_request">Aceptar solicitud de</string>
+    <string name="online_users_activity">Usuarios en linea</string>
+    <string name="about">Acerca de</string>
 </resources>

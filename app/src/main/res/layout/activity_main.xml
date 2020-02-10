@@ -178,7 +178,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:layout_marginTop="20dp"
-                    android:hint="Player X: "
+                    android:hint="@string/player_x"
                     app:name="@{viewModel.userLiveData.name}"
                     app:firstName="@{viewModel.userLiveData.firstName}"
                     android:textColor="@color/color_blue"
@@ -207,7 +207,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
-                    android:text="Player O: "
+                    android:text="@string/player_y"
                     android:textColor="@color/color_blue"
                     android:textSize="@dimen/text_size_large" />
 

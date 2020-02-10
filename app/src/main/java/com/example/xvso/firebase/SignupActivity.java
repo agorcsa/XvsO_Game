@@ -10,7 +10,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 
-import com.example.xvso.MainActivity;
+import com.example.xvso.HomeActivity;
 import com.example.xvso.R;
 import com.example.xvso.User;
 import com.example.xvso.databinding.ActivitySignupBinding;
@@ -118,7 +118,7 @@ public class SignupActivity extends BaseActivity {
                                     databaseReference = FirebaseDatabase.getInstance().getReference("users");
                                     databaseReference.child(getFirebaseUser().getUid()).setValue(user);
 
-                                    startActivity(new Intent(SignupActivity.this, MainActivity.class));
+                                    startActivity(new Intent(SignupActivity.this, HomeActivity.class));
                                     finish();
                                 }
                             }

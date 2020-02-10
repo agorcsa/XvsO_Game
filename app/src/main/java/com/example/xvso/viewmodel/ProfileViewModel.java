@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.xvso.ProfileEditState;
+import com.example.xvso.ResourceProvider;
 import com.example.xvso.User;
 import com.example.xvso.eventobserver.Event;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -44,6 +45,8 @@ public class ProfileViewModel extends ViewModel {
     }
 
     public MutableLiveData<ProfileEditState> stateLiveData = new MutableLiveData<>();
+
+    private ResourceProvider resourceProvider;
 
     private User user = new User();
     private MutableLiveData<User> userLiveData = new MutableLiveData<>();
@@ -207,20 +210,7 @@ public class ProfileViewModel extends ViewModel {
     }
 
 
-    // creates a String from the user's data
-    // used to display a Toast message if fields are validated
-    public String createInputText() {
 
-        String input = "First name: " + userLiveData.getValue().getFirstName();
-        input += "\n";
-        input += "Last name: " + userLiveData.getValue().getLastName();
-        input += "\n";
-        input += "Email: " + userLiveData.getValue().getEmailAddress();
-        input += "\n";
-        input += "Password: " + userLiveData.getValue().getPassword();
-
-        return input;
-    }
 
     private void saveImageUrlInDatabase(Uri uri) {
         user.setImageUrl(uri.toString());
@@ -303,7 +293,7 @@ public class ProfileViewModel extends ViewModel {
 
             if (validateInputFields()) {
                 saveUserToDatabase();
-                createInputText();
+                //createInputText();
             }
         }
     }

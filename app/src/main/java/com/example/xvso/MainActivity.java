@@ -57,7 +57,7 @@ public class MainActivity extends BaseActivity {
             mScoreViewModel.gameEnded();
             announceWinner();
         } else if (mScoreViewModel.fullBoard()) {
-            showToast("It's a draw");
+            showToast(getString(R.string.draw));
         } else {
             mScoreViewModel.togglePlayer();
         }
@@ -71,9 +71,9 @@ public class MainActivity extends BaseActivity {
         int team = mScoreViewModel.getCurrentTeam().getTeamType();
 
             if (team == Team.TEAM_X) {
-                showToast("Player 1 has won! (X)");
+                showToast(getString(R.string.player_x_won));
             } else {
-                showToast("Player 2 has won! (O)");
+                showToast(getString(R.string.player_y_won));
             }
     }
 
@@ -95,7 +95,10 @@ public class MainActivity extends BaseActivity {
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_new_round) {
+        if (item.getItemId() == R.id.action_home) {
+            Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+            startActivity(intent);
+        } else if (item.getItemId() == R.id.action_new_round) {
             mScoreViewModel.newRound();
             mScoreViewModel.togglePlayer();
         } else if (item.getItemId() == R.id.action_new_game) {
@@ -106,7 +109,7 @@ public class MainActivity extends BaseActivity {
             Intent intent = new Intent(MainActivity.this, VideoActivity.class);
             startActivity(intent);
         } else if (item.getItemId() == R.id.action_log_out) {
-            showToast("Log out");
+            showToast(getString(R.string.log_out_menu));
             FirebaseAuth.getInstance().signOut();
             Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(loginIntent);

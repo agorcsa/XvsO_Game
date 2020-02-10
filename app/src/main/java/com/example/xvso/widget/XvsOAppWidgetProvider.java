@@ -7,8 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.widget.RemoteViews;
 
+import com.example.xvso.HomeActivity;
 import com.example.xvso.R;
-import com.example.xvso.WelcomeActivity;
 
 public class XvsOAppWidgetProvider extends AppWidgetProvider {
 
@@ -17,7 +17,7 @@ public class XvsOAppWidgetProvider extends AppWidgetProvider {
         // loops through all the widget ids
         for (int appWidgetId : appWidgetIds) {
 
-            Intent intent = new Intent(context, WelcomeActivity.class);
+            Intent intent = new Intent(context, HomeActivity.class);
             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
 
             // displays the layout in another process (widget)

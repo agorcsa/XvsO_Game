@@ -1,6 +1,7 @@
 <resources>
-    <string name="app_name">X vs. 0</string>
+    <string name="app_name">X vs. 0 in Space</string>
     <string name="app_label">X vs. O in Space</string>
+    <string name="profile_label">Your Profile</string>
     <string name="log_in_activity">Log In</string>
     <string name="sign_up_activity">Sign Up</string>
     <string name="reset_password_activity">Reset Password</string>
@@ -17,10 +18,9 @@
     <string name="new_pass">New Password</string>
     <string name="title_activity_profile" translatable="false">Firebase</string>
     <string name="title_activity_login">Sign in</string>
-
-
+    <string name="online_users_activity">Online Users</string>
+    
     <string name="hint_name">Fullname</string>
-
 
     <string name="btn_link_to_login">Already registered. Login Me!</string>
     <string name="title_activity_reset_password">ResetPasswordActivity</string>
@@ -52,14 +52,33 @@
     <string name="btn_forgot_password">Forgot your password?</string>
     <string name="btn_link_to_register">Not a member? Get registered in Firebase now!</string>
 
-
     <!-- activity_signup.xml -->
    <string name="single_player">Single Player</string>
    <string name="multi_player">Multi Player</string>
+    <string name="about">About</string>
 
    <string name="first_name">First Name</string>
    <string name="last_name">Last Name</string>
     <string name="e_mail">E-mail</string>
     <string name="password">Password</string>
     <string name="submit_button">Submit</string>
+
+    <string name="player_x">Player X:</string>
+    <string name="player_y">Player Y:</string>
+
+    <string name="player_x_won">Player 1 has won! (X)</string>
+    <string name="player_y_won">Player 2 has won! (O)</string>
+    <string name="draw">It\'s a draw!</string>
+
+    <string name="home_menu" translatable="false">Home</string>
+    <string name="new_round_menu">New Round</string>
+    <string name="reset_game_menu">Reset Game</string>
+    <string name="always_win_menu">Always win</string>
+    <string name="settings_menu">Settings</string>
+    <string name="log_out_menu">Log out</string>
+
+    <string name="user_id" translatable="false">ID</string>
+    <string name="send_request">Send request to</string>
+    <string name="accept_request">Accept request from</string>
+
 </resources>

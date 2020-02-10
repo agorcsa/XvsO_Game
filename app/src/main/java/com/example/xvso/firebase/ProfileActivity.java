@@ -156,7 +156,7 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
     public void handleStatus(ProfileViewModel.NetworkState networkState) {
         switch (networkState) {
             case LOADED:
-                showMessage(profileViewModel.createInputText());
+                showMessage(createInputText());
                 break;
             case LOADING:
                 showMessage("Loading");
@@ -167,5 +167,20 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
                 showMessage("Failed");
                 break;
         }
+    }
+
+    // creates a String from the user's data
+    // used to display a Toast message if fields are validated
+    public String createInputText() {
+
+        String input = getResources().getString(R.string.first_name) + ": " + profileViewModel.getUserLiveData().getValue().getFirstName();
+        input += "\n";
+        input += getResources().getString(R.string.last_name) + ": " + profileViewModel.getUserLiveData().getValue().getLastName();
+        input += "\n";
+        input += getResources().getString(R.string.e_mail) + ": " + profileViewModel.getUserLiveData().getValue().getEmailAddress();
+        input += "\n";
+        input += getResources().getString(R.string.password) + ": " + profileViewModel.getUserLiveData().getValue().getPassword();
+
+        return input;
     }
 }
