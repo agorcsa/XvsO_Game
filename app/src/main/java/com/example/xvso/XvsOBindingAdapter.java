@@ -1,6 +1,5 @@
 package com.example.xvso;
 
-import android.net.Uri;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
@@ -98,21 +97,21 @@ public class XvsOBindingAdapter {
 
     @BindingAdapter("profileImage")
     public static void profileImage(ImageView view, String imageUrl) {
+
         if (imageUrl != null) {
-            // load profile image with Glide
-            Glide.with(view.getContext())
-                    .load(imageUrl)
-                    .into(view);
+            if (!imageUrl.isEmpty()) {
+                // load profile image with Glide
+                Glide.with(view.getContext())
+                        .load(imageUrl)
+                        .into(view);
+            }
+            
         } else {
-            // load placeholder with Glide
-            Uri uri = Uri.parse("android.resource://com.example.xvso.firebase/" + R.drawable.tictactoe);
-            String placeholderUrl = uri.toString();
             Glide.with(view.getContext())
-                    .load(placeholderUrl)
+                    .load(R.drawable.tictactoe)
                     .into(view);
         }
     }
-
 
     @BindingAdapter("visible")
     public static void setVisibility(View view, Boolean value) {
