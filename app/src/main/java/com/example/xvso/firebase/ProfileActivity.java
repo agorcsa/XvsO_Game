@@ -158,6 +158,8 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
             case LOADED:
                 showMessage(createInputText());
                 break;
+            case IMAGE_UPLOADED:
+                showMessage("Profile picture was uploaded");
             case LOADING:
                 showMessage("Loading");
                 break;

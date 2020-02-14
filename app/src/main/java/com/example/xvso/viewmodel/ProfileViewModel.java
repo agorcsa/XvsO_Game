@@ -218,7 +218,7 @@ public class ProfileViewModel extends ViewModel {
                 .child(firebaseUser.getUid())
                 .setValue(user)
                 .addOnSuccessListener(aVoid ->
-                        networkState.setValue(new Event<>(NetworkState.LOADED)))
+                        networkState.setValue(new Event<>(NetworkState.IMAGE_UPLOADED)))
                 .addOnFailureListener(aVoid ->
                         networkState.setValue(new Event<>(NetworkState.FAILED)))
         ;
@@ -320,6 +320,7 @@ public class ProfileViewModel extends ViewModel {
     }
 
     public enum NetworkState {
+        IMAGE_UPLOADED,
         LOADED,
         LOADING,
         UPLOADING,

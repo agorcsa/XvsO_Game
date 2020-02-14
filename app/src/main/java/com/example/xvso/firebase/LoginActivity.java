@@ -57,8 +57,8 @@ public class LoginActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
 
-                loginViewModel.getEmail().setValue(loginBinding.email.getText().toString());
-                loginViewModel.getPassword().setValue(loginBinding.password.getText().toString());
+                loginViewModel.getEmail().setValue(loginBinding.loginEmail.getText().toString());
+                loginViewModel.getPassword().setValue(loginBinding.loginPassword.getText().toString());
 
                 if (TextUtils.isEmpty(( loginViewModel.getEmail().toString()))) {
                     Toast.makeText(getApplicationContext(), "Enter email address!", Toast.LENGTH_SHORT).show();
@@ -84,7 +84,7 @@ public class LoginActivity extends BaseActivity {
                                 if (!task.isSuccessful()) {
                                     // there was an error
                                     if (loginViewModel.getPassword().toString().length() < 6) {
-                                    loginBinding.password.setError(getString(R.string.minimum_password));
+                                    loginBinding.loginPassword.setError(getString(R.string.minimum_password));
                                     } else {
                                         Toast.makeText(LoginActivity.this, getString(R.string.auth_failed), Toast.LENGTH_LONG).show();
                                     }

@@ -15,9 +15,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.example.xvso.databinding.ActivityOnlineUsersBinding;
 import com.example.xvso.firebase.BaseActivity;
+import com.example.xvso.viewmodel.OnlineUsersViewModel;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -52,6 +54,8 @@ public class OnlineUsersActivity extends BaseActivity {
     private String LoginUserID;
     private String UserName;
 
+    private OnlineUsersViewModel onlineUsersViewModel;
+
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference myRef = database.getReference();
 
@@ -61,6 +65,9 @@ public class OnlineUsersActivity extends BaseActivity {
         setContentView(R.layout.activity_online_users);
 
         usersBinding = DataBindingUtil.setContentView(this, R.layout.activity_online_users);
+        onlineUsersViewModel = ViewModelProviders.of(this).get(OnlineUsersViewModel.class);
+        usersBinding.setViewModel(onlineUsersViewModel);
+        usersBinding.setLifecycleOwner(this);
 
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         mAuth = FirebaseAuth.getInstance();
@@ -150,6 +157,7 @@ public class OnlineUsersActivity extends BaseActivity {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                // register user
+
             }
         });
         builder.setNegativeButton("Back", new DialogInterface.OnClickListener() {
