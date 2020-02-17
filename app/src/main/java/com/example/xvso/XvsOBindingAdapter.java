@@ -94,7 +94,6 @@ public class XvsOBindingAdapter {
         }
     }
 
-
     @BindingAdapter("profileImage")
     public static void profileImage(ImageView view, String imageUrl) {
 
@@ -112,6 +111,7 @@ public class XvsOBindingAdapter {
                     .into(view);
         }
     }
+
 
     @BindingAdapter("visible")
     public static void setVisibility(View view, Boolean value) {

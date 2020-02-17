@@ -3,6 +3,13 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+        <variable
+            name="onlineuser"
+            type="com.example.xvso.OnlineUsersActivity" />
+    </data>
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -36,7 +43,7 @@
                android:layout_width="match_parent"
                android:layout_height="wrap_content"
                android:fontFamily="sans-serif-condensed"
-               android:text="@string/send_request"
+               android:text="{}"
                android:textColor="#000000"
                android:textSize="16sp"/>
 

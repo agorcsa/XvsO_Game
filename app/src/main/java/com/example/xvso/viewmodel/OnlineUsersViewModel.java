@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
+import com.example.xvso.Deserializer;
 import com.example.xvso.User;
 import com.example.xvso.firebaseutils.FirebaseQueryLiveData;
 import com.google.firebase.auth.FirebaseAuth;
@@ -15,10 +16,11 @@ public class OnlineUsersViewModel extends ViewModel {
     private static final String LOG_TAG = "OnlineUsersViewModel";
 
     private FirebaseAuth auth;
-
     private DatabaseReference query;
 
     private LiveData<User> userLiveData;
+
+    private String message;
 
     public OnlineUsersViewModel () {
 
@@ -29,7 +31,12 @@ public class OnlineUsersViewModel extends ViewModel {
             query = FirebaseDatabase.getInstance().getReference("users").child((auth.getUid()));
 
             FirebaseQueryLiveData resultLiveData = new FirebaseQueryLiveData(query);
-            userLiveData = Transformations.map(resultLiveData, new ScoreViewModel.Deserializer());
+            userLiveData = Transformations.map(resultLiveData, new Deserializer());
         }
+    }
+
+    public String getMessage() {
+
+        return "Please wait...";
     }
 }

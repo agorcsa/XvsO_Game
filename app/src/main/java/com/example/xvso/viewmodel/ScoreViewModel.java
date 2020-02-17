@@ -1,19 +1,15 @@
 package com.example.xvso.viewmodel;
 
-import android.os.Build;
-
-import androidx.annotation.RequiresApi;
-import androidx.arch.core.util.Function;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
+import com.example.xvso.Deserializer;
 import com.example.xvso.Team;
 import com.example.xvso.User;
 import com.example.xvso.firebaseutils.FirebaseQueryLiveData;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -328,13 +324,5 @@ public class ScoreViewModel extends ViewModel {
     public void gameEnded(){
         isGameInProgress.postValue(false);
         updateScore();
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    private class Deserializer implements Function<DataSnapshot, User> {
-        @Override
-        public User apply(DataSnapshot dataSnapshot) {
-            return dataSnapshot.getValue(User.class);
-        }
     }
 }

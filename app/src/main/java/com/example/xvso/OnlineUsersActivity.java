@@ -62,10 +62,10 @@ public class OnlineUsersActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_online_users);
 
         usersBinding = DataBindingUtil.setContentView(this, R.layout.activity_online_users);
         onlineUsersViewModel = ViewModelProviders.of(this).get(OnlineUsersViewModel.class);
+
         usersBinding.setViewModel(onlineUsersViewModel);
         usersBinding.setLifecycleOwner(this);
 
@@ -76,7 +76,7 @@ public class OnlineUsersActivity extends BaseActivity {
         usersBinding.loggedUsersListview.setAdapter(loggedUsersArrayAdapter);
 
         usersBinding.sendRequestTextview.setText(getString(R.string.please_wait));
-        usersBinding.sendRequestTextview.setText(getString(R.string.please_wait));
+        usersBinding.acceptRequestTextView.setText(getString(R.string.please_wait));
 
         requestedUsersArrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1);
         usersBinding.requestedUsersListview.setAdapter(requestedUsersArrayAdapter);
