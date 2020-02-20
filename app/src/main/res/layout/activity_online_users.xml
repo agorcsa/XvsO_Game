@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
         <variable
-            name="onlineuser"
-            type="com.example.xvso.OnlineUsersActivity" />
+            name="viewModel"
+            type="com.example.xvso.viewmodel.OnlineUsersViewModel" />
     </data>
 
 
@@ -43,8 +42,8 @@
                android:layout_width="match_parent"
                android:layout_height="wrap_content"
                android:fontFamily="sans-serif-condensed"
-               android:text="{}"
                android:textColor="#000000"
+               app="@{viewModel.status}"
                android:textSize="16sp"/>
 
            <ListView
@@ -67,6 +66,7 @@
                 android:fontFamily="sans-serif-condensed"
                 android:text="@string/accept_request"
                 android:textColor="#000000"
+                app="@{viewModel.status}"
                 android:textSize="16sp"/>
 
             <ListView
@@ -74,11 +74,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
 
-        </LinearLayout>
+         </LinearLayout>
 
        </LinearLayout>
 
     </LinearLayout>
 
-    </layout>
+</layout>
 

@@ -12,6 +12,9 @@ import com.google.android.material.textfield.TextInputEditText;
 
 public class XvsOBindingAdapter {
 
+    public static final String PLEASE_WAIT = "Please wait...";
+    public static final String CONNECTED = "Connected";
+
     @BindingAdapter("state")
     public static void setCellState(ImageView imageView, int state) {
         if (state == Team.TEAM_O) {
@@ -116,5 +119,16 @@ public class XvsOBindingAdapter {
     @BindingAdapter("visible")
     public static void setVisibility(View view, Boolean value) {
           view.setVisibility(value? View.VISIBLE :View.GONE );
+    }
+
+
+    @BindingAdapter("status")
+    public static void setAlertDialogStatus(TextView textView, String status) {
+
+        if (status == PLEASE_WAIT) {
+            textView.setText(PLEASE_WAIT);
+        } else if (status == CONNECTED ) {
+            textView.setText(CONNECTED);
+        }
     }
 }

@@ -1,6 +1,8 @@
 package com.example.xvso.viewmodel;
 
+
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
@@ -19,10 +21,9 @@ public class OnlineUsersViewModel extends ViewModel {
     private DatabaseReference query;
 
     private LiveData<User> userLiveData;
+    private MutableLiveData<AlertDialogStatus> status = new MutableLiveData<>();
 
-    private String message;
-
-    public OnlineUsersViewModel () {
+    public OnlineUsersViewModel() {
 
         auth = FirebaseAuth.getInstance();
 
@@ -35,8 +36,16 @@ public class OnlineUsersViewModel extends ViewModel {
         }
     }
 
-    public String getMessage() {
+    public MutableLiveData<AlertDialogStatus> getStatus() {
+        return status;
+    }
 
-        return "Please wait...";
+    public void setStatus(MutableLiveData<AlertDialogStatus> status) {
+        this.status = status;
+    }
+
+    public enum AlertDialogStatus {
+        CONNECTING,
+        CONNECTED
     }
 }
