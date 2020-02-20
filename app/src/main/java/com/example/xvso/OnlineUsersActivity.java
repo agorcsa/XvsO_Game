@@ -151,16 +151,16 @@ public class OnlineUsersActivity extends BaseActivity {
         final EditText emailEditText = dialogView.findViewById(R.id.login_email);
         final EditText passwordEditText = dialogView.findViewById(R.id.login_password);
 
-        builder.setTitle("Please register");
-        builder.setMessage("Enter your email and password for registration");
-        builder.setPositiveButton(" Register", new DialogInterface.OnClickListener() {
+        builder.setTitle(getString(R.string.please_wait));
+        builder.setMessage(getString(R.string.enter_email_password));
+        builder.setPositiveButton(getString(R.string.register), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                // register user
 
             }
         });
-        builder.setNegativeButton("Back", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(getString(R.string.back), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 Intent intent = new Intent(getApplicationContext(), HomeActivity.class);

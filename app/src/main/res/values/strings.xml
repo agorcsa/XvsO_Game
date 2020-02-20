@@ -81,4 +81,9 @@
     <string name="send_request">Send request to</string>
     <string name="accept_request">Accept request from</string>
 
+    <string name="please_register">Please register</string>
+    <string name="enter_email_password">Enter your email and password for registration</string>
+    <string name="register">Register</string>
+    <string name="back">Back</string>
+
 </resources>

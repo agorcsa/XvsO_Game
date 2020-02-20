@@ -61,4 +61,8 @@
     <string name="accept_request">Aceptar solicitud de</string>
     <string name="online_users_activity">Usuarios en linea</string>
     <string name="about">Acerca de</string>
+    <string name="please_register">Por favor regístrese</string>
+    <string name="enter_email_password">Ingrese su correo electrónico y contraseña para registrarse</string>
+    <string name="register">Registrarse</string>
+    <string name="back">atrás</string>
 </resources>
