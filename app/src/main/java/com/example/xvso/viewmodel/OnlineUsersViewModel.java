@@ -36,6 +36,14 @@ public class OnlineUsersViewModel extends ViewModel {
         }
     }
 
+    public LiveData<User> getUserLiveData() {
+        return userLiveData;
+    }
+
+    public void setUserLiveData(LiveData<User> userLiveData) {
+        this.userLiveData = userLiveData;
+    }
+
     public MutableLiveData<AlertDialogStatus> getStatus() {
         return status;
     }

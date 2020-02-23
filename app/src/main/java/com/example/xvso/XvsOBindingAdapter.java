@@ -8,6 +8,7 @@ import android.widget.TextView;
 import androidx.databinding.BindingAdapter;
 
 import com.bumptech.glide.Glide;
+import com.example.xvso.viewmodel.OnlineUsersViewModel;
 import com.google.android.material.textfield.TextInputEditText;
 
 public class XvsOBindingAdapter {
@@ -123,11 +124,11 @@ public class XvsOBindingAdapter {
 
 
     @BindingAdapter("status")
-    public static void setAlertDialogStatus(TextView textView, String status) {
+    public static void setAlertDialogStatus(TextView textView, OnlineUsersViewModel.AlertDialogStatus status) {
 
-        if (status == PLEASE_WAIT) {
+        if (status == OnlineUsersViewModel.AlertDialogStatus.CONNECTING) {
             textView.setText(PLEASE_WAIT);
-        } else if (status == CONNECTED ) {
+        } else if (status == OnlineUsersViewModel.AlertDialogStatus.CONNECTED ) {
             textView.setText(CONNECTED);
         }
     }
