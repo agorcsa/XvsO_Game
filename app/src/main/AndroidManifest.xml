@@ -9,7 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
+        <activity android:name=".OnlineGameActivity"></activity>
         <activity
             android:name=".firebase.LoginActivity"
             android:label="@string/log_in_activity"
@@ -20,7 +20,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".firebase.SignupActivity"
             android:label="@string/sign_up_activity"
@@ -30,7 +29,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".firebase.LoginActivity" />
         </activity>
-
         <activity
             android:name=".HomeActivity"
             android:label="@string/home_menu"
@@ -40,8 +38,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".firebase.SignupActivity" />
         </activity>
-
-
         <activity
             android:name=".AboutActivity"
             android:label="@string/about"
@@ -51,7 +47,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".HomeActivity" />
         </activity>
-
         <activity
             android:name=".OnlineUsersActivity"
             android:label="@string/online_users_activity"
@@ -61,7 +56,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".HomeActivity" />
         </activity>
-
         <activity
             android:name=".firebase.ProfileActivity"
             android:label="@string/profile_label"
@@ -103,14 +97,14 @@
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
+
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/xvso_widget_info" />
         </receiver>
-
     </application>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>

@@ -4,13 +4,16 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,7 +23,10 @@ import androidx.lifecycle.ViewModelProviders;
 import com.example.xvso.databinding.ActivityOnlineUsersBinding;
 import com.example.xvso.firebase.BaseActivity;
 import com.example.xvso.viewmodel.OnlineUsersViewModel;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -31,6 +37,9 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 public class OnlineUsersActivity extends BaseActivity {
 
@@ -40,6 +49,8 @@ public class OnlineUsersActivity extends BaseActivity {
 
     private FirebaseAnalytics mFirebaseAnalytics;
     private FirebaseAuth mAuth;
+
+    // triggered at user sign-in, sign-out, or change, or when the listener was registered
     private FirebaseAuth.AuthStateListener mAuthListener;
 
     private ArrayList<String> loggedUsersArrayList = new ArrayList();
@@ -82,14 +93,16 @@ public class OnlineUsersActivity extends BaseActivity {
         usersBinding.requestedUsersListview.setAdapter(requestedUsersArrayAdapter);
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
+
+            // when the user will be changed
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
-                    // User is signed in
+                 // User is signed in
                     LoginUID = user.getUid();
                         Log.d(LOG_TAG, "onAuthStateChanged:signed_in: " + LoginUID);
-                        LoginUID = user.getEmail();
+                        LoginUserID = user.getEmail();
                         usersBinding.userLoginTextview.setText(LoginUserID);
                         UserName = convertEmailToString(LoginUserID);
 
@@ -102,6 +115,97 @@ public class OnlineUsersActivity extends BaseActivity {
                 }
             }
         };
+
+        myRef.getRoot().child("users").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                updateLoginUsers(dataSnapshot);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        usersBinding.loggedUsersListview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                    final String requestToUser =((TextView)view).getText().toString();
+                    confirmRequest(requestToUser, "To");
+            }
+        });
+    }
+
+    public void confirmRequest(final String otherPlayer, final String reqType) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = this.getLayoutInflater();
+        final View dialogView = inflater.inflate(R.layout.connect_player_dialog, null);
+        builder.setView(dialogView);
+
+        builder.setTitle("Start Game");
+        builder.setMessage("Connect with " + otherPlayer);
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+                myRef.child("users").child(otherPlayer).child("request").push().setValue(LoginUserID);
+
+                if(reqType.equalsIgnoreCase("From")) {
+                    startGame(otherPlayer + ":" + UserName, otherPlayer, "From:");
+                } else {
+                    startGame(UserName + ":" + otherPlayer, otherPlayer, "To");
+                }
+            }
+        });
+        builder.setNegativeButton("Back", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+        builder.show();
+    }
+
+    public void startGame(String playerGameId, String otherPlayer, String requestType) {
+
+        myRef.child("playing").child(playerGameId).removeValue();
+        Intent intent = new Intent(getApplicationContext(), OnlineGameActivity.class);
+        intent.putExtra("player_session", playerGameId);
+        intent.putExtra("user_name", UserName);
+        intent.putExtra("other_player", otherPlayer);
+        intent.putExtra("login_uid", LoginUID);
+        intent.putExtra("request_type", requestType);
+        startActivity(intent);
+        finish();
+    }
+
+
+    public void updateLoginUsers(DataSnapshot dataSnapshot) {
+
+        String key = "";
+        Set<String> set = new HashSet<>();
+        Iterator iterator = dataSnapshot.getChildren().iterator();
+
+        while (iterator.hasNext()) {
+
+            key = dataSnapshot.getKey();
+            if (!key.equalsIgnoreCase(UserName)) {
+
+                set.add(key);
+            }
+        }
+
+        requestedUsersArrayAdapter.clear();
+        requestedUsersArrayAdapter.addAll(set);
+        requestedUsersArrayAdapter.notifyDataSetChanged();
+
+        usersBinding.sendRequestTextview.setText("Send request to");
+        usersBinding.acceptRequestTextView.setText("Accept request from");
+
+
 
     }
 
@@ -148,15 +252,16 @@ public class OnlineUsersActivity extends BaseActivity {
         final View dialogView = inflater.inflate(R.layout.login_dialog, null);
         builder.setView(dialogView);
 
-        final EditText emailEditText = dialogView.findViewById(R.id.login_email);
-        final EditText passwordEditText = dialogView.findViewById(R.id.login_password);
+        final EditText emailEditText = dialogView.findViewById(R.id.email_editview);
+        final EditText passwordEditText = dialogView.findViewById(R.id.password_editview);
 
-        builder.setTitle(getString(R.string.please_wait));
-        builder.setMessage(getString(R.string.enter_email_password));
+        builder.setTitle("Please register");
+        builder.setMessage("Enter your email and password for registration");
         builder.setPositiveButton(getString(R.string.register), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                // register user
+                registerUser(emailEditText.getText().toString(), passwordEditText.getText().toString());
 
             }
         });
@@ -171,5 +276,18 @@ public class OnlineUsersActivity extends BaseActivity {
 
     private void registerUser(String email, String password) {
 
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d("Auth complete", "createUserWithEmail:success" + task.isSuccessful());
+
+                            if (!task.isSuccessful()) {
+                                Toast.makeText(getApplicationContext(), "Auth failed", Toast.LENGTH_SHORT).show();
+                            }
+                    }
+                });
     }
 }
