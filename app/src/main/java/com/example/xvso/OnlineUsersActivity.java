@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -189,12 +188,24 @@ public class OnlineUsersActivity extends BaseActivity {
         Set<String> set = new HashSet<>();
         Iterator iterator = dataSnapshot.getChildren().iterator();
 
-        while (iterator.hasNext()) {
+        for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
+            User user = snapshot.getValue(User.class);
 
-            key = dataSnapshot.getKey();
-            if (!key.equalsIgnoreCase(UserName)) {
+            if (user!= null) {
+                String userEmail = user.getEmailAddress();
 
-                set.add(key);
+                FirebaseUser currentUser = mAuth.getCurrentUser();
+
+                if (currentUser != null) {
+
+                    String currentUserEmail = mAuth.getCurrentUser().getEmail();
+
+                    if (userEmail != null && currentUserEmail != null) {
+                        if (!userEmail.equals(currentUserEmail)) {
+                            set.add(user.getName());
+                        }
+                    }
+                }
             }
         }
 
@@ -204,9 +215,6 @@ public class OnlineUsersActivity extends BaseActivity {
 
         usersBinding.sendRequestTextview.setText("Send request to");
         usersBinding.acceptRequestTextView.setText("Accept request from");
-
-
-
     }
 
     private String convertEmailToString(String email) {
@@ -289,5 +297,11 @@ public class OnlineUsersActivity extends BaseActivity {
                             }
                     }
                 });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
     }
 }
