@@ -4,8 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
@@ -209,11 +211,59 @@ public class OnlineGameActivity extends AppCompatActivity {
         }
     }
 
-    public void checkWinner() {
-
-        // no winner
+    void checkWinner(){
         int winner = 0;
 
+        /********* for Player 1 *********/
+        if(player1.contains(1) && player1.contains(2) && player1.contains(3)){ winner = 1; }
+        if(player1.contains(4) && player1.contains(5) && player1.contains(6)){ winner = 1; }
+        if(player1.contains(7) && player1.contains(8) && player1.contains(9)){ winner = 1; }
+
+        if(player1.contains(1) && player1.contains(4) && player1.contains(7)){ winner = 1; }
+        if(player1.contains(2) && player1.contains(5) && player1.contains(8)){ winner = 1; }
+        if(player1.contains(3) && player1.contains(6) && player1.contains(9)){ winner = 1; }
+
+        if(player1.contains(1) && player1.contains(5) && player1.contains(9)){ winner = 1; }
+        if(player1.contains(3) && player1.contains(5) && player1.contains(7)){ winner = 1; }
+
+
+        /********* for Player 2 *********/
+        if(player2.contains(1) && player2.contains(2) && player2.contains(3)){ winner = 2; }
+        if(player2.contains(4) && player2.contains(5) && player2.contains(6)){ winner = 2; }
+        if(player2.contains(7) && player2.contains(8) && player2.contains(9)){ winner = 2; }
+
+        if(player2.contains(1) && player2.contains(4) && player2.contains(7)){ winner = 2; }
+        if(player2.contains(2) && player2.contains(5) && player2.contains(8)){ winner = 2; }
+        if(player2.contains(3) && player2.contains(6) && player2.contains(9)){ winner = 2; }
+
+        if(player2.contains(1) && player2.contains(5) && player2.contains(9)){ winner = 2; }
+        if(player2.contains(3) && player2.contains(5) && player2.contains(7)){ winner = 2; }
+
+
+
+
+        if(winner != 0 && gameState == 1){
+            if(winner == 1){
+                ShowAlert(otherPlayer +" is winner");
+            }else if(winner == 2){
+                ShowAlert("You won the game");
+            }
+            gameState = 2;
+        }
+
+        ArrayList<Integer> emptyBlocks = new ArrayList<Integer>();
+        for(int i=1; i<=9; i++){
+            if(!(player1.contains(i) || player2.contains(i))){
+                emptyBlocks.add(i);
+            }
+        }
+        if(emptyBlocks.size() == 0) {
+            if(gameState == 1) {
+                AlertDialog.Builder b = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert);
+                ShowAlert("Draw");
+            }
+            gameState = 3;
+        }
     }
 
     public void setEnableClick(boolean b) {
@@ -229,5 +279,10 @@ public class OnlineGameActivity extends AppCompatActivity {
         onlineGameBinding.block7.setClickable(b);
         onlineGameBinding.block8.setClickable(b);
         onlineGameBinding.block9.setClickable(b);
+    }
+
+    public void ShowAlert(String message) {
+        Toast toast=Toast. makeText(getApplicationContext(),message,Toast. LENGTH_SHORT);
+        toast.show();
     }
 }
