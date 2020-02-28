@@ -8,6 +8,7 @@ import android.widget.TextView;
 import androidx.databinding.BindingAdapter;
 
 import com.bumptech.glide.Glide;
+import com.example.xvso.Objects.Team;
 import com.example.xvso.viewmodel.OnlineUsersViewModel;
 import com.google.android.material.textfield.TextInputEditText;
 

@@ -30,11 +30,17 @@ public class OnlineGameActivity extends AppCompatActivity {
     private ActivityOnlineGameBinding onlineGameBinding;
 
     private String playerSession = "";
+    // current player user name
     private String userName = "";
+
+    // other player user name
     private String otherPlayer = "";
     private String loginUID = "";
     private String requestType = "";
+
+    // current user is signed in with X
     private String myGameSignIn = "X";
+
     private int gameState = 0;
 
     FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -44,6 +50,9 @@ public class OnlineGameActivity extends AppCompatActivity {
     ArrayList<Integer> player1 = new ArrayList<>();
     ArrayList<Integer> player2 = new ArrayList<>();
 
+    private boolean readyToPlayX;
+    private boolean readyToPlayO;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,7 +60,9 @@ public class OnlineGameActivity extends AppCompatActivity {
 
         onlineGameBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
-        // gets the values from the intent
+        // gets the values wrapped in the intent
+        // inside startGame() method -> OnlineUsersActivity.class,
+        // which were sent to this Activity after the confirmRequest() was called
         userName = getIntent().getExtras().get("user_name").toString();
         loginUID = getIntent().getExtras().get("login_uid").toString();
         otherPlayer = getIntent().getExtras().get("other_player").toString();
@@ -62,6 +73,7 @@ public class OnlineGameActivity extends AppCompatActivity {
 
         if (requestType.equals("From")) {
 
+            // the player who sends the request plays with X
             myGameSignIn = "O";
 
             onlineGameBinding.player1Text.setText("Your turn");

@@ -7,7 +7,7 @@ import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
 import com.example.xvso.Deserializer;
-import com.example.xvso.User;
+import com.example.xvso.Objects.User;
 import com.example.xvso.firebaseutils.FirebaseQueryLiveData;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;

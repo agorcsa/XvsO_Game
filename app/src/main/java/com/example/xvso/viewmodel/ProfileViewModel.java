@@ -8,9 +8,9 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.xvso.Objects.User;
 import com.example.xvso.ProfileEditState;
 import com.example.xvso.ResourceProvider;
-import com.example.xvso.User;
 import com.example.xvso.eventobserver.Event;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;

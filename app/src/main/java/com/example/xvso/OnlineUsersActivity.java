@@ -19,6 +19,7 @@ import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.example.xvso.Objects.User;
 import com.example.xvso.databinding.ActivityOnlineUsersBinding;
 import com.example.xvso.firebase.BaseActivity;
 import com.example.xvso.viewmodel.OnlineUsersViewModel;

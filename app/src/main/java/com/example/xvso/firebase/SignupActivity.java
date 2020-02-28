@@ -11,8 +11,8 @@ import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 
 import com.example.xvso.HomeActivity;
+import com.example.xvso.Objects.User;
 import com.example.xvso.R;
-import com.example.xvso.User;
 import com.example.xvso.databinding.ActivitySignupBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
