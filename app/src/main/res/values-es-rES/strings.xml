@@ -65,4 +65,5 @@
     <string name="enter_email_password">Ingrese su correo electrónico y contraseña para registrarse</string>
     <string name="register">Registrarse</string>
     <string name="back">atrás</string>
+    <string name="new_game">Nuevo Juego</string>
 </resources>
