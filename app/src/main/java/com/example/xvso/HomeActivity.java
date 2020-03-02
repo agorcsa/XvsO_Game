@@ -49,7 +49,7 @@ public class HomeActivity extends AppCompatActivity{
     }
 
     public void startGameOnline(View view) {
-        Intent intent = new Intent(this, NewGameActivity.class);
+        Intent intent = new Intent(this, OnlineUsersActivity.class);
         startActivity(intent);
     }
 }

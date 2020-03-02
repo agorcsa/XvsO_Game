@@ -18,8 +18,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.xvso.Objects.GameItem;
 import com.example.xvso.Objects.User;
+import com.example.xvso.adapter.GameAdapter;
 import com.example.xvso.databinding.ActivityOnlineUsersBinding;
 import com.example.xvso.firebase.BaseActivity;
 import com.example.xvso.viewmodel.OnlineUsersViewModel;
@@ -70,6 +74,12 @@ public class OnlineUsersActivity extends BaseActivity {
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference myRef = database.getReference();
 
+    private ArrayList<GameItem> mOpenGamesList;
+
+    private RecyclerView recyclerView;
+    private RecyclerView.LayoutManager layoutManager;
+    private RecyclerView.Adapter adapter;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,6 +89,9 @@ public class OnlineUsersActivity extends BaseActivity {
 
         usersBinding.setViewModel(onlineUsersViewModel);
         usersBinding.setLifecycleOwner(this);
+
+        buildRecyclerView();
+        createGameList();
 
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         mAuth = FirebaseAuth.getInstance();
@@ -304,5 +317,43 @@ public class OnlineUsersActivity extends BaseActivity {
     protected void onStart() {
         super.onStart();
         mAuth.addAuthStateListener(mAuthListener);
+    }
+
+    public void onButtonClick(View view) {
+
+        Toast.makeText(getApplicationContext(), "New game added to list", Toast.LENGTH_LONG).show();
+    }
+
+
+    public void createGameList() {
+        // add the games from Firebase
+        // placeholder/dummy code
+        mOpenGamesList = new ArrayList<>();
+
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        String userName = currentUser.getDisplayName();
+
+        mOpenGamesList.add(new GameItem(R.drawable.profile, userName, "user 1"));
+    }
+
+    public void buildRecyclerView() {
+        recyclerView = findViewById(R.id.games_recycler_view);
+        recyclerView.setHasFixedSize(true);
+        layoutManager = new LinearLayoutManager(this);
+        adapter = new GameAdapter(mOpenGamesList);
+
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(adapter);
+    }
+
+    public void onNewGameButtonClicked(View view) {
+        Toast.makeText(getApplicationContext(), "A new game has been created", Toast.LENGTH_LONG).show();
+        addNewGame();
+    }
+
+    public void addNewGame() {
+        mOpenGamesList.add( new GameItem(R.drawable.ic_cross, "A new game has been added", "Opponent User Name"));
+        adapter.notifyDataSetChanged();
     }
 }
