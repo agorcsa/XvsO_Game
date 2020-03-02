@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -96,15 +95,6 @@ public class OnlineUsersActivity extends BaseActivity {
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         mAuth = FirebaseAuth.getInstance();
 
-        loggedUsersArrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1);
-        usersBinding.loggedUsersListview.setAdapter(loggedUsersArrayAdapter);
-
-        usersBinding.sendRequestTextview.setText(getString(R.string.please_wait));
-        usersBinding.acceptRequestTextView.setText(getString(R.string.please_wait));
-
-        requestedUsersArrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1);
-        usersBinding.requestedUsersListview.setAdapter(requestedUsersArrayAdapter);
-
         mAuthListener = new FirebaseAuth.AuthStateListener() {
 
             // when the user will be changed
@@ -142,14 +132,14 @@ public class OnlineUsersActivity extends BaseActivity {
             }
         });
 
-        usersBinding.loggedUsersListview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        /*usersBinding.loggedUsersListview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
                     final String requestToUser =((TextView)view).getText().toString();
                     confirmRequest(requestToUser, "To");
             }
-        });
+        });*/
     }
 
     public void confirmRequest(final String otherPlayer, final String reqType) {
@@ -227,8 +217,8 @@ public class OnlineUsersActivity extends BaseActivity {
         requestedUsersArrayAdapter.addAll(set);
         requestedUsersArrayAdapter.notifyDataSetChanged();
 
-        usersBinding.sendRequestTextview.setText("Send request to");
-        usersBinding.acceptRequestTextView.setText("Accept request from");
+        /*usersBinding.sendRequestTextview.setText("Send request to");
+        usersBinding.acceptRequestTextView.setText("Accept request from");*/
     }
 
     private String convertEmailToString(String email) {
