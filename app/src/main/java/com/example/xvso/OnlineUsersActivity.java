@@ -3,6 +3,7 @@ package com.example.xvso;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -61,7 +62,7 @@ public class OnlineUsersActivity extends BaseActivity {
 
     private ListView requestedUsersListView;
     private ArrayList<String> requestedUsersArrayList = new ArrayList<>();
-    private ArrayAdapter requestedUsersArrayAdapter;
+//    private ArrayAdapter requestedUsersArrayAdapter;
 
     private TextView userIdTextView;
     private String LoginUID;
@@ -73,11 +74,18 @@ public class OnlineUsersActivity extends BaseActivity {
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference myRef = database.getReference();
 
-    private ArrayList<GameItem> mOpenGamesList;
+    private ArrayList<GameItem> mOpenGamesList = new ArrayList<>();
 
     private RecyclerView recyclerView;
-    private RecyclerView.LayoutManager layoutManager;
-    private RecyclerView.Adapter adapter;
+    private LinearLayoutManager layoutManager;
+    private GameAdapter adapter;
+
+    // game status
+    public static final int STATUS_WAITING = 0;
+    public static final int STATUS_PLAYING = 1;
+    public static final int STATUS_FINISHED = 2;
+    private int statusGuest;
+    private int statusHost;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -89,11 +97,12 @@ public class OnlineUsersActivity extends BaseActivity {
         usersBinding.setViewModel(onlineUsersViewModel);
         usersBinding.setLifecycleOwner(this);
 
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        mAuth = FirebaseAuth.getInstance();
+
         buildRecyclerView();
         createGameList();
 
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
-        mAuth = FirebaseAuth.getInstance();
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
 
@@ -102,19 +111,19 @@ public class OnlineUsersActivity extends BaseActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
-                 // User is signed in
+                    // User is signed in
                     LoginUID = user.getUid();
-                        Log.d(LOG_TAG, "onAuthStateChanged:signed_in: " + LoginUID);
-                        LoginUserID = user.getEmail();
-                        usersBinding.userLoginTextview.setText(LoginUserID);
-                        UserName = convertEmailToString(LoginUserID);
+                    Log.d(LOG_TAG, "onAuthStateChanged:signed_in: " + LoginUID);
+                    LoginUserID = user.getEmail();
+                    usersBinding.userLoginTextview.setText(LoginUserID);
+                    UserName = convertEmailToString(LoginUserID);
 
-                        myRef.child("users").child(UserName).child("request").setValue(LoginUID);
-                        requestedUsersArrayAdapter.clear();
-                        acceptIncomingRequests();
+                    myRef.child("users").child(UserName).child("request").setValue(LoginUID);
+                    // requestedUsersArrayAdapter.clear();
+                    acceptIncomingRequests();
                 } else {
                     Log.d(LOG_TAG, "onAuthStateChanged:signed_out or login");
-                        joinOnlineGame();
+                    joinOnlineGame();
                 }
             }
         };
@@ -132,6 +141,15 @@ public class OnlineUsersActivity extends BaseActivity {
             }
         });
 
+
+        // Use a Firebase listener to read from the "multiplayer" node, all games whose status is "open", assign them to mOpenGamesList, and refresh the adapter.
+
+
+        // mOpenGamesList.add( new GameItem(R.drawable.ic_cross, "A new game has been added", "Opponent User Name"));
+        adapter.notifyDataSetChanged();
+    }
+
+
         /*usersBinding.loggedUsersListview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -140,7 +158,7 @@ public class OnlineUsersActivity extends BaseActivity {
                     confirmRequest(requestToUser, "To");
             }
         });*/
-    }
+
 
     public void confirmRequest(final String otherPlayer, final String reqType) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -213,9 +231,9 @@ public class OnlineUsersActivity extends BaseActivity {
             }
         }
 
-        requestedUsersArrayAdapter.clear();
+       /* requestedUsersArrayAdapter.clear();
         requestedUsersArrayAdapter.addAll(set);
-        requestedUsersArrayAdapter.notifyDataSetChanged();
+        requestedUsersArrayAdapter.notifyDataSetChanged();*/
 
         /*usersBinding.sendRequestTextview.setText("Send request to");
         usersBinding.acceptRequestTextView.setText("Accept request from");*/
@@ -241,8 +259,8 @@ public class OnlineUsersActivity extends BaseActivity {
 
                                 for (String key:map.keySet()) {
                                     value = (String) map.get(key);
-                                    requestedUsersArrayAdapter.add(convertEmailToString(value));
-                                    requestedUsersArrayAdapter.notifyDataSetChanged();
+//                                    requestedUsersArrayAdapter.add(convertEmailToString(value));
+//                                    requestedUsersArrayAdapter.notifyDataSetChanged();
                                     myRef.child("users").child(UserName).child("request").setValue(LoginUID);
                                 }
                             }
@@ -309,16 +327,10 @@ public class OnlineUsersActivity extends BaseActivity {
         mAuth.addAuthStateListener(mAuthListener);
     }
 
-    public void onButtonClick(View view) {
-
-        Toast.makeText(getApplicationContext(), "New game added to list", Toast.LENGTH_LONG).show();
-    }
-
 
     public void createGameList() {
         // add the games from Firebase
         // placeholder/dummy code
-        mOpenGamesList = new ArrayList<>();
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
@@ -328,13 +340,11 @@ public class OnlineUsersActivity extends BaseActivity {
     }
 
     public void buildRecyclerView() {
-        recyclerView = findViewById(R.id.games_recycler_view);
-        recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         adapter = new GameAdapter(mOpenGamesList);
-
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(adapter);
+        usersBinding.gamesRecyclerView.setHasFixedSize(true);
+        usersBinding.gamesRecyclerView.setLayoutManager(layoutManager);
+        usersBinding.gamesRecyclerView.setAdapter(adapter);
     }
 
     public void onNewGameButtonClicked(View view) {
@@ -343,7 +353,52 @@ public class OnlineUsersActivity extends BaseActivity {
     }
 
     public void addNewGame() {
-        mOpenGamesList.add( new GameItem(R.drawable.ic_cross, "A new game has been added", "Opponent User Name"));
-        adapter.notifyDataSetChanged();
+
+        // Modify addNewGame() so that it makes a Game push to Firebase, with the corresponding data of the user who creates the game.
+
+        FirebaseUser user = mAuth.getCurrentUser();
+
+        if (user != null) {
+
+            LoginUserID = user.getEmail();
+            UserName = convertEmailToString(LoginUserID);
+
+            myRef.child("game").child("user").setValue(UserName);
+
+            Uri profilePictureUrl =  user.getPhotoUrl();
+            if (profilePictureUrl != null) {
+
+                myRef.child("game").child("picture").setValue(profilePictureUrl);
+            } else {
+
+               myRef.child("game").child("picture").setValue("");
+            }
+
+            myRef.child("game").child("gameNumber").setValue("1");
+
+            Log.d(LOG_TAG, "Firebase push successful for username " + UserName);
+        }
+    }
+
+
+    public void readFromDatabase() {
+
+        // Get a reference to our posts
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference ref = database.getReference("game/user");
+
+      // Attach a listener to read the data at our posts reference
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                UserName = user.getName();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                System.out.println("The read failed: " + databaseError.getCode());
+            }
+        });
     }
 }

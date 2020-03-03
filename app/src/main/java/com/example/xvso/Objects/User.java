@@ -11,6 +11,8 @@ public class User {
     private String mPassword = "";
     private String mImageUrl = "";
 
+    private Boolean mActiveGame;
+
     // empty constructor used for saving the user to database
     public User() {
 
@@ -29,12 +31,13 @@ public class User {
         mPassword = password;
     }
 
-    public User(String firstName, String lastName, String emailAddress, String password, String imageUrl) {
+    public User(String firstName, String lastName, String emailAddress, String password, String imageUrl, Boolean activeGame) {
         mFirstName = firstName;
         mLastName = lastName;
         mEmailAddress = emailAddress;
         mPassword = password;
         mImageUrl = imageUrl;
+        mActiveGame = activeGame;
     }
 
     public String getName() {
@@ -83,6 +86,14 @@ public class User {
 
     public void setImageUrl(String imageUrl) {
         mImageUrl = imageUrl;
+    }
+
+    public Boolean getActiveGame() {
+        return mActiveGame;
+    }
+
+    public void setActiveGame(Boolean mActiveGame) {
+        this.mActiveGame = mActiveGame;
     }
 
     public boolean isFirstNameValid() {
