@@ -20,11 +20,10 @@ public class User {
 
     }
 
-    public User(String name, String email, String password, int totalScore) {
+    public User(String name, String email, String password) {
         mName = name;
         mEmailAddress = email;
         mPassword = password;
-        mTotalScore = totalScore;
     }
 
     public User(String firstName, String lastName, String email, String password, int totalScore) {

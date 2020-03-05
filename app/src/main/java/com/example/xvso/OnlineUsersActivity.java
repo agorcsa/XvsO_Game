@@ -85,6 +85,10 @@ public class OnlineUsersActivity extends BaseActivity {
 
     private Game game;
 
+    private DatabaseReference query;
+
+    private User currentUser;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -116,7 +120,8 @@ public class OnlineUsersActivity extends BaseActivity {
                     usersBinding.userLoginTextview.setText(LoginUserID);
                     UserName = convertEmailToString(LoginUserID);
 
-                    myRef.child("users").child(UserName).child("request").setValue(LoginUID);
+                    myRef.child("users").child(LoginUID).child("request").setValue(LoginUID);
+
                     // requestedUsersArrayAdapter.clear();
                     acceptIncomingRequests();
                 } else {
@@ -126,9 +131,12 @@ public class OnlineUsersActivity extends BaseActivity {
             }
         };
 
-        myRef.getRoot().child("users").addValueEventListener(new ValueEventListener() {
+        myRef.getRoot().child("users").child(LoginUID).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                currentUser = dataSnapshot.getValue(User.class);
+
                 updateLoginUsers(dataSnapshot);
 
             }
@@ -259,7 +267,7 @@ public class OnlineUsersActivity extends BaseActivity {
                                     value = (String) map.get(key);
 //                                    requestedUsersArrayAdapter.add(convertEmailToString(value));
 //                                    requestedUsersArrayAdapter.notifyDataSetChanged();
-                                    myRef.child("users").child(UserName).child("request").setValue(LoginUID);
+                                    myRef.child("users").child(LoginUID).child("request").setValue(LoginUID);
                                 }
                             }
                         } catch (Exception e) {
@@ -352,26 +360,37 @@ public class OnlineUsersActivity extends BaseActivity {
 
     public void addNewGame() {
 
-        // Modify addNewGame() so that it makes a Game push to Firebase, with the corresponding data of the user who creates the game.
+        FirebaseUser firebaseUser = mAuth.getCurrentUser();
 
-        FirebaseUser hostUser = mAuth.getCurrentUser();
-
+        User hostUser = new User();
         User guestUser = new User();
 
-        if (hostUser != null) {
+
+        if (firebaseUser != null) {
 
             Game newGame = new Game();
-            LoginUID = hostUser.getUid();
+            LoginUID = firebaseUser.getUid();
+
+            UserName = convertEmailToString(LoginUserID);
 
             myRef.child("multiplayer").child("game: " + LoginUID).setValue(newGame);
+            //myRef.child("multiplayer").child("game: " + LoginUID).child("host_user").setValue(UserName);
+            myRef.child("multiplayer").child("game: " + LoginUID).child("guest_user").setValue(guestUser);
+
+            myRef.child("multiplayer").child("game: " + LoginUID).child("host_user").setValue(currentUser);
+
 
             Log.d(LOG_TAG, "Firebase push successful for username " + UserName);
         }
 
-
         if (guestUser == null) {
             game.setGameStatus(Game.STATUS_WAITING);
         }
+
+      /*  query = FirebaseDatabase.getInstance().getReference("users").child((auth.getUid()));
+
+        FirebaseQueryLiveData resultLiveData = new FirebaseQueryLiveData(query);
+        userLiveData = Transformations.map(resultLiveData, new Deserializer());*/
     }
 
 
@@ -401,5 +420,12 @@ public class OnlineUsersActivity extends BaseActivity {
 
         Intent intent = new Intent(OnlineUsersActivity.this, OnlineGameActivity.class);
         startActivity(intent);
+    }
+
+
+    public void sendGameID() {
+         Intent intent = new Intent (OnlineUsersActivity.this, OnlineGameActivity.class);
+         intent.putExtra("gameID", LoginUID);
+         startActivity(intent);
     }
 }
