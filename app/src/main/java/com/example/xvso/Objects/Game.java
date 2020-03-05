@@ -4,7 +4,17 @@ public class Game {
 
     private UserInfo userInfo;
     private Board board;
-    private String[] status = new String[] { "Waiting", "Playing", "Finished" };
+
+    private User host;
+    private User guest;
+
+    // game status
+    public static final int STATUS_WAITING = 0;
+    public static final int STATUS_PLAYING = 1;
+    public static final int STATUS_FINISHED = 2;
+
+    private int gameStatus;
+
 
     // empty constructor
     public Game() {
@@ -12,10 +22,35 @@ public class Game {
     }
 
     // constructor
-    public Game(UserInfo userInfo, Board board, String[] status) {
+    public Game(Board board, int gameStatus, User host, User guest) {
 
-        this.userInfo = userInfo;
         this.board = board;
-        this.status = status;
+        this.gameStatus = gameStatus;
+        this.host = host;
+        this.guest = guest;
+    }
+
+    public int getGameStatus() {
+        return gameStatus;
+    }
+
+    public void setGameStatus(int gameStatus) {
+        this.gameStatus = gameStatus;
+    }
+
+    public User getHost() {
+        return host;
+    }
+
+    public void setHost(User host) {
+        this.host = host;
+    }
+
+    public User getGuest() {
+        return guest;
+    }
+
+    public void setGuest(User guest) {
+        this.guest = guest;
     }
 }

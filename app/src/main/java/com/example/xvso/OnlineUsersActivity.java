@@ -3,7 +3,6 @@ package com.example.xvso;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,6 +20,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.xvso.Objects.Game;
 import com.example.xvso.Objects.GameItem;
 import com.example.xvso.Objects.User;
 import com.example.xvso.adapter.GameAdapter;
@@ -80,12 +80,10 @@ public class OnlineUsersActivity extends BaseActivity {
     private LinearLayoutManager layoutManager;
     private GameAdapter adapter;
 
-    // game status
-    public static final int STATUS_WAITING = 0;
-    public static final int STATUS_PLAYING = 1;
-    public static final int STATUS_FINISHED = 2;
-    private int statusGuest;
-    private int statusHost;
+    private User host;
+    private User guest;
+
+    private Game game;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -102,7 +100,7 @@ public class OnlineUsersActivity extends BaseActivity {
 
         buildRecyclerView();
         createGameList();
-
+        //readFromDatabase();
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
 
@@ -356,27 +354,23 @@ public class OnlineUsersActivity extends BaseActivity {
 
         // Modify addNewGame() so that it makes a Game push to Firebase, with the corresponding data of the user who creates the game.
 
-        FirebaseUser user = mAuth.getCurrentUser();
+        FirebaseUser hostUser = mAuth.getCurrentUser();
 
-        if (user != null) {
+        User guestUser = new User();
 
-            LoginUserID = user.getEmail();
-            UserName = convertEmailToString(LoginUserID);
+        if (hostUser != null) {
 
-            myRef.child("game").child("user").setValue(UserName);
+            Game newGame = new Game();
+            LoginUID = hostUser.getUid();
 
-            Uri profilePictureUrl =  user.getPhotoUrl();
-            if (profilePictureUrl != null) {
-
-                myRef.child("game").child("picture").setValue(profilePictureUrl);
-            } else {
-
-               myRef.child("game").child("picture").setValue("");
-            }
-
-            myRef.child("game").child("gameNumber").setValue("1");
+            myRef.child("multiplayer").child("game: " + LoginUID).setValue(newGame);
 
             Log.d(LOG_TAG, "Firebase push successful for username " + UserName);
+        }
+
+
+        if (guestUser == null) {
+            game.setGameStatus(Game.STATUS_WAITING);
         }
     }
 
@@ -400,5 +394,12 @@ public class OnlineUsersActivity extends BaseActivity {
                 System.out.println("The read failed: " + databaseError.getCode());
             }
         });
+    }
+
+    public void startGame() {
+        game.setGameStatus(Game.STATUS_PLAYING);
+
+        Intent intent = new Intent(OnlineUsersActivity.this, OnlineGameActivity.class);
+        startActivity(intent);
     }
 }

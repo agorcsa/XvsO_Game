@@ -10,6 +10,8 @@ public class User {
     private String mEmailAddress = "";
     private String mPassword = "";
     private String mImageUrl = "";
+    private int mTotalScore = 0;
+
 
     private Boolean mActiveGame;
 
@@ -18,26 +20,28 @@ public class User {
 
     }
 
-    public User(String name, String email, String password) {
+    public User(String name, String email, String password, int totalScore) {
         mName = name;
         mEmailAddress = email;
         mPassword = password;
+        mTotalScore = totalScore;
     }
 
-    public User(String firstName, String lastName, String email, String password) {
+    public User(String firstName, String lastName, String email, String password, int totalScore) {
         mFirstName = firstName;
         mLastName = lastName;
         mEmailAddress = email;
         mPassword = password;
+        mTotalScore = totalScore;
     }
 
-    public User(String firstName, String lastName, String emailAddress, String password, String imageUrl, Boolean activeGame) {
+    public User(String firstName, String lastName, String emailAddress, String password, String imageUrl, int totalScore) {
         mFirstName = firstName;
         mLastName = lastName;
         mEmailAddress = emailAddress;
         mPassword = password;
         mImageUrl = imageUrl;
-        mActiveGame = activeGame;
+        mTotalScore = totalScore;
     }
 
     public String getName() {
