@@ -16,6 +16,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -131,7 +132,7 @@ public class OnlineUsersActivity extends BaseActivity {
             }
         };
 
-        myRef.getRoot().child("users").child(LoginUID).addValueEventListener(new ValueEventListener() {
+        myRef.getRoot().child("users").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
@@ -144,6 +145,13 @@ public class OnlineUsersActivity extends BaseActivity {
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
+            }
+        });
+
+        onlineUsersViewModel.getUserLiveData().observe(this, new Observer<User>() {
+            @Override
+            public void onChanged(User user) {
+              myRef.child("users").child(LoginUID).setValue(user);
             }
         });
 
@@ -415,7 +423,7 @@ public class OnlineUsersActivity extends BaseActivity {
         });
     }
 
-    public void startGame() {
+    public void startGame(View view) {
         game.setGameStatus(Game.STATUS_PLAYING);
 
         Intent intent = new Intent(OnlineUsersActivity.this, OnlineGameActivity.class);
@@ -423,9 +431,9 @@ public class OnlineUsersActivity extends BaseActivity {
     }
 
 
-    public void sendGameID() {
-         Intent intent = new Intent (OnlineUsersActivity.this, OnlineGameActivity.class);
-         intent.putExtra("gameID", LoginUID);
-         startActivity(intent);
-    }
+    /*public void sendGameID() {
+        Intent intent = new Intent(OnlineUsersActivity.this, OnlineGameActivity.class);
+        intent.putExtra("gameID", LoginUID);
+        startActivity(intent);
+    }*/
 }

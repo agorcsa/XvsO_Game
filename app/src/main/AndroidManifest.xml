@@ -66,23 +66,13 @@
         </activity>
 
         <activity
-            android:name=".VSActivity"
+            android:name=".OnlineGameActivity"
             android:label="@string/online_users_activity"
             android:launchMode="singleTop"
             android:parentActivityName=".OnlineUsersActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".OnlineUsersActivity" />
-        </activity>
-
-        <activity
-            android:name=".OnlineGameActivity"
-            android:label="@string/online_users_activity"
-            android:launchMode="singleTop"
-            android:parentActivityName=".VSActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".VSActivity" />
         </activity>
 
         <activity

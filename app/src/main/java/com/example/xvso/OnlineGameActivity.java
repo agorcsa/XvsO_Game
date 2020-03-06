@@ -3,6 +3,7 @@ package com.example.xvso;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -50,15 +51,15 @@ public class OnlineGameActivity extends AppCompatActivity {
     ArrayList<Integer> player1 = new ArrayList<>();
     ArrayList<Integer> player2 = new ArrayList<>();
 
-    private boolean readyToPlayX;
-    private boolean readyToPlayO;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_online_game);
 
         onlineGameBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+
+        setInitialVisibility();
+        animateViews();
 
         // gets the values wrapped in the intent
         // inside startGame() method -> OnlineUsersActivity.class,
@@ -296,5 +297,48 @@ public class OnlineGameActivity extends AppCompatActivity {
     public void ShowAlert(String message) {
         Toast toast=Toast. makeText(getApplicationContext(),message,Toast. LENGTH_SHORT);
         toast.show();
+    }
+
+
+    private void hideView(View view) {
+        GridLayout gridLayout = (GridLayout) view.getParent();
+        for (int i = 0; i <  gridLayout.getChildCount(); i++) {
+            if (view == gridLayout.getChildAt(i)) {
+                gridLayout.removeViewAt(i);
+                break;
+            }
+        }
+    }
+
+    public void setInitialVisibility() {
+        onlineGameBinding.block1.setVisibility(View.INVISIBLE);
+        onlineGameBinding.block2.setVisibility(View.INVISIBLE);
+        onlineGameBinding.block3.setVisibility(View.INVISIBLE);
+        onlineGameBinding.block4.setVisibility(View.INVISIBLE);
+        onlineGameBinding.block5.setVisibility(View.INVISIBLE);
+        onlineGameBinding.block6.setVisibility(View.INVISIBLE);
+        onlineGameBinding.block7.setVisibility(View.INVISIBLE);
+        onlineGameBinding.block8.setVisibility(View.INVISIBLE);
+        onlineGameBinding.block9.setVisibility(View.INVISIBLE);
+
+        onlineGameBinding.vsImageView.setVisibility(View.VISIBLE);
+        onlineGameBinding.profilePictureHost.setVisibility(View.VISIBLE);
+        onlineGameBinding.profilePictureGuest.setVisibility(View.VISIBLE);
+    }
+
+    public void animateViews() {
+        onlineGameBinding.vsImageView.animate().alpha(0f).setDuration(3000);
+        onlineGameBinding.profilePictureHost.animate().alpha(0f).setDuration(3000);
+        onlineGameBinding.profilePictureGuest.animate().alpha(0f).setDuration(3000);
+
+        onlineGameBinding.block1.animate().alpha(1f).setDuration(3000);
+        onlineGameBinding.block2.animate().alpha(1f).setDuration(3000);
+        onlineGameBinding.block3.animate().alpha(1f).setDuration(3000);
+        onlineGameBinding.block4.animate().alpha(1f).setDuration(3000);
+        onlineGameBinding.block5.animate().alpha(1f).setDuration(3000);
+        onlineGameBinding.block6.animate().alpha(1f).setDuration(3000);
+        onlineGameBinding.block7.animate().alpha(1f).setDuration(3000);
+        onlineGameBinding.block8.animate().alpha(1f).setDuration(3000);
+        onlineGameBinding.block9.animate().alpha(1f).setDuration(3000);
     }
 }
