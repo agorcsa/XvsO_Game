@@ -67,7 +67,7 @@
 
         <activity
             android:name=".OnlineGameActivity"
-            android:label="@string/online_users_activity"
+            android:label="Online Game"
             android:launchMode="singleTop"
             android:parentActivityName=".OnlineUsersActivity">
             <meta-data

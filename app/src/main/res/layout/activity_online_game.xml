@@ -5,11 +5,11 @@
     <data>
         <variable
             name="viewModel"
-            type="com.example.xvso.viewmodel.ScoreViewModel" />
+            type="com.example.xvso.viewmodel.OnlineGameViewModel" />
 
         <variable
             name="player1Text"
-            type="com.example.xvso.viewmodel.ScoreViewModel" />
+            type="com.example.xvso.viewmodel.OnlineGameViewModel" />
     </data>
 
     <FrameLayout

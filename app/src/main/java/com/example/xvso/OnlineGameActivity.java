@@ -11,9 +11,10 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.example.xvso.databinding.ActivityOnlineGameBinding;
-import com.example.xvso.viewmodel.ScoreViewModel;
+import com.example.xvso.viewmodel.OnlineGameViewModel;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -27,7 +28,7 @@ public class OnlineGameActivity extends AppCompatActivity {
 
     private static final String LOG_TAG = "OnlineGameActivity";
 
-    private ScoreViewModel mScoreViewModel;
+    private OnlineGameViewModel onlineGameViewModel;
     private ActivityOnlineGameBinding onlineGameBinding;
 
     private String playerSession = "";
@@ -54,21 +55,27 @@ public class OnlineGameActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_online_game);
+        //setContentView(R.layout.activity_online_game);
 
-        onlineGameBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        onlineGameViewModel = ViewModelProviders.of(this).get(OnlineGameViewModel.class);
+        onlineGameBinding = DataBindingUtil.setContentView(this, R.layout.activity_online_game);
+        onlineGameBinding.setViewModel(onlineGameViewModel);
+        onlineGameBinding.setLifecycleOwner(this);
 
         setInitialVisibility();
         animateViews();
 
-        // gets the values wrapped in the intent
-        // inside startGame() method -> OnlineUsersActivity.class,
-        // which were sent to this Activity after the confirmRequest() was called
-        userName = getIntent().getExtras().get("user_name").toString();
-        loginUID = getIntent().getExtras().get("login_uid").toString();
-        otherPlayer = getIntent().getExtras().get("other_player").toString();
-        requestType = getIntent().getExtras().get("request_type").toString();
-        playerSession = getIntent().getExtras().get("player_session").toString();
+       /* if (getIntent().getExtras() != null) {
+
+            // gets the values wrapped in the intent
+            // inside startGame() method -> OnlineUsersActivity.class,
+            // which were sent to this Activity after the confirmRequest() was called
+            userName = getIntent().getExtras().get("user_name").toString();
+            loginUID = getIntent().getExtras().get("login_uid").toString();
+            otherPlayer = getIntent().getExtras().get("other_player").toString();
+            requestType = getIntent().getExtras().get("request_type").toString();
+            playerSession = getIntent().getExtras().get("player_session").toString();
+        }*/
 
         gameState = 1;
 
@@ -253,8 +260,6 @@ public class OnlineGameActivity extends AppCompatActivity {
         if(player2.contains(3) && player2.contains(5) && player2.contains(7)){ winner = 2; }
 
 
-
-
         if(winner != 0 && gameState == 1){
             if(winner == 1){
                 ShowAlert(otherPlayer +" is winner");
@@ -324,6 +329,11 @@ public class OnlineGameActivity extends AppCompatActivity {
         onlineGameBinding.vsImageView.setVisibility(View.VISIBLE);
         onlineGameBinding.profilePictureHost.setVisibility(View.VISIBLE);
         onlineGameBinding.profilePictureGuest.setVisibility(View.VISIBLE);
+
+        onlineGameBinding.player1Text.setVisibility(View.INVISIBLE);
+        onlineGameBinding.player2Text.setVisibility(View.INVISIBLE);
+        onlineGameBinding.player1Result.setVisibility(View.INVISIBLE);
+        onlineGameBinding.player2Result.setVisibility(View.INVISIBLE);
     }
 
     public void animateViews() {
@@ -331,14 +341,38 @@ public class OnlineGameActivity extends AppCompatActivity {
         onlineGameBinding.profilePictureHost.animate().alpha(0f).setDuration(3000);
         onlineGameBinding.profilePictureGuest.animate().alpha(0f).setDuration(3000);
 
-        onlineGameBinding.block1.animate().alpha(1f).setDuration(3000);
-        onlineGameBinding.block2.animate().alpha(1f).setDuration(3000);
-        onlineGameBinding.block3.animate().alpha(1f).setDuration(3000);
-        onlineGameBinding.block4.animate().alpha(1f).setDuration(3000);
-        onlineGameBinding.block5.animate().alpha(1f).setDuration(3000);
-        onlineGameBinding.block6.animate().alpha(1f).setDuration(3000);
-        onlineGameBinding.block7.animate().alpha(1f).setDuration(3000);
-        onlineGameBinding.block8.animate().alpha(1f).setDuration(3000);
-        onlineGameBinding.block9.animate().alpha(1f).setDuration(3000);
+        onlineGameBinding.block1.setVisibility(View.VISIBLE);
+        onlineGameBinding.block2.setVisibility(View.VISIBLE);
+        onlineGameBinding.block3.setVisibility(View.VISIBLE);
+        onlineGameBinding.block4.setVisibility(View.VISIBLE);
+        onlineGameBinding.block5.setVisibility(View.VISIBLE);
+        onlineGameBinding.block6.setVisibility(View.VISIBLE);
+        onlineGameBinding.block7.setVisibility(View.VISIBLE);
+        onlineGameBinding.block8.setVisibility(View.VISIBLE);
+        onlineGameBinding.block9.setVisibility(View.VISIBLE);
+
+        onlineGameBinding.player1Text.postDelayed(new Runnable() {
+            public void run() {
+                onlineGameBinding.player1Text.setVisibility(View.VISIBLE);
+            }
+        }, 3000);
+
+        onlineGameBinding.player2Text.postDelayed(new Runnable() {
+            public void run() {
+                onlineGameBinding.player2Text.setVisibility(View.VISIBLE);
+            }
+        }, 3000);
+
+        onlineGameBinding.player1Result.postDelayed(new Runnable() {
+            public void run() {
+                onlineGameBinding.player1Result.setVisibility(View.VISIBLE);
+            }
+        }, 3000);
+
+        onlineGameBinding.player2Result.postDelayed(new Runnable() {
+            public void run() {
+                onlineGameBinding.player2Result.setVisibility(View.VISIBLE);
+            }
+        }, 3000);
     }
 }

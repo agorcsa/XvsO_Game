@@ -38,6 +38,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -68,7 +70,9 @@ public class OnlineUsersActivity extends BaseActivity {
     private TextView userIdTextView;
     private String LoginUID;
     private String LoginUserID;
-    private String UserName;
+    private String userName;
+
+    private Game game = new Game();
 
     private OnlineUsersViewModel onlineUsersViewModel;
 
@@ -79,16 +83,15 @@ public class OnlineUsersActivity extends BaseActivity {
 
     private RecyclerView recyclerView;
     private LinearLayoutManager layoutManager;
-    private GameAdapter adapter;
+    private GameAdapter gameAdapter;
 
     private User host;
     private User guest;
 
-    private Game game;
-
     private DatabaseReference query;
 
     private User currentUser;
+    private User myUser = new User();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -105,7 +108,7 @@ public class OnlineUsersActivity extends BaseActivity {
 
         buildRecyclerView();
         createGameList();
-        //readFromDatabase();
+        readFromDatabase();
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
 
@@ -119,7 +122,7 @@ public class OnlineUsersActivity extends BaseActivity {
                     Log.d(LOG_TAG, "onAuthStateChanged:signed_in: " + LoginUID);
                     LoginUserID = user.getEmail();
                     usersBinding.userLoginTextview.setText(LoginUserID);
-                    UserName = convertEmailToString(LoginUserID);
+                    userName = convertEmailToString(LoginUserID);
 
                     myRef.child("users").child(LoginUID).child("request").setValue(LoginUID);
 
@@ -151,7 +154,10 @@ public class OnlineUsersActivity extends BaseActivity {
         onlineUsersViewModel.getUserLiveData().observe(this, new Observer<User>() {
             @Override
             public void onChanged(User user) {
-              myRef.child("users").child(LoginUID).setValue(user);
+                myUser = user;
+                myRef.child("multiplayer").child("game: " + LoginUID).child("host_user").setValue(myUser);
+
+                //myRef.child("users").child(LoginUID).setValue(user);
             }
         });
 
@@ -160,7 +166,7 @@ public class OnlineUsersActivity extends BaseActivity {
 
 
         // mOpenGamesList.add( new GameItem(R.drawable.ic_cross, "A new game has been added", "Opponent User Name"));
-        adapter.notifyDataSetChanged();
+        gameAdapter.notifyDataSetChanged();
     }
 
 
@@ -189,9 +195,9 @@ public class OnlineUsersActivity extends BaseActivity {
                 myRef.child("users").child(otherPlayer).child("request").push().setValue(LoginUserID);
 
                 if(reqType.equalsIgnoreCase("From")) {
-                    startGame(otherPlayer + ":" + UserName, otherPlayer, "From:");
+                    startGame(otherPlayer + ":" + userName, otherPlayer, "From:");
                 } else {
-                    startGame(UserName + ":" + otherPlayer, otherPlayer, "To");
+                    startGame(userName + ":" + otherPlayer, otherPlayer, "To");
                 }
             }
         });
@@ -209,7 +215,7 @@ public class OnlineUsersActivity extends BaseActivity {
         myRef.child("playing").child(playerGameId).removeValue();
         Intent intent = new Intent(getApplicationContext(), OnlineGameActivity.class);
         intent.putExtra("player_session", playerGameId);
-        intent.putExtra("user_name", UserName);
+        intent.putExtra("user_name", userName);
         intent.putExtra("other_player", otherPlayer);
         intent.putExtra("login_uid", LoginUID);
         intent.putExtra("request_type", requestType);
@@ -255,13 +261,13 @@ public class OnlineUsersActivity extends BaseActivity {
 
     private String convertEmailToString(String email) {
 
-        UserName = email.substring(0, getFirebaseUser().getEmail().indexOf("@"));
+        userName = email.substring(0, getFirebaseUser().getEmail().indexOf("@"));
 
-        return UserName;
+        return userName;
     }
 
     private void acceptIncomingRequests() {
-        myRef.child("users").child(UserName).child("request")
+        myRef.child("users").child(userName).child("request")
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -355,10 +361,10 @@ public class OnlineUsersActivity extends BaseActivity {
 
     public void buildRecyclerView() {
         layoutManager = new LinearLayoutManager(this);
-        adapter = new GameAdapter(mOpenGamesList);
+        gameAdapter = new GameAdapter(mOpenGamesList);
         usersBinding.gamesRecyclerView.setHasFixedSize(true);
         usersBinding.gamesRecyclerView.setLayoutManager(layoutManager);
-        usersBinding.gamesRecyclerView.setAdapter(adapter);
+        usersBinding.gamesRecyclerView.setAdapter(gameAdapter);
     }
 
     public void onNewGameButtonClicked(View view) {
@@ -379,7 +385,7 @@ public class OnlineUsersActivity extends BaseActivity {
             Game newGame = new Game();
             LoginUID = firebaseUser.getUid();
 
-            UserName = convertEmailToString(LoginUserID);
+            userName = convertEmailToString(LoginUserID);
 
             myRef.child("multiplayer").child("game: " + LoginUID).setValue(newGame);
             //myRef.child("multiplayer").child("game: " + LoginUID).child("host_user").setValue(UserName);
@@ -388,7 +394,7 @@ public class OnlineUsersActivity extends BaseActivity {
             myRef.child("multiplayer").child("game: " + LoginUID).child("host_user").setValue(currentUser);
 
 
-            Log.d(LOG_TAG, "Firebase push successful for username " + UserName);
+            Log.d(LOG_TAG, "Firebase push successful for username " + userName);
         }
 
         if (guestUser == null) {
@@ -412,8 +418,14 @@ public class OnlineUsersActivity extends BaseActivity {
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                User user = dataSnapshot.getValue(User.class);
-                UserName = user.getName();
+                // clear current list
+                mOpenGamesList.clear();
+                // query the database
+                Query firebaseQuery = myRef.child("game").child("guest_user").orderByChild("gameStatus").equalTo(0);
+                GenericTypeIndicator<ArrayList<GameItem>> genericTypeIndicator = new GenericTypeIndicator<ArrayList<GameItem>>() {};
+                ArrayList<GameItem> firebaseList = dataSnapshot.getValue(genericTypeIndicator);
+                gameAdapter = new GameAdapter(firebaseList);
+                gameAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -427,13 +439,7 @@ public class OnlineUsersActivity extends BaseActivity {
         game.setGameStatus(Game.STATUS_PLAYING);
 
         Intent intent = new Intent(OnlineUsersActivity.this, OnlineGameActivity.class);
-        startActivity(intent);
-    }
-
-
-    /*public void sendGameID() {
-        Intent intent = new Intent(OnlineUsersActivity.this, OnlineGameActivity.class);
         intent.putExtra("gameID", LoginUID);
         startActivity(intent);
-    }*/
+    }
 }
