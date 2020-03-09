@@ -9,14 +9,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.xvso.Objects.GameItem;
+import com.example.xvso.Objects.Game;
 import com.example.xvso.R;
 
 import java.util.ArrayList;
 
 public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder> {
 
-    private ArrayList<GameItem>  mGameItemsList;
+    private ArrayList<Game>  mGameItemsList;
 
     @NonNull
     @Override
@@ -28,10 +28,10 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull GameViewHolder holder, int position) {
-        GameItem currentItem = mGameItemsList.get(position);
-        holder.profilePicture.setImageResource(currentItem.getProfilePicture());
+        Game currentItem = mGameItemsList.get(position);
+        holder.profilePicture.setImageResource(currentItem.getPicture());
         holder.gameNumber.setText(currentItem.getGameNumber());
-        holder.opponentUserName.setText(currentItem.getLoggedUserName());
+        holder.opponentUserName.setText(currentItem.getUserName());
     }
 
     @Override
@@ -39,7 +39,7 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder
         return  mGameItemsList == null ? 0 : mGameItemsList.size();
     }
 
-    public GameAdapter(ArrayList<GameItem> gameItemsList) {
+    public GameAdapter(ArrayList<Game> gameItemsList) {
            mGameItemsList = gameItemsList;
     }
 

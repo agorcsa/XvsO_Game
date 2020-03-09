@@ -2,41 +2,47 @@ package com.example.xvso.Objects;
 
 public class Game {
 
-    private UserInfo userInfo;
-
-    private Board board;
-
-    private User host;
-    private User guest;
-
-    // game status
+    // game status constants
     public static final int STATUS_WAITING = 0;
     public static final int STATUS_PLAYING = 1;
     public static final int STATUS_FINISHED = 2;
 
-    private int gameStatus;
-
+    private Board board;
+    private User host;
+    private User guest;
+    private int status;
+    private int picture;
+    private String gameNumber;
+    private String userName;
 
     // empty constructor
     public Game() {
 
     }
 
-    // constructor
-    public Game(Board board, int gameStatus, User host, User guest) {
+    public Game(int picture, String gameNumber, String userName) {
+        this.picture = picture;
+        this.gameNumber = gameNumber;
+        this.userName = userName;
+    }
 
+    // constructor
+    public Game(Board board, User host, User guest, int status, int picture, String gameNumber, String userName) {
         this.board = board;
-        this.gameStatus = gameStatus;
         this.host = host;
         this.guest = guest;
+        this.status = status;
+        this.picture = picture;
+        this.gameNumber = gameNumber;
+        this.userName = userName;
     }
 
-    public int getGameStatus() {
-        return gameStatus;
+    public Board getBoard() {
+        return board;
     }
 
-    public void setGameStatus(int gameStatus) {
-        this.gameStatus = gameStatus;
+    public void setBoard(Board board) {
+        this.board = board;
     }
 
     public User getHost() {
@@ -54,4 +60,38 @@ public class Game {
     public void setGuest(User guest) {
         this.guest = guest;
     }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public int getPicture() {
+        return picture;
+    }
+
+    public void setPicture(int picture) {
+        this.picture = picture;
+    }
+
+    public String getGameNumber() {
+        return gameNumber;
+    }
+
+    public void setGameNumber(String gameNumber) {
+        this.gameNumber = gameNumber;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
 }
+
+

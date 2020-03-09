@@ -73,7 +73,7 @@ public class LoginActivity extends BaseActivity {
                 loginBinding.progressBar.setVisibility(View.VISIBLE);
 
                 //authenticate user
-                auth.signInWithEmailAndPassword(loginViewModel.getEmail().toString(), loginViewModel.getPassword().toString())
+                auth.signInWithEmailAndPassword(loginViewModel.getEmail().getValue(), loginViewModel.getPassword().getValue())
                         .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {

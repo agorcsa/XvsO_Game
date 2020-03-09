@@ -22,7 +22,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.xvso.Objects.Game;
-import com.example.xvso.Objects.GameItem;
 import com.example.xvso.Objects.User;
 import com.example.xvso.adapter.GameAdapter;
 import com.example.xvso.databinding.ActivityOnlineUsersBinding;
@@ -49,6 +48,7 @@ import java.util.Set;
 public class OnlineUsersActivity extends BaseActivity {
 
     private static final String LOG_TAG = "OnlineUsersActivity";
+    private static final String MULTIPLAYER = "multiplayer";
 
     private ActivityOnlineUsersBinding usersBinding;
 
@@ -77,7 +77,7 @@ public class OnlineUsersActivity extends BaseActivity {
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference myRef = database.getReference();
 
-    private ArrayList<GameItem> mOpenGamesList = new ArrayList<>();
+    private ArrayList<Game> mOpenGamesList = new ArrayList<>();
 
     private RecyclerView recyclerView;
     private LinearLayoutManager layoutManager;
@@ -153,7 +153,7 @@ public class OnlineUsersActivity extends BaseActivity {
             @Override
             public void onChanged(User user) {
                 myUser = user;
-                myRef.child("multiplayer").child("game: " + LoginUID).child("host_user").setValue(myUser);
+                myRef.child(MULTIPLAYER).child("game: " + LoginUID).child("host_user").setValue(myUser);
 
                 //myRef.child("users").child(LoginUID).setValue(user);
             }
@@ -353,7 +353,7 @@ public class OnlineUsersActivity extends BaseActivity {
 
         String userName = currentUser.getDisplayName();
 
-        mOpenGamesList.add(new GameItem(R.drawable.profile, userName, "user 1"));
+        mOpenGamesList.add(new Game(R.drawable.profile, userName, "user 1"));
     }
 
     public void buildRecyclerView() {
@@ -379,47 +379,45 @@ public class OnlineUsersActivity extends BaseActivity {
 
         if (firebaseUser != null) {
 
-            Game newGame = new Game();
-            LoginUID = firebaseUser.getUid();
+            Game game = new Game();
+            game.setHost(host);
+            game.setGuest(host);
 
+            LoginUID = firebaseUser.getUid();
             userName = convertEmailToString(LoginUserID);
 
-            myRef.child("multiplayer").child("game: " + LoginUID).setValue(newGame);
-            //myRef.child("multiplayer").child("game: " + LoginUID).child("host_user").setValue(UserName);
-            myRef.child("multiplayer").child("game: " + LoginUID).child("guest").setValue(guest);
-
-            myRef.child("multiplayer").child("game: " + LoginUID).child("host").setValue(currentUser);
-
+            myRef.child(MULTIPLAYER).child(LoginUID).setValue(game);
 
             Log.d(LOG_TAG, "Firebase push successful for username " + userName);
         }
 
         if (guest == null) {
-            game.setGameStatus(Game.STATUS_WAITING);
+            game.setStatus(Game.STATUS_WAITING);
         }
-
-      /*  query = FirebaseDatabase.getInstance().getReference("users").child((auth.getUid()));
-
-        FirebaseQueryLiveData resultLiveData = new FirebaseQueryLiveData(query);
-        userLiveData = Transformations.map(resultLiveData, new Deserializer());*/
     }
 
 
     public void readFromDatabase() {
 
-        // Get a reference to our posts
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference ref = database.getReference("multiplayer");
 
-      // Attach a listener to read the data at our posts reference
+        // Read from the "multiplayer" node from the database
+        DatabaseReference ref = database.getReference(MULTIPLAYER);
+
+        // Attach a listener to read the data at our posts reference
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
+                mOpenGamesList.clear();
+
                 for (DataSnapshot item: dataSnapshot.getChildren()) {
-                    GameItem gameItem = item.getValue(GameItem.class);
-                    mOpenGamesList.add(gameItem);
+                    Game game = item.getValue(Game.class);
+                    mOpenGamesList.add(game);
                 }
+
+                gameAdapter = new GameAdapter(mOpenGamesList);
+                gameAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -430,7 +428,8 @@ public class OnlineUsersActivity extends BaseActivity {
     }
 
     public void startGame(View view) {
-        game.setGameStatus(Game.STATUS_PLAYING);
+
+        game.setStatus(Game.STATUS_PLAYING);
 
         Intent intent = new Intent(OnlineUsersActivity.this, OnlineGameActivity.class);
         intent.putExtra("gameID", LoginUID);

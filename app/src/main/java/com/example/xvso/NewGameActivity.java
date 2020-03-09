@@ -10,14 +10,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.xvso.Objects.GameItem;
+import com.example.xvso.Objects.Game;
 import com.example.xvso.adapter.GameAdapter;
 
 import java.util.ArrayList;
 
 public class NewGameActivity extends AppCompatActivity {
 
-    private ArrayList<GameItem> mOpenGamesList;
+    private ArrayList<Game> mOpenGamesList;
 
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
@@ -46,16 +46,16 @@ public class NewGameActivity extends AppCompatActivity {
         // placeholder/dummy code
         mOpenGamesList = new ArrayList<>();
 
-        mOpenGamesList.add(new GameItem(R.drawable.profile, "Game 1" , "user 1"));
-        mOpenGamesList.add(new GameItem(R.drawable.profile, "Game 2" , "user 2"));
-        mOpenGamesList.add(new GameItem(R.drawable.profile, "Game 3" , "user 3"));
-        mOpenGamesList.add(new GameItem(R.drawable.profile, "Game 4" , "user 4"));
-        mOpenGamesList.add(new GameItem(R.drawable.profile, "Game 5" , "user 5"));
-        mOpenGamesList.add(new GameItem(R.drawable.profile, "Game 6" , "user 6"));
-        mOpenGamesList.add(new GameItem(R.drawable.profile, "Game 7" , "user 7"));
-        mOpenGamesList.add(new GameItem(R.drawable.profile, "Game 8" , "user 8"));
-        mOpenGamesList.add(new GameItem(R.drawable.profile, "Game 9" , "user 9"));
-        mOpenGamesList.add(new GameItem(R.drawable.profile, "Game 10" , "user 10"));
+        mOpenGamesList.add(new Game(R.drawable.profile, "Game 1" , "user 1"));
+        mOpenGamesList.add(new Game(R.drawable.profile, "Game 2" , "user 2"));
+        mOpenGamesList.add(new Game(R.drawable.profile, "Game 3" , "user 3"));
+        mOpenGamesList.add(new Game(R.drawable.profile, "Game 4" , "user 4"));
+        mOpenGamesList.add(new Game(R.drawable.profile, "Game 5" , "user 5"));
+        mOpenGamesList.add(new Game(R.drawable.profile, "Game 6" , "user 6"));
+        mOpenGamesList.add(new Game(R.drawable.profile, "Game 7" , "user 7"));
+        mOpenGamesList.add(new Game(R.drawable.profile, "Game 8" , "user 8"));
+        mOpenGamesList.add(new Game(R.drawable.profile, "Game 9" , "user 9"));
+        mOpenGamesList.add(new Game(R.drawable.profile, "Game 10" , "user 10"));
     }
 
     public void buildRecyclerView() {
@@ -75,7 +75,7 @@ public class NewGameActivity extends AppCompatActivity {
     }
 
     public void addNewGame(int position) {
-        mOpenGamesList.add(position, new GameItem(R.drawable.ic_cross, "A new game has been added at position" + position, "Opponent User Name"));
+        mOpenGamesList.add(position, new Game(R.drawable.ic_cross, "A new game has been added at position" + position, "Opponent User Name"));
         adapter.notifyDataSetChanged();
     }
 
