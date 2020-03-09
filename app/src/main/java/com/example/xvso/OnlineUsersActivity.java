@@ -350,7 +350,6 @@ public class OnlineUsersActivity extends BaseActivity {
 
     public void createGameList() {
         // add the games from Firebase
-        // placeholder/dummy code
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
