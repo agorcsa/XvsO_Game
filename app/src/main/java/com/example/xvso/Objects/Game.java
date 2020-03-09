@@ -3,6 +3,7 @@ package com.example.xvso.Objects;
 public class Game {
 
     private UserInfo userInfo;
+
     private Board board;
 
     private User host;

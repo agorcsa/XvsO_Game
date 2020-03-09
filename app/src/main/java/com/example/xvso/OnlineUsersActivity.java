@@ -38,8 +38,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.GenericTypeIndicator;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -375,8 +373,8 @@ public class OnlineUsersActivity extends BaseActivity {
 
         FirebaseUser firebaseUser = mAuth.getCurrentUser();
 
-        User hostUser = new User();
-        User guestUser = new User();
+        User host = new User();
+        User guest = new User();
 
 
         if (firebaseUser != null) {
@@ -388,15 +386,15 @@ public class OnlineUsersActivity extends BaseActivity {
 
             myRef.child("multiplayer").child("game: " + LoginUID).setValue(newGame);
             //myRef.child("multiplayer").child("game: " + LoginUID).child("host_user").setValue(UserName);
-            myRef.child("multiplayer").child("game: " + LoginUID).child("guest_user").setValue(guestUser);
+            myRef.child("multiplayer").child("game: " + LoginUID).child("guest").setValue(guest);
 
-            myRef.child("multiplayer").child("game: " + LoginUID).child("host_user").setValue(currentUser);
+            myRef.child("multiplayer").child("game: " + LoginUID).child("host").setValue(currentUser);
 
 
             Log.d(LOG_TAG, "Firebase push successful for username " + userName);
         }
 
-        if (guestUser == null) {
+        if (guest == null) {
             game.setGameStatus(Game.STATUS_WAITING);
         }
 
@@ -411,20 +409,17 @@ public class OnlineUsersActivity extends BaseActivity {
 
         // Get a reference to our posts
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference ref = database.getReference("game/user");
+        DatabaseReference ref = database.getReference("multiplayer");
 
       // Attach a listener to read the data at our posts reference
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                // clear current list
-                mOpenGamesList.clear();
-                // query the database
-                Query firebaseQuery = myRef.child("game").child("guest_user").orderByChild("gameStatus").equalTo(0);
-                GenericTypeIndicator<ArrayList<GameItem>> genericTypeIndicator = new GenericTypeIndicator<ArrayList<GameItem>>() {};
-                ArrayList<GameItem> firebaseList = dataSnapshot.getValue(genericTypeIndicator);
-                gameAdapter = new GameAdapter(firebaseList);
-                gameAdapter.notifyDataSetChanged();
+
+                for (DataSnapshot item: dataSnapshot.getChildren()) {
+                    GameItem gameItem = item.getValue(GameItem.class);
+                    mOpenGamesList.add(gameItem);
+                }
             }
 
             @Override
