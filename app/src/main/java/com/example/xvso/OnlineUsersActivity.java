@@ -42,7 +42,6 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 public class OnlineUsersActivity extends BaseActivity {
@@ -85,6 +84,7 @@ public class OnlineUsersActivity extends BaseActivity {
 
     private User host;
     private User guest;
+    private int gameNumber = 0;
 
     private DatabaseReference query;
 
@@ -121,6 +121,10 @@ public class OnlineUsersActivity extends BaseActivity {
                     LoginUserID = user.getEmail();
                     usersBinding.userLoginTextview.setText(LoginUserID);
                     userName = convertEmailToString(LoginUserID);
+
+                    if (userNameCheck(true)) {
+                            userName = userName.replace(".", "1");
+                    }
 
                     myRef.child("users").child(LoginUID).child("request").setValue(LoginUID);
 
@@ -226,7 +230,6 @@ public class OnlineUsersActivity extends BaseActivity {
 
         String key = "";
         Set<String> set = new HashSet<>();
-        Iterator iterator = dataSnapshot.getChildren().iterator();
 
         for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
             User user = snapshot.getValue(User.class);
@@ -434,5 +437,44 @@ public class OnlineUsersActivity extends BaseActivity {
         Intent intent = new Intent(OnlineUsersActivity.this, OnlineGameActivity.class);
         intent.putExtra("gameID", LoginUID);
         startActivity(intent);
+    }
+
+    public boolean userNameCheck(Boolean b) {
+
+        FirebaseUser user = mAuth.getCurrentUser();
+
+        if (user != null) {
+            LoginUserID = user.getEmail();
+            userName = convertEmailToString(LoginUserID);
+
+            b = userName.contains(".");
+
+        }
+        return b;
+    }
+
+    public void opponentJoinedGame() {
+
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference ref = database.getReference("multiplayer").child(LoginUID).child("guest");
+
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                User guest = dataSnapshot.getValue(User.class);
+
+                if (guest != null) {
+                    //startGame();
+                    game.setStatus(Game.STATUS_PLAYING);
+                } else {
+                    game.setStatus(Game.STATUS_WAITING);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 }
