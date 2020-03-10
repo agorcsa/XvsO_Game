@@ -19,7 +19,6 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.xvso.Objects.Game;
 import com.example.xvso.Objects.User;
@@ -78,7 +77,6 @@ public class OnlineUsersActivity extends BaseActivity {
 
     private ArrayList<Game> mOpenGamesList = new ArrayList<>();
 
-    private RecyclerView recyclerView;
     private LinearLayoutManager layoutManager;
     private GameAdapter gameAdapter;
 
@@ -389,7 +387,7 @@ public class OnlineUsersActivity extends BaseActivity {
             LoginUID = firebaseUser.getUid();
             userName = convertEmailToString(LoginUserID);
 
-            myRef.child(MULTIPLAYER).child(LoginUID).setValue(game);
+            myRef.child(MULTIPLAYER).setValue(game);
 
             Log.d(LOG_TAG, "Firebase push successful for username " + userName);
         }
@@ -419,7 +417,6 @@ public class OnlineUsersActivity extends BaseActivity {
                     mOpenGamesList.add(game);
                 }
 
-                gameAdapter = new GameAdapter(mOpenGamesList);
                 gameAdapter.notifyDataSetChanged();
             }
 
