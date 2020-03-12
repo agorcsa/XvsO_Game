@@ -12,12 +12,21 @@ public class User {
     private String mImageUrl = "";
     private int mTotalScore = 0;
 
+    private String picture;
+    private int gameNumber;
+    private String userName;
 
     private Boolean mActiveGame;
 
     // empty constructor used for saving the user to database
     public User() {
 
+    }
+
+    public User (String picture, int gameNumber, String userName) {
+        this.picture = picture;
+        this.gameNumber = gameNumber;
+        this.userName = userName;
     }
 
     public User(String name, String email, String password) {
@@ -33,7 +42,6 @@ public class User {
         mPassword = password;
         mTotalScore = totalScore;
     }
-
     public User(String firstName, String lastName, String emailAddress, String password, String imageUrl, int totalScore) {
         mFirstName = firstName;
         mLastName = lastName;
@@ -41,6 +49,30 @@ public class User {
         mPassword = password;
         mImageUrl = imageUrl;
         mTotalScore = totalScore;
+    }
+
+    public String getPicture() {
+        return picture;
+    }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
+    }
+
+    public int getGameNumber() {
+        return gameNumber;
+    }
+
+    public void setGameNumber(int gameNumber) {
+        this.gameNumber = gameNumber;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getName() {

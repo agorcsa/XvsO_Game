@@ -1,5 +1,6 @@
 package com.example.xvso.adapter;
 
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +11,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.xvso.Objects.Game;
+import com.example.xvso.Objects.User;
 import com.example.xvso.R;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -26,13 +29,18 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder
         return gameViewHolder;
     }
 
-    @Override
     public void onBindViewHolder(@NonNull GameViewHolder holder, int position) {
         Game currentItem = mGameItemsList.get(position);
-        holder.profilePicture.setImageResource(currentItem.getPicture());
-        holder.gameNumber.setText(currentItem.getGameNumber());
-        holder.opponentUserName.setText(currentItem.getUserName());
+        User user = currentItem.getHost();
+        if (user != null) {
+            if (!TextUtils.isEmpty(user.getImageUrl())) {
+                Picasso.get().load(user.getImageUrl()).into(holder.profilePicture);
+            }
+            holder.gameNumber.setText(String.valueOf(user.getGameNumber()));
+            holder.opponentUserName.setText(user.getFirstName());
+        }
     }
+
 
     @Override
     public int getItemCount() {
@@ -56,5 +64,9 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder
             gameNumber = itemView.findViewById(R.id.first_line_text_view);
             opponentUserName = itemView.findViewById(R.id.second_line_text_view);
         }
+    }
+
+    public interface OnItemClick {
+        void onClick (String value);
     }
 }

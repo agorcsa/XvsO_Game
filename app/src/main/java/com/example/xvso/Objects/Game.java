@@ -11,6 +11,7 @@ public class Game {
     private User host;
     private User guest;
     private int status;
+
     private int picture;
     private String gameNumber;
     private String userName;

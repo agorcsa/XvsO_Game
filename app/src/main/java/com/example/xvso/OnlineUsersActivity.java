@@ -82,12 +82,13 @@ public class OnlineUsersActivity extends BaseActivity {
 
     private User host;
     private User guest;
-    private int gameNumber = 0;
 
     private DatabaseReference query;
 
     private User currentUser;
     private User myUser = new User();
+
+    private int gameNumber;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -99,11 +100,14 @@ public class OnlineUsersActivity extends BaseActivity {
         usersBinding.setViewModel(onlineUsersViewModel);
         usersBinding.setLifecycleOwner(this);
 
+        if (savedInstanceState != null) {
+            gameNumber = savedInstanceState.getInt("counter");
+        }
+
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         mAuth = FirebaseAuth.getInstance();
 
         buildRecyclerView();
-        createGameList();
         readFromDatabase();
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -126,7 +130,6 @@ public class OnlineUsersActivity extends BaseActivity {
 
                     myRef.child("users").child(LoginUID).child("request").setValue(LoginUID);
 
-                    // requestedUsersArrayAdapter.clear();
                     acceptIncomingRequests();
                 } else {
                     Log.d(LOG_TAG, "onAuthStateChanged:signed_out or login");
@@ -155,7 +158,7 @@ public class OnlineUsersActivity extends BaseActivity {
             @Override
             public void onChanged(User user) {
                 myUser = user;
-                myRef.child(MULTIPLAYER).child("game: " + LoginUID).child("host_user").setValue(myUser);
+                //myRef.child(MULTIPLAYER).child("game: " + LoginUID).child("host_user").setValue(myUser);
 
                 //myRef.child("users").child(LoginUID).setValue(user);
             }
@@ -346,17 +349,6 @@ public class OnlineUsersActivity extends BaseActivity {
         mAuth.addAuthStateListener(mAuthListener);
     }
 
-
-    public void createGameList() {
-        // add the games from Firebase
-
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-
-        String userName = currentUser.getDisplayName();
-
-        mOpenGamesList.add(new Game(R.drawable.profile, userName, "user 1"));
-    }
-
     public void buildRecyclerView() {
         layoutManager = new LinearLayoutManager(this);
         gameAdapter = new GameAdapter(mOpenGamesList);
@@ -377,19 +369,16 @@ public class OnlineUsersActivity extends BaseActivity {
         User host = new User();
         User guest = new User();
 
-
         if (firebaseUser != null) {
-
             Game game = new Game();
-            game.setHost(host);
+            game.setHost(myUser);
             game.setGuest(host);
-
             LoginUID = firebaseUser.getUid();
             userName = convertEmailToString(LoginUserID);
-
-            myRef.child(MULTIPLAYER).setValue(game);
-
-            Log.d(LOG_TAG, "Firebase push successful for username " + userName);
+            DatabaseReference newGameRef = myRef.child(MULTIPLAYER).push();
+            newGameRef.setValue(game);
+            incrementGameNumber(gameNumber);
+            Log.d(LOG_TAG, "Firebase push successful for username " + userName + "game number: " + gameNumber);
         }
 
         if (guest == null) {
@@ -473,5 +462,15 @@ public class OnlineUsersActivity extends BaseActivity {
 
             }
         });
+    }
+
+   public void incrementGameNumber(int number) {
+        gameNumber++;
+   }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("gameNumber", gameNumber);
     }
 }
