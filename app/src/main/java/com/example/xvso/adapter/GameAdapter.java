@@ -17,9 +17,18 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
+import static com.example.xvso.R.id.join_game_text_view;
+
 public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder> {
 
     private ArrayList<Game>  mGameItemsList;
+
+    private JoinGameClick listener;
+
+    public GameAdapter(JoinGameClick listener, ArrayList<Game> mGameItemsList) {
+        this.listener = listener;
+        this.mGameItemsList = mGameItemsList;
+    }
 
     @NonNull
     @Override
@@ -31,6 +40,7 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder
 
     public void onBindViewHolder(@NonNull GameViewHolder holder, int position) {
         Game currentItem = mGameItemsList.get(position);
+        String key = currentItem.getKey();
         User user = currentItem.getHost();
         if (user != null) {
             if (!TextUtils.isEmpty(user.getImageUrl())) {
@@ -38,6 +48,13 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder
             }
             holder.gameNumber.setText(String.valueOf(position + 1));
             holder.opponentUserName.setText(user.getFirstName());
+            holder.joinGame.setText("JOIN");
+            holder.joinGame.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    listener.onJoinGameClick(key);
+                }
+            });
         }
     }
 
@@ -50,11 +67,16 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder
            mGameItemsList = gameItemsList;
     }
 
+    public interface JoinGameClick {
+        void onJoinGameClick(String key);
+    }
+
     public static class GameViewHolder extends RecyclerView.ViewHolder {
 
         public ImageView profilePicture;
         public TextView gameNumber;
         public TextView opponentUserName;
+        public TextView joinGame;
 
         public GameViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -62,6 +84,7 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder
             profilePicture = itemView.findViewById(R.id.profile_image_view);
             gameNumber = itemView.findViewById(R.id.first_line_text_view);
             opponentUserName = itemView.findViewById(R.id.second_line_text_view);
+            joinGame = itemView.findViewById(join_game_text_view);
         }
     }
 }

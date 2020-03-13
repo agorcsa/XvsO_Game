@@ -3,14 +3,7 @@ package com.example.xvso;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.TextPaint;
-import android.text.method.LinkMovementMethod;
-import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -50,7 +43,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-public class OnlineUsersActivity extends BaseActivity {
+public class OnlineUsersActivity extends BaseActivity implements GameAdapter.JoinGameClick {
 
     private static final String LOG_TAG = "OnlineUsersActivity";
     private static final String MULTIPLAYER = "multiplayer";
@@ -109,30 +102,8 @@ public class OnlineUsersActivity extends BaseActivity {
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         mAuth = FirebaseAuth.getInstance();
 
-        TextView textView = findViewById(R.id.join_game_text_view);
-
-        String text = "join game";
-
-        SpannableString ss = new SpannableString(text);
-
-        ClickableSpan clickableSpan = new ClickableSpan() {
-            @Override
-            public void onClick(View widget) {
-                Toast.makeText(getApplicationContext(), "Click", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void updateDrawState(TextPaint ds) {
-                super.updateDrawState(ds);
-                ds.setColor(Color.YELLOW);
-                ds.setUnderlineText(false);
-            }
-        };
-
-        ss.setSpan(clickableSpan, 0, 8, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-        textView.setText(ss);
-        textView.setMovementMethod(LinkMovementMethod.getInstance());
+        buildRecyclerView();
+        readFromDatabase();
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
 
@@ -182,30 +153,11 @@ public class OnlineUsersActivity extends BaseActivity {
             @Override
             public void onChanged(User user) {
                 myUser = user;
-                //myRef.child(MULTIPLAYER).child("game: " + LoginUID).child("host_user").setValue(myUser);
-
-                //myRef.child("users").child(LoginUID).setValue(user);
             }
         });
 
-
-        // Use a Firebase listener to read from the "multiplayer" node, all games whose status is "open", assign them to mOpenGamesList, and refresh the adapter.
-
-
-        // mOpenGamesList.add( new GameItem(R.drawable.ic_cross, "A new game has been added", "Opponent User Name"));
         gameAdapter.notifyDataSetChanged();
     }
-
-
-        /*usersBinding.loggedUsersListview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-                    final String requestToUser =((TextView)view).getText().toString();
-                    confirmRequest(requestToUser, "To");
-            }
-        });*/
-
 
     public void confirmRequest(final String otherPlayer, final String reqType) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -222,9 +174,9 @@ public class OnlineUsersActivity extends BaseActivity {
                 myRef.child("users").child(otherPlayer).child("request").push().setValue(LoginUserID);
 
                 if(reqType.equalsIgnoreCase("From")) {
-                    startGame(otherPlayer + ":" + userName, otherPlayer, "From:");
+                    //startGame(otherPlayer + ":" + userName, otherPlayer, "From:");
                 } else {
-                    startGame(userName + ":" + otherPlayer, otherPlayer, "To");
+                    //startGame(userName + ":" + otherPlayer, otherPlayer, "To");
                 }
             }
         });
@@ -237,15 +189,13 @@ public class OnlineUsersActivity extends BaseActivity {
         builder.show();
     }
 
-    public void startGame(String playerGameId, String otherPlayer, String requestType) {
+    public void startGame(String key) {
 
-        myRef.child("playing").child(playerGameId).removeValue();
+        myRef.child("playing").child(key).removeValue();
         Intent intent = new Intent(getApplicationContext(), OnlineGameActivity.class);
-        intent.putExtra("player_session", playerGameId);
+        intent.putExtra("player_session", key);
         intent.putExtra("user_name", userName);
-        intent.putExtra("other_player", otherPlayer);
         intent.putExtra("login_uid", LoginUID);
-        intent.putExtra("request_type", requestType);
         startActivity(intent);
         finish();
     }
@@ -276,13 +226,6 @@ public class OnlineUsersActivity extends BaseActivity {
                 }
             }
         }
-
-       /* requestedUsersArrayAdapter.clear();
-        requestedUsersArrayAdapter.addAll(set);
-        requestedUsersArrayAdapter.notifyDataSetChanged();*/
-
-        /*usersBinding.sendRequestTextview.setText("Send request to");
-        usersBinding.acceptRequestTextView.setText("Accept request from");*/
     }
 
     private String convertEmailToString(String email) {
@@ -375,7 +318,7 @@ public class OnlineUsersActivity extends BaseActivity {
 
     public void buildRecyclerView() {
         layoutManager = new LinearLayoutManager(this);
-        gameAdapter = new GameAdapter(mOpenGamesList);
+        gameAdapter = new GameAdapter(this, mOpenGamesList);
         usersBinding.gamesRecyclerView.setHasFixedSize(true);
         usersBinding.gamesRecyclerView.setLayoutManager(layoutManager);
         usersBinding.gamesRecyclerView.setAdapter(gameAdapter);
@@ -398,17 +341,17 @@ public class OnlineUsersActivity extends BaseActivity {
             game.setGuest(guest);
             LoginUID = firebaseUser.getUid();
             userName = convertEmailToString(LoginUserID);
+            String key = myRef.getKey();
+            game.setKey(key);
             DatabaseReference newGameRef = myRef.child(MULTIPLAYER).push();
             newGameRef.setValue(game);
-
-            String key = myRef.getKey();
 
             if (key != null) {
 
                 myRef.child(MULTIPLAYER).child(key).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        startGame();
+                        //startGame();
                     }
 
                     @Override
@@ -450,7 +393,7 @@ public class OnlineUsersActivity extends BaseActivity {
         });
     }
 
-    public void startGame() {
+    /*public void startGame() {
 
         game.setStatus(Game.STATUS_PLAYING);
 
@@ -459,7 +402,7 @@ public class OnlineUsersActivity extends BaseActivity {
         intent.putExtra("guestID", (Parcelable) guest);
         startActivity(intent);
     }
-
+*/
     public boolean userNameCheck(Boolean b) {
 
         FirebaseUser user = mAuth.getCurrentUser();
@@ -497,5 +440,10 @@ public class OnlineUsersActivity extends BaseActivity {
 
             }
         });
+    }
+
+    @Override
+    public void onJoinGameClick(String key) {
+        startGame(key);
     }
 }

@@ -16,6 +16,8 @@ public class Game {
     private String gameNumber;
     private String userName;
 
+    private String key;
+
     // empty constructor
     public Game() {
 
@@ -28,7 +30,7 @@ public class Game {
     }
 
     // constructor
-    public Game(Board board, User host, User guest, int status, int picture, String gameNumber, String userName) {
+    public Game(Board board, User host, User guest, int status, int picture, String gameNumber, String userName, String key) {
         this.board = board;
         this.host = host;
         this.guest = guest;
@@ -36,6 +38,7 @@ public class Game {
         this.picture = picture;
         this.gameNumber = gameNumber;
         this.userName = userName;
+        this.key = key;
     }
 
     public Board getBoard() {
@@ -92,6 +95,14 @@ public class Game {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 }
 
