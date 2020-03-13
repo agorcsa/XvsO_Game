@@ -3,7 +3,14 @@ package com.example.xvso;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.TextPaint;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -88,7 +95,6 @@ public class OnlineUsersActivity extends BaseActivity {
     private User currentUser;
     private User myUser = new User();
 
-    private int gameNumber;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -100,15 +106,33 @@ public class OnlineUsersActivity extends BaseActivity {
         usersBinding.setViewModel(onlineUsersViewModel);
         usersBinding.setLifecycleOwner(this);
 
-        if (savedInstanceState != null) {
-            gameNumber = savedInstanceState.getInt("counter");
-        }
-
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         mAuth = FirebaseAuth.getInstance();
 
-        buildRecyclerView();
-        readFromDatabase();
+        TextView textView = findViewById(R.id.join_game_text_view);
+
+        String text = "join game";
+
+        SpannableString ss = new SpannableString(text);
+
+        ClickableSpan clickableSpan = new ClickableSpan() {
+            @Override
+            public void onClick(View widget) {
+                Toast.makeText(getApplicationContext(), "Click", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void updateDrawState(TextPaint ds) {
+                super.updateDrawState(ds);
+                ds.setColor(Color.YELLOW);
+                ds.setUnderlineText(false);
+            }
+        };
+
+        ss.setSpan(clickableSpan, 0, 8, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        textView.setText(ss);
+        textView.setMovementMethod(LinkMovementMethod.getInstance());
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
 
@@ -366,23 +390,33 @@ public class OnlineUsersActivity extends BaseActivity {
 
         FirebaseUser firebaseUser = mAuth.getCurrentUser();
 
-        User host = new User();
         User guest = new User();
 
         if (firebaseUser != null) {
             Game game = new Game();
             game.setHost(myUser);
-            game.setGuest(host);
+            game.setGuest(guest);
             LoginUID = firebaseUser.getUid();
             userName = convertEmailToString(LoginUserID);
             DatabaseReference newGameRef = myRef.child(MULTIPLAYER).push();
             newGameRef.setValue(game);
-            incrementGameNumber(gameNumber);
-            Log.d(LOG_TAG, "Firebase push successful for username " + userName + "game number: " + gameNumber);
-        }
 
-        if (guest == null) {
-            game.setStatus(Game.STATUS_WAITING);
+            String key = myRef.getKey();
+
+            if (key != null) {
+
+                myRef.child(MULTIPLAYER).child(key).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        startGame();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
         }
     }
 
@@ -416,12 +450,13 @@ public class OnlineUsersActivity extends BaseActivity {
         });
     }
 
-    public void startGame(View view) {
+    public void startGame() {
 
         game.setStatus(Game.STATUS_PLAYING);
 
         Intent intent = new Intent(OnlineUsersActivity.this, OnlineGameActivity.class);
         intent.putExtra("gameID", LoginUID);
+        intent.putExtra("guestID", (Parcelable) guest);
         startActivity(intent);
     }
 
@@ -462,15 +497,5 @@ public class OnlineUsersActivity extends BaseActivity {
 
             }
         });
-    }
-
-   public void incrementGameNumber(int number) {
-        gameNumber++;
-   }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt("gameNumber", gameNumber);
     }
 }

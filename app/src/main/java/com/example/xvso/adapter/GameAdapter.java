@@ -36,11 +36,10 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder
             if (!TextUtils.isEmpty(user.getImageUrl())) {
                 Picasso.get().load(user.getImageUrl()).into(holder.profilePicture);
             }
-            holder.gameNumber.setText(String.valueOf(user.getGameNumber()));
+            holder.gameNumber.setText(String.valueOf(position + 1));
             holder.opponentUserName.setText(user.getFirstName());
         }
     }
-
 
     @Override
     public int getItemCount() {
@@ -64,9 +63,5 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder
             gameNumber = itemView.findViewById(R.id.first_line_text_view);
             opponentUserName = itemView.findViewById(R.id.second_line_text_view);
         }
-    }
-
-    public interface OnItemClick {
-        void onClick (String value);
     }
 }
