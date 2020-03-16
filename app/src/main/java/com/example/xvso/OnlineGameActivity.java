@@ -36,8 +36,8 @@ public class OnlineGameActivity extends AppCompatActivity {
     private String userName = "";
 
     // other player user name
-    private String otherPlayer = "";
-    private String loginUID = "";
+    private String opponentFirstName = "";
+    private String LoginUID = "";
     private String requestType = "";
 
     // current user is signed in with X
@@ -65,21 +65,18 @@ public class OnlineGameActivity extends AppCompatActivity {
         setInitialVisibility();
         animateViews();
 
-       /* if (getIntent().getExtras() != null) {
+        if (getIntent().getExtras() != null) {
+            userName = getIntent().getExtras().get("userName").toString();
+            opponentFirstName = getIntent().getExtras().get("opponentFirstName").toString();
+            //LoginUID = getIntent().getExtras().get("LoginUID").toString();
 
-            // gets the values wrapped in the intent
-            // inside startGame() method -> OnlineUsersActivity.class,
-            // which were sent to this Activity after the confirmRequest() was called
-            userName = getIntent().getExtras().get("user_name").toString();
-            loginUID = getIntent().getExtras().get("login_uid").toString();
-            otherPlayer = getIntent().getExtras().get("other_player").toString();
-            requestType = getIntent().getExtras().get("request_type").toString();
-            playerSession = getIntent().getExtras().get("player_session").toString();
-        }*/
+            onlineGameBinding.player2Text.setText(opponentFirstName);
+
+        }
 
         gameState = 1;
 
-        if (requestType.equals("From")) {
+       /* if (requestType.equals("From")) {
 
             // the player who sends the request plays with X
             myGameSignIn = "O";
@@ -87,17 +84,17 @@ public class OnlineGameActivity extends AppCompatActivity {
             onlineGameBinding.player1Text.setText("Your turn");
             onlineGameBinding.player2Text.setText("Your turn");
 
-            reference.child("playing").child(playerSession).child("turn").setValue(otherPlayer);
+            reference.child("playing").child(playerSession).child("turn").setValue(opponentFirstName);
 
         } else {
 
             myGameSignIn = "X";
 
-            onlineGameBinding.player1Text.setText(otherPlayer + "\'s turn");
-            onlineGameBinding.player1Text.setText(otherPlayer + "\'s turn");
+            onlineGameBinding.player1Text.setText(opponentFirstName + "\'s turn");
+            onlineGameBinding.player1Text.setText(opponentFirstName + "\'s turn");
 
-            reference.child("playing").child(playerSession).child("turn").setValue(otherPlayer);
-        }
+            reference.child("playing").child(playerSession).child("turn").setValue(opponentFirstName);
+        }*/
 
         reference.child("playing").child(playerSession).child("turn").addValueEventListener(new ValueEventListener() {
             @Override
@@ -111,10 +108,10 @@ public class OnlineGameActivity extends AppCompatActivity {
                         onlineGameBinding.player2Text.setText("Your turn");
                         setEnableClick(true);
                         activePlayer = 1;
-                    } else if (value.equals(otherPlayer)) {
+                    } else if (value.equals(opponentFirstName)) {
 
-                        onlineGameBinding.player1Text.setText(otherPlayer + "\'s turn");
-                        onlineGameBinding.player1Text.setText(otherPlayer + "\'s turn");
+                        onlineGameBinding.player1Text.setText(opponentFirstName + "\'s turn");
+                        onlineGameBinding.player1Text.setText(opponentFirstName + "\'s turn");
                         setEnableClick(false);
                         activePlayer = 2;
                     }
@@ -208,7 +205,7 @@ public class OnlineGameActivity extends AppCompatActivity {
                     break;
             }
             reference.child("playing").child(playerSession).child("game").child("block" + selectedBlock).setValue(userName);
-            reference.child("playing").child(playerSession).child(playerSession).child("turn").setValue(otherPlayer);
+            reference.child("playing").child(playerSession).child(playerSession).child("turn").setValue(opponentFirstName);
             setEnableClick(false);
             activePlayer = 2;
 
@@ -262,7 +259,7 @@ public class OnlineGameActivity extends AppCompatActivity {
 
         if(winner != 0 && gameState == 1){
             if(winner == 1){
-                ShowAlert(otherPlayer +" is winner");
+                ShowAlert(opponentFirstName + " is winner");
             }else if(winner == 2){
                 ShowAlert("You won the game");
             }

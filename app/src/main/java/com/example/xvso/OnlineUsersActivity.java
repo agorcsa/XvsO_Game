@@ -105,6 +105,7 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
         buildRecyclerView();
         readFromDatabase();
 
+
         mAuthListener = new FirebaseAuth.AuthStateListener() {
 
             // when the user will be changed
@@ -191,10 +192,9 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
 
     public void startGame(String key) {
 
-        myRef.child("playing").child(key).removeValue();
         Intent intent = new Intent(getApplicationContext(), OnlineGameActivity.class);
         intent.putExtra("player_session", key);
-        intent.putExtra("user_name", userName);
+        intent.putExtra("userName", userName);
         intent.putExtra("login_uid", LoginUID);
         startActivity(intent);
         finish();
@@ -393,16 +393,6 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
         });
     }
 
-    /*public void startGame() {
-
-        game.setStatus(Game.STATUS_PLAYING);
-
-        Intent intent = new Intent(OnlineUsersActivity.this, OnlineGameActivity.class);
-        intent.putExtra("gameID", LoginUID);
-        intent.putExtra("guestID", (Parcelable) guest);
-        startActivity(intent);
-    }
-*/
     public boolean userNameCheck(Boolean b) {
 
         FirebaseUser user = mAuth.getCurrentUser();
@@ -417,7 +407,8 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
         return b;
     }
 
-    public void opponentJoinedGame() {
+
+    public boolean opponentJoinedGame() {
 
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference ref = database.getReference("multiplayer").child(LoginUID).child("guest");
@@ -428,7 +419,16 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
                 User guest = dataSnapshot.getValue(User.class);
 
                 if (guest != null) {
-                    //startGame();
+                    // introduce the key
+                    String opponentFirstName = guest.getFirstName();
+
+                    Intent intent = new Intent(getApplicationContext(), OnlineGameActivity.class);
+                    intent.putExtra("userName", userName);
+                    intent.putExtra("opponentFirstName", opponentFirstName);
+                    intent.putExtra("LoginUID", LoginUID);
+                    startActivity(intent);
+                    finish();
+
                     game.setStatus(Game.STATUS_PLAYING);
                 } else {
                     game.setStatus(Game.STATUS_WAITING);
@@ -440,6 +440,8 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
 
             }
         });
+
+        return true;
     }
 
     @Override

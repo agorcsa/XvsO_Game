@@ -1,5 +1,6 @@
 package com.example.xvso.firebase;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -14,6 +15,8 @@ import com.example.xvso.HomeActivity;
 import com.example.xvso.Objects.User;
 import com.example.xvso.R;
 import com.example.xvso.databinding.ActivitySignupBinding;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -49,10 +52,12 @@ public class SignupActivity extends BaseActivity {
         setContentView(R.layout.activity_signup);
 
         signupBinding = DataBindingUtil.setContentView(this, R.layout.activity_signup);
-        //signUpViewModel = ViewModelProviders.of(this).get(SignUpViewModel.class);
 
-        //Get Firebase auth instance
         auth = FirebaseAuth.getInstance();
+
+        if (!isGooglePlayServicesAvailable(getApplicationContext())) {
+            Toast.makeText(getApplicationContext(), "Google Play Services are not available", Toast.LENGTH_LONG).show();
+        }
 
         signupBinding.resetPasswordButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -127,10 +132,15 @@ public class SignupActivity extends BaseActivity {
         });
     }
 
-
     @Override
     protected void onResume() {
         super.onResume();
         signupBinding.progressBar.setVisibility(View.GONE);
+    }
+
+    public boolean isGooglePlayServicesAvailable(Context context){
+        GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
+        int resultCode = googleApiAvailability.isGooglePlayServicesAvailable(context);
+        return resultCode == ConnectionResult.SUCCESS;
     }
 }

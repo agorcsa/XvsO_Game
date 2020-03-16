@@ -21,7 +21,7 @@ import static com.example.xvso.R.id.join_game_text_view;
 
 public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder> {
 
-    private ArrayList<Game>  mGameItemsList;
+    private ArrayList<Game> mGameItemsList;
 
     private JoinGameClick listener;
 
@@ -39,32 +39,45 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder
     }
 
     public void onBindViewHolder(@NonNull GameViewHolder holder, int position) {
-        Game currentItem = mGameItemsList.get(position);
-        String key = currentItem.getKey();
-        User user = currentItem.getHost();
-        if (user != null) {
-            if (!TextUtils.isEmpty(user.getImageUrl())) {
-                Picasso.get().load(user.getImageUrl()).into(holder.profilePicture);
+        Game currentGame = mGameItemsList.get(position);
+        String key = currentGame.getKey();
+
+        User host = currentGame.getHost();
+        User guest = currentGame.getGuest();
+
+        String guestName = guest.getFirstName();
+
+        if (host != null) {
+            if (!TextUtils.isEmpty(host.getImageUrl())) {
+                Picasso.get().load(host.getImageUrl()).into(holder.profilePicture);
             }
+
             holder.gameNumber.setText(String.valueOf(position + 1));
-            holder.opponentUserName.setText(user.getFirstName());
-            holder.joinGame.setText("JOIN");
-            holder.joinGame.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    listener.onJoinGameClick(key);
-                }
-            });
+            holder.userName.setText(host.getFirstName());
+
+            // TODO 1
+            // make JOIN button hide for only host user
+            if (!holder.userName.getText().toString().equals(host.getFirstName())) {
+                holder.joinGame.setVisibility(View.INVISIBLE);
+            } else {
+                holder.joinGame.setText("JOIN");
+                holder.joinGame.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        listener.onJoinGameClick(key);
+                    }
+                });
+            }
         }
     }
 
     @Override
     public int getItemCount() {
-        return  mGameItemsList == null ? 0 : mGameItemsList.size();
+        return mGameItemsList == null ? 0 : mGameItemsList.size();
     }
 
     public GameAdapter(ArrayList<Game> gameItemsList) {
-           mGameItemsList = gameItemsList;
+        mGameItemsList = gameItemsList;
     }
 
     public interface JoinGameClick {
@@ -75,7 +88,7 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder
 
         public ImageView profilePicture;
         public TextView gameNumber;
-        public TextView opponentUserName;
+        public TextView userName;
         public TextView joinGame;
 
         public GameViewHolder(@NonNull View itemView) {
@@ -83,7 +96,7 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder
 
             profilePicture = itemView.findViewById(R.id.profile_image_view);
             gameNumber = itemView.findViewById(R.id.first_line_text_view);
-            opponentUserName = itemView.findViewById(R.id.second_line_text_view);
+            userName = itemView.findViewById(R.id.second_line_text_view);
             joinGame = itemView.findViewById(join_game_text_view);
         }
     }

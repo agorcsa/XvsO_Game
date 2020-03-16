@@ -1,5 +1,6 @@
 package com.example.xvso.firebase;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -14,6 +15,8 @@ import com.example.xvso.MainActivity;
 import com.example.xvso.R;
 import com.example.xvso.databinding.ActivityLoginBinding;
 import com.example.xvso.viewmodel.LoginViewModel;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -21,8 +24,8 @@ import com.google.firebase.auth.AuthResult;
 public class LoginActivity extends BaseActivity {
 
     ActivityLoginBinding loginBinding;
-
     private LoginViewModel loginViewModel;
+    private SignupActivity signupActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +41,9 @@ public class LoginActivity extends BaseActivity {
 
         loginBinding = DataBindingUtil.setContentView(this, R.layout.activity_login);
 
+        if (!isGooglePlayServicesAvailable(getApplicationContext())) {
+            Toast.makeText(getApplicationContext(), "Google Play Services are not available", Toast.LENGTH_LONG).show();
+        }
 
         loginBinding.btnSignup.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,5 +103,11 @@ public class LoginActivity extends BaseActivity {
                         });
             }
         });
+    }
+
+    public boolean isGooglePlayServicesAvailable(Context context){
+        GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
+        int resultCode = googleApiAvailability.isGooglePlayServicesAvailable(context);
+        return resultCode == ConnectionResult.SUCCESS;
     }
 }
