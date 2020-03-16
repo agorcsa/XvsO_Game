@@ -67,10 +67,10 @@ public class OnlineGameActivity extends AppCompatActivity {
 
         if (getIntent().getExtras() != null) {
             userName = getIntent().getExtras().get("userName").toString();
-            opponentFirstName = getIntent().getExtras().get("opponentFirstName").toString();
+            //opponentFirstName = getIntent().getExtras().get("opponentFirstName").toString();
             //LoginUID = getIntent().getExtras().get("LoginUID").toString();
 
-            onlineGameBinding.player2Text.setText(opponentFirstName);
+            //onlineGameBinding.player2Text.setText(opponentFirstName);
 
         }
 
