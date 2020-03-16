@@ -25,9 +25,12 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder
 
     private JoinGameClick listener;
 
-    public GameAdapter(JoinGameClick listener, ArrayList<Game> mGameItemsList) {
+    private User user = new User();
+
+    public GameAdapter(JoinGameClick listener, ArrayList<Game> mGameItemsList, User user) {
         this.listener = listener;
         this.mGameItemsList = mGameItemsList;
+        this.user = user;
     }
 
     @NonNull
@@ -42,9 +45,12 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder
         Game currentGame = mGameItemsList.get(position);
         String key = currentGame.getKey();
 
+        String currentUserName = user.getFirstName();
+
         User host = currentGame.getHost();
         User guest = currentGame.getGuest();
 
+        String hostName = host.getFirstName();
         String guestName = guest.getFirstName();
 
         if (host != null) {
@@ -57,10 +63,11 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder
 
             // TODO 1
             // make JOIN button hide for only host user
-            if (!holder.userName.getText().toString().equals(host.getFirstName())) {
+            if (currentUserName.equals(hostName)) {
                 holder.joinGame.setVisibility(View.INVISIBLE);
             } else {
                 holder.joinGame.setText("JOIN");
+                holder.joinGame.setVisibility(View.VISIBLE);
                 holder.joinGame.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
