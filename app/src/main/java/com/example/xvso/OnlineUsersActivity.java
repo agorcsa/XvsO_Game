@@ -85,7 +85,7 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
 
     private DatabaseReference query;
 
-    private User currentUser;
+    private User currentUser = new User();
     private User myUser = new User();
 
 
@@ -102,9 +102,8 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         mAuth = FirebaseAuth.getInstance();
 
-        buildRecyclerView();
+        buildRecyclerView(currentUser);
         readFromDatabase();
-
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
 
@@ -154,6 +153,7 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
             @Override
             public void onChanged(User user) {
                 myUser = user;
+                buildRecyclerView(myUser);
             }
         });
 
@@ -316,9 +316,9 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
         mAuth.addAuthStateListener(mAuthListener);
     }
 
-    public void buildRecyclerView() {
+    public void buildRecyclerView(User user) {
         layoutManager = new LinearLayoutManager(this);
-        gameAdapter = new GameAdapter(this, mOpenGamesList);
+        gameAdapter = new GameAdapter(this, mOpenGamesList, currentUser);
         usersBinding.gamesRecyclerView.setHasFixedSize(true);
         usersBinding.gamesRecyclerView.setLayoutManager(layoutManager);
         usersBinding.gamesRecyclerView.setAdapter(gameAdapter);
