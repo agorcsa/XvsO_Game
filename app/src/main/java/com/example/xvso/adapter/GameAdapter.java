@@ -47,6 +47,8 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder
 
         String currentUserName = user.getFirstName();
 
+
+
         User host = currentGame.getHost();
         User guest = currentGame.getGuest();
 
@@ -65,6 +67,7 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder
             // make JOIN button hide for only host user
             if (currentUserName.equals(hostName)) {
                 holder.joinGame.setVisibility(View.INVISIBLE);
+                mGameItemsList.set(0, currentGame);
             } else {
                 holder.joinGame.setText("JOIN");
                 holder.joinGame.setVisibility(View.VISIBLE);

@@ -105,6 +105,8 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
         buildRecyclerView(currentUser);
         readFromDatabase();
 
+        addNewGame();
+
         mAuthListener = new FirebaseAuth.AuthStateListener() {
 
             // when the user will be changed
@@ -159,6 +161,14 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
 
         gameAdapter.notifyDataSetChanged();
     }
+
+    private String convertEmailToString(String email) {
+
+        userName = email.substring(0, getFirebaseUser().getEmail().indexOf("@"));
+
+        return userName;
+    }
+
 
     public void confirmRequest(final String otherPlayer, final String reqType) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -228,12 +238,6 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
         }
     }
 
-    private String convertEmailToString(String email) {
-
-        userName = email.substring(0, getFirebaseUser().getEmail().indexOf("@"));
-
-        return userName;
-    }
 
     private void acceptIncomingRequests() {
         myRef.child("users").child(userName).child("request")
@@ -318,16 +322,12 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
 
     public void buildRecyclerView(User user) {
         layoutManager = new LinearLayoutManager(this);
-        gameAdapter = new GameAdapter(this, mOpenGamesList, currentUser);
+        gameAdapter = new GameAdapter(this, mOpenGamesList, user);
         usersBinding.gamesRecyclerView.setHasFixedSize(true);
         usersBinding.gamesRecyclerView.setLayoutManager(layoutManager);
         usersBinding.gamesRecyclerView.setAdapter(gameAdapter);
     }
 
-    public void onNewGameButtonClicked(View view) {
-        Toast.makeText(getApplicationContext(), "A new game has been created", Toast.LENGTH_LONG).show();
-        addNewGame();
-    }
 
     public void addNewGame() {
 
@@ -340,7 +340,7 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
             game.setHost(myUser);
             game.setGuest(guest);
             LoginUID = firebaseUser.getUid();
-            userName = convertEmailToString(LoginUserID);
+            //userName = convertEmailToString(LoginUserID);
             String key = myRef.getKey();
             game.setKey(key);
             DatabaseReference newGameRef = myRef.child(MULTIPLAYER).push();
