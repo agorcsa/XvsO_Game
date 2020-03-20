@@ -48,6 +48,8 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
     private static final String LOG_TAG = "OnlineUsersActivity";
     private static final String MULTIPLAYER = "multiplayer";
 
+    private static final String PLAYER_SESSION = "player_session";
+
     private ActivityOnlineUsersBinding usersBinding;
 
     private FirebaseAnalytics mFirebaseAnalytics;
@@ -105,8 +107,6 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
         buildRecyclerView(currentUser);
         readFromDatabase();
 
-        addNewGame();
-
         mAuthListener = new FirebaseAuth.AuthStateListener() {
 
             // when the user will be changed
@@ -119,10 +119,10 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
                     Log.d(LOG_TAG, "onAuthStateChanged:signed_in: " + LoginUID);
                     LoginUserID = user.getEmail();
                     usersBinding.userLoginTextview.setText(LoginUserID);
-                    userName = convertEmailToString(LoginUserID);
+                    userName = myUser.getName();
 
                     if (userNameCheck(true)) {
-                            userName = userName.replace(".", "1");
+                        userName = userName.replace(".", "1");
                     }
 
                     myRef.child("users").child(LoginUID).child("request").setValue(LoginUID);
@@ -130,7 +130,7 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
                     acceptIncomingRequests();
                 } else {
                     Log.d(LOG_TAG, "onAuthStateChanged:signed_out or login");
-                    joinOnlineGame();
+                    //joinOnlineGame();
                 }
             }
         };
@@ -156,18 +156,14 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
             public void onChanged(User user) {
                 myUser = user;
                 buildRecyclerView(myUser);
+                addNewGame();
             }
         });
 
         gameAdapter.notifyDataSetChanged();
     }
 
-    private String convertEmailToString(String email) {
 
-        userName = email.substring(0, getFirebaseUser().getEmail().indexOf("@"));
-
-        return userName;
-    }
 
 
     public void confirmRequest(final String otherPlayer, final String reqType) {
@@ -203,9 +199,13 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
     public void startGame(String key) {
 
         Intent intent = new Intent(getApplicationContext(), OnlineGameActivity.class);
-        intent.putExtra("player_session", key);
-        intent.putExtra("userName", userName);
-        intent.putExtra("login_uid", LoginUID);
+
+        String playerSession = database.getReference("multiplayer").child(LoginUID).getKey();
+        intent.putExtra(PLAYER_SESSION, playerSession);
+
+        //String userName = myUser.getUserName();
+        //intent.putExtra("userName", userName);
+
         startActivity(intent);
         finish();
     }
@@ -331,16 +331,14 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
 
     public void addNewGame() {
 
-        FirebaseUser firebaseUser = mAuth.getCurrentUser();
-
         User guest = new User();
 
-        if (firebaseUser != null) {
+        if (myUser != null) {
             Game game = new Game();
             game.setHost(myUser);
             game.setGuest(guest);
-            LoginUID = firebaseUser.getUid();
-            //userName = convertEmailToString(LoginUserID);
+            userName = game.getHost().getUserName();
+            game.setUserName(userName);
             String key = myRef.getKey();
             game.setKey(key);
             DatabaseReference newGameRef = myRef.child(MULTIPLAYER).push();
@@ -399,7 +397,7 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
 
         if (user != null) {
             LoginUserID = user.getEmail();
-            userName = convertEmailToString(LoginUserID);
+            //userName = convertEmailToString(LoginUserID);
 
             b = userName.contains(".");
 
@@ -408,7 +406,7 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
     }
 
 
-    public boolean opponentJoinedGame() {
+    public boolean opponentJoinedGame(String key) {
 
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference ref = database.getReference("multiplayer").child(LoginUID).child("guest");
@@ -419,17 +417,8 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
                 User guest = dataSnapshot.getValue(User.class);
 
                 if (guest != null) {
-                    // introduce the key
-                    String opponentFirstName = guest.getFirstName();
-
-                    Intent intent = new Intent(getApplicationContext(), OnlineGameActivity.class);
-                    intent.putExtra("userName", userName);
-                    intent.putExtra("opponentFirstName", opponentFirstName);
-                    intent.putExtra("LoginUID", LoginUID);
-                    startActivity(intent);
-                    finish();
-
-                    game.setStatus(Game.STATUS_PLAYING);
+                    // extract the key from the game and introduce it.
+                    showAlert(key);
                 } else {
                     game.setStatus(Game.STATUS_WAITING);
                 }
@@ -444,8 +433,34 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
         return true;
     }
 
-    @Override
+   @Override
     public void onJoinGameClick(String key) {
         startGame(key);
+    }
+
+
+    // alert dialog used when the guest sends a request to the host
+    public void showAlert(String key) {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+        alert.setTitle("Accept invitation");
+        alert.setMessage(guest.getFirstName() + " has invited you to join XvsO for an unforgettable battle");
+
+        alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                    startGame(key);
+                    game.setStatus(Game.STATUS_PLAYING);
+            }
+        });
+
+        alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Toast.makeText(getApplicationContext(), "You have refused playing with this user", Toast.LENGTH_SHORT).show();
+                game.setStatus(Game.STATUS_WAITING);
+            }
+        });
+        alert.create().show();
     }
 }
