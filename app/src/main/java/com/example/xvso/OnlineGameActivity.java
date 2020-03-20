@@ -23,6 +23,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class OnlineGameActivity extends AppCompatActivity {
 
@@ -31,12 +32,16 @@ public class OnlineGameActivity extends AppCompatActivity {
     private OnlineGameViewModel onlineGameViewModel;
     private ActivityOnlineGameBinding onlineGameBinding;
 
-    private String playerSession = "";
+
     // current player user name
     private String userName = "";
 
     // other player user name
     private String opponentFirstName = "";
+
+    private String playerSession = "";
+    private static final String PLAYER_SESSION = "player_session";
+
     private String LoginUID = "";
     private String requestType = "";
 
@@ -66,7 +71,15 @@ public class OnlineGameActivity extends AppCompatActivity {
         animateViews();
 
         if (getIntent().getExtras() != null) {
-            userName = getIntent().getExtras().get("userName").toString();
+
+            playerSession = Objects.requireNonNull(getIntent().getExtras().get(PLAYER_SESSION)).toString();
+
+           DatabaseReference ref =  database.getReference("multiplayer").child(playerSession).child("guest");
+
+           String guestName = ref.getKey();
+
+
+            //userName = getIntent().getExtras().get("userName").toString();
             //opponentFirstName = getIntent().getExtras().get("opponentFirstName").toString();
             //LoginUID = getIntent().getExtras().get("LoginUID").toString();
 
