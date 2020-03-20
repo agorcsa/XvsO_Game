@@ -24,6 +24,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 public class SignupActivity extends BaseActivity {
@@ -114,11 +115,13 @@ public class SignupActivity extends BaseActivity {
                                             Toast.LENGTH_SHORT).show();
                                 } else {
 
-                                    String name = getFirebaseUser().getEmail().substring(0, getFirebaseUser().getEmail().indexOf("@"));
+
+                                    String id = Objects.requireNonNull(auth.getCurrentUser()).getUid();
+                                    String name = convertEmailToString(Objects.requireNonNull(getFirebaseUser().getEmail()));
                                     String firstName = "";
                                     String lastName = "";
 
-                                    User user = new User(name, email, password);
+                                    User user = new User(id, name, email, password);
 
                                     databaseReference = FirebaseDatabase.getInstance().getReference("users");
                                     databaseReference.child(getFirebaseUser().getUid()).setValue(user);
@@ -142,5 +145,10 @@ public class SignupActivity extends BaseActivity {
         GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
         int resultCode = googleApiAvailability.isGooglePlayServicesAvailable(context);
         return resultCode == ConnectionResult.SUCCESS;
+    }
+
+    private String convertEmailToString(String email) {
+
+        return email.substring(0, Objects.requireNonNull(getFirebaseUser().getEmail()).indexOf("@"));
     }
 }

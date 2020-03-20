@@ -27,6 +27,8 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder
 
     private User user = new User();
 
+    private String UID = "";
+
     public GameAdapter(JoinGameClick listener, ArrayList<Game> mGameItemsList, User user) {
         this.listener = listener;
         this.mGameItemsList = mGameItemsList;
@@ -43,29 +45,28 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder
 
     public void onBindViewHolder(@NonNull GameViewHolder holder, int position) {
         Game currentGame = mGameItemsList.get(position);
+
         String key = currentGame.getKey();
 
-        String currentUserName = user.getFirstName();
-
-
-
         User host = currentGame.getHost();
+        UID = host.getUID();
+
         User guest = currentGame.getGuest();
 
-        String hostName = host.getFirstName();
-        String guestName = guest.getFirstName();
-
-        if (host != null) {
             if (!TextUtils.isEmpty(host.getImageUrl())) {
                 Picasso.get().load(host.getImageUrl()).into(holder.profilePicture);
             }
 
             holder.gameNumber.setText(String.valueOf(position + 1));
-            holder.userName.setText(host.getFirstName());
 
-            // TODO 1
-            // make JOIN button hide for only host user
-            if (currentUserName.equals(hostName)) {
+            if (TextUtils.isEmpty(host.getFirstName())) {
+                holder.userName.setText(host.getName());
+            } else {
+                holder.userName.setText(host.getFirstName());
+            }
+
+            // compare the host uid with the current user uid in the adapter.
+            if (UID.equals(user.getUID())) {
                 holder.joinGame.setVisibility(View.INVISIBLE);
                 mGameItemsList.set(0, currentGame);
             } else {
@@ -78,7 +79,6 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder
                     }
                 });
             }
-        }
     }
 
     @Override

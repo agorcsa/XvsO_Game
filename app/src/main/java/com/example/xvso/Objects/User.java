@@ -4,6 +4,7 @@ import android.util.Patterns;
 
 public class User {
 
+    private String mUID = "";
     private String mName = "";
     private String mFirstName = "";
     private String mLastName = "";
@@ -29,7 +30,8 @@ public class User {
         this.userName = userName;
     }
 
-    public User(String name, String email, String password) {
+    public User(String uid, String name, String email, String password) {
+        mUID = uid;
         mName = name;
         mEmailAddress = email;
         mPassword = password;
@@ -85,6 +87,14 @@ public class User {
 
     public String getFirstName() {
         return mFirstName;
+    }
+
+    public String getUID() {
+        return mUID;
+    }
+
+    public void setUID(String mUID) {
+        this.mUID = mUID;
     }
 
     public void setFirstName(String firstName) {
