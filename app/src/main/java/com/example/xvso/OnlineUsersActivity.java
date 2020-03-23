@@ -90,6 +90,8 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
     private User currentUser = new User();
     private User myUser = new User();
 
+    private boolean newGame;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -156,7 +158,9 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
             public void onChanged(User user) {
                 myUser = user;
                 buildRecyclerView(myUser);
-                addNewGame();
+                if (newGame == false) {
+                    addNewGame();
+                }
             }
         });
 
@@ -199,12 +203,8 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
     public void startGame(String key) {
 
         Intent intent = new Intent(getApplicationContext(), OnlineGameActivity.class);
-
         String playerSession = database.getReference("multiplayer").child(LoginUID).getKey();
         intent.putExtra(PLAYER_SESSION, playerSession);
-
-        //String userName = myUser.getUserName();
-        //intent.putExtra("userName", userName);
 
         startActivity(intent);
         finish();
@@ -366,10 +366,8 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
 
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
 
-        // Read from the "multiplayer" node from the database
         DatabaseReference ref = database.getReference(MULTIPLAYER);
 
-        // Attach a listener to read the data at our posts reference
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -379,6 +377,19 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
                 for (DataSnapshot item: dataSnapshot.getChildren()) {
                     Game game = item.getValue(Game.class);
                     mOpenGamesList.add(game);
+                    User host = game.getHost();
+                    String uidHost = host.getUID();
+                    String UID = myUser.getUID();
+                    // makes sure that the host can add only one game at a time
+                    if (UID.equals(uidHost)) {
+                        newGame = true;
+                    }
+                }
+
+                //
+                if (!newGame) {
+                    addNewGame();
+                    //opponentJoinedGame();
                 }
 
                 gameAdapter.notifyDataSetChanged();

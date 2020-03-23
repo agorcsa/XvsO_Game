@@ -44,13 +44,14 @@ public class User {
         mPassword = password;
         mTotalScore = totalScore;
     }
-    public User(String firstName, String lastName, String emailAddress, String password, String imageUrl, int totalScore) {
+    public User(String uid, String firstName, String lastName, String emailAddress, String password, String imageUrl, int totalScore) {
         mFirstName = firstName;
         mLastName = lastName;
         mEmailAddress = emailAddress;
         mPassword = password;
         mImageUrl = imageUrl;
         mTotalScore = totalScore;
+        mUID = uid;
     }
 
     public String getPicture() {
