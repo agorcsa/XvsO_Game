@@ -46,12 +46,13 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder
     public void onBindViewHolder(@NonNull GameViewHolder holder, int position) {
         Game currentGame = mGameItemsList.get(position);
 
-        String key = currentGame.getKey();
+        if (currentGame != null) {
 
-        User host = currentGame.getHost();
-        UID = host.getUID();
+            String key = currentGame.getKey();
+            User host = currentGame.getHost();
+            UID = host.getUID();
 
-        User guest = currentGame.getGuest();
+            User guest = currentGame.getGuest();
 
             if (!TextUtils.isEmpty(host.getImageUrl())) {
                 Picasso.get().load(host.getImageUrl()).into(holder.profilePicture);
@@ -79,6 +80,7 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder
                     }
                 });
             }
+        }
     }
 
     @Override

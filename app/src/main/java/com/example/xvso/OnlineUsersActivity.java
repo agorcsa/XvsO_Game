@@ -203,7 +203,7 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
     public void startGame(String key) {
 
         Intent intent = new Intent(getApplicationContext(), OnlineGameActivity.class);
-        String playerSession = database.getReference("multiplayer").child(LoginUID).getKey();
+        String playerSession = database.getReference("multiplayer").child(key).getKey();
         intent.putExtra(PLAYER_SESSION, playerSession);
 
         startActivity(intent);
@@ -339,9 +339,9 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
             game.setGuest(guest);
             userName = game.getHost().getUserName();
             game.setUserName(userName);
-            String key = myRef.getKey();
-            game.setKey(key);
             DatabaseReference newGameRef = myRef.child(MULTIPLAYER).push();
+            String key = newGameRef.getKey();
+            game.setKey(key);
             newGameRef.setValue(game);
 
             if (key != null) {
@@ -383,13 +383,14 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
                     // makes sure that the host can add only one game at a time
                     if (UID.equals(uidHost)) {
                         newGame = true;
+                        String key = item.getKey();
+                        opponentJoinedGame(key);
                     }
                 }
 
                 //
                 if (!newGame) {
                     addNewGame();
-                    //opponentJoinedGame();
                 }
 
                 gameAdapter.notifyDataSetChanged();
@@ -420,12 +421,12 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
     public boolean opponentJoinedGame(String key) {
 
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference ref = database.getReference("multiplayer").child(LoginUID).child("guest");
+        DatabaseReference ref = database.getReference("multiplayer").child(key).child("guest");
 
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                User guest = dataSnapshot.getValue(User.class);
+                guest = dataSnapshot.getValue(User.class);
 
                 if (guest != null) {
                     // extract the key from the game and introduce it.
@@ -452,26 +453,34 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
 
     // alert dialog used when the guest sends a request to the host
     public void showAlert(String key) {
-        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        AlertDialog alertDialog = new AlertDialog.Builder(this)
+                .setIcon(R.drawable.ic_cross)
+                .setTitle("Accept invitation")
+                .setMessage(guest.getFirstName() + " has invited you to join XvsO for an unforgettable battle")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 
-        alert.setTitle("Accept invitation");
-        alert.setMessage(guest.getFirstName() + " has invited you to join XvsO for an unforgettable battle");
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                startGame(key);
+                                game.setStatus(Game.STATUS_PLAYING);
+                            }
+                        })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
 
-        alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Toast.makeText(getApplicationContext(), "You have refused playing with this user", Toast.LENGTH_SHORT).show();
+                        dialogInterface.dismiss();
+                        game.setStatus(Game.STATUS_WAITING);
+                    }
+                })
+                .show();
+        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                    startGame(key);
-                    game.setStatus(Game.STATUS_PLAYING);
+            public void onShow(DialogInterface dialogInterface) {
+                alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.btn_login));
+                alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.app_background));
             }
         });
-
-        alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                Toast.makeText(getApplicationContext(), "You have refused playing with this user", Toast.LENGTH_SHORT).show();
-                game.setStatus(Game.STATUS_WAITING);
-            }
-        });
-        alert.create().show();
     }
 }
