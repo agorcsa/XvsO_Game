@@ -91,7 +91,7 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
     private User myUser = new User();
 
     private boolean newGame;
-
+    private String key;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -340,7 +340,7 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
             userName = game.getHost().getUserName();
             game.setUserName(userName);
             DatabaseReference newGameRef = myRef.child(MULTIPLAYER).push();
-            String key = newGameRef.getKey();
+            key = newGameRef.getKey();
             game.setKey(key);
             newGameRef.setValue(game);
 
@@ -383,14 +383,17 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
                     // makes sure that the host can add only one game at a time
                     if (UID.equals(uidHost)) {
                         newGame = true;
-                        String key = item.getKey();
+                        key = item.getKey();
                         opponentJoinedGame(key);
                     }
                 }
 
-                //
                 if (!newGame) {
                     addNewGame();
+                }
+
+                if (newGame) {
+                    opponentJoinedGame(key);
                 }
 
                 gameAdapter.notifyDataSetChanged();
@@ -456,6 +459,7 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
         AlertDialog alertDialog = new AlertDialog.Builder(this)
                 .setIcon(R.drawable.ic_cross)
                 .setTitle("Accept invitation")
+                // guest.getFirstName()
                 .setMessage(guest.getFirstName() + " has invited you to join XvsO for an unforgettable battle")
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 
