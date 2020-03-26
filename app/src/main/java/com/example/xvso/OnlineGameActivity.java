@@ -2,7 +2,6 @@ package com.example.xvso;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.GridLayout;
 import android.widget.ImageView;
@@ -14,7 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 
-import com.example.xvso.Objects.Game;
+import com.example.xvso.Objects.User;
 import com.example.xvso.databinding.ActivityOnlineGameBinding;
 import com.example.xvso.viewmodel.OnlineGameViewModel;
 import com.google.firebase.database.DataSnapshot;
@@ -58,6 +57,9 @@ public class OnlineGameActivity extends AppCompatActivity {
     ArrayList<Integer> player1 = new ArrayList<>();
     ArrayList<Integer> player2 = new ArrayList<>();
 
+    private User guest;
+    private static final String GUEST = "guest";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,8 +76,9 @@ public class OnlineGameActivity extends AppCompatActivity {
         if (getIntent().getExtras() != null) {
 
             playerSession = Objects.requireNonNull(getIntent().getExtras().get(PLAYER_SESSION)).toString();
+            guest = getIntent().getExtras().getParcelable(GUEST);
 
-            reference.child("multiplayer").child(playerSession).addValueEventListener(new ValueEventListener() {
+            /*reference.child("multiplayer").child(playerSession).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
@@ -95,7 +98,7 @@ public class OnlineGameActivity extends AppCompatActivity {
                 public void onCancelled(@NonNull DatabaseError databaseError) {
 
                 }
-            });
+            });*/
         }
 
         gameState = 1;

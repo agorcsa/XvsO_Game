@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,8 +49,11 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
 
     private static final String LOG_TAG = "OnlineUsersActivity";
     private static final String MULTIPLAYER = "multiplayer";
-
     private static final String PLAYER_SESSION = "player_session";
+    private static final String GUEST = "guest";
+
+    private static final int REQUEST_NOT_ACCEPTED = 0;
+    private static final int REQUEST_ACCEPTED = 1;
 
     private ActivityOnlineUsersBinding usersBinding;
 
@@ -153,14 +158,14 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
             }
         });
 
-        onlineUsersViewModel.getUserLiveData().observe(this, new Observer<User>() {
+      onlineUsersViewModel.getUserLiveData().observe(this, new Observer<User>() {
             @Override
             public void onChanged(User user) {
                 myUser = user;
                 buildRecyclerView(myUser);
-                if (newGame == false) {
+                /*if (newGame == false) {
                     addNewGame();
-                }
+                }*/
             }
         });
 
@@ -203,8 +208,11 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
     public void startGame(String key) {
 
         Intent intent = new Intent(getApplicationContext(), OnlineGameActivity.class);
+
         String playerSession = database.getReference("multiplayer").child(key).getKey();
+
         intent.putExtra(PLAYER_SESSION, playerSession);
+        intent.putExtra(GUEST, (Parcelable) guest);
 
         startActivity(intent);
         finish();
@@ -328,7 +336,6 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
         usersBinding.gamesRecyclerView.setAdapter(gameAdapter);
     }
 
-
     public void addNewGame() {
 
         User guest = new User();
@@ -423,19 +430,25 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
 
     public boolean opponentJoinedGame(String key) {
 
+
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference ref = database.getReference("multiplayer").child(key).child("guest");
 
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
                 guest = dataSnapshot.getValue(User.class);
 
                 if (guest != null) {
-                    // extract the key from the game and introduce it.
-                    showAlert(key);
-                } else {
-                    game.setStatus(Game.STATUS_WAITING);
+
+                    String guestUID = guest.getUID();
+
+                    if (!TextUtils.isEmpty(guestUID)) {
+                        showAlert(key);
+                    } else {
+                        game.setStatus(Game.STATUS_WAITING);
+                    }
                 }
             }
 
@@ -465,10 +478,36 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
 
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                startGame(key);
-                                game.setStatus(Game.STATUS_PLAYING);
+                                // updates the acceptedRequest variable in the Firebase database
+                                database.getReference("multiplayer").child(key).child("acceptedRequest").setValue(REQUEST_ACCEPTED);
+
+                                DatabaseReference ref = database.getReference("multiplayer").child(key).child("guest");
+
+                                ref.addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                        guest = dataSnapshot.getValue(User.class);
+
+                                        if (!TextUtils.isEmpty(guest.getFirstName())) {
+                                            String guestFirstName = guest.getFirstName();
+                                        } else {
+                                            String guestName = guest.getName();
+                                        }
+
+                                        startGame(key);
+                                        game.setStatus(Game.STATUS_PLAYING);
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
                             }
                         })
+
+
                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
 
                     @Override

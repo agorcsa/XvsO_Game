@@ -18,19 +18,23 @@ public class Game {
 
     private String key;
 
+
+    private int acceptedRequest;
+
     // empty constructor
     public Game() {
 
     }
 
-    public Game(int picture, String gameNumber, String userName) {
+    public Game(int picture, String gameNumber, String userName, int acceptedRequest) {
         this.picture = picture;
         this.gameNumber = gameNumber;
         this.userName = userName;
+        this.acceptedRequest = acceptedRequest;
     }
 
     // constructor
-    public Game(Board board, User host, User guest, int status, int picture, String gameNumber, String userName, String key) {
+    public Game(Board board, User host, User guest, int status, int picture, String gameNumber, String userName, String key, int acceptedRequest) {
         this.board = board;
         this.host = host;
         this.guest = guest;
@@ -39,6 +43,7 @@ public class Game {
         this.gameNumber = gameNumber;
         this.userName = userName;
         this.key = key;
+        this.acceptedRequest = acceptedRequest;
     }
 
     public Board getBoard() {
@@ -103,6 +108,14 @@ public class Game {
 
     public void setKey(String key) {
         this.key = key;
+    }
+
+    public int getAcceptedRequest() {
+        return acceptedRequest;
+    }
+
+    public void setAcceptedRequest(int acceptedRequest) {
+        this.acceptedRequest = acceptedRequest;
     }
 }
 
