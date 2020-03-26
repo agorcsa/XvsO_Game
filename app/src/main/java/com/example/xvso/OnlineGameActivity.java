@@ -2,6 +2,7 @@ package com.example.xvso;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.GridLayout;
 import android.widget.ImageView;
@@ -13,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.example.xvso.Objects.Game;
 import com.example.xvso.Objects.User;
 import com.example.xvso.databinding.ActivityOnlineGameBinding;
 import com.example.xvso.viewmodel.OnlineGameViewModel;
@@ -76,9 +78,8 @@ public class OnlineGameActivity extends AppCompatActivity {
         if (getIntent().getExtras() != null) {
 
             playerSession = Objects.requireNonNull(getIntent().getExtras().get(PLAYER_SESSION)).toString();
-            guest = getIntent().getExtras().getParcelable(GUEST);
 
-            /*reference.child("multiplayer").child(playerSession).addValueEventListener(new ValueEventListener() {
+            reference.child("multiplayer").child(playerSession).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
@@ -87,9 +88,12 @@ public class OnlineGameActivity extends AppCompatActivity {
                     if (game != null) {
 
                         String guestFirstName = game.getGuest().getFirstName();
+                        String guestName = game.getGuest().getName();
 
                         if (!TextUtils.isEmpty(guestFirstName)) {
                             onlineGameBinding.player2Text.setText(guestFirstName);
+                        } else {
+                            onlineGameBinding.player2Text.setText(guestName);
                         }
                     }
                 }
@@ -98,7 +102,7 @@ public class OnlineGameActivity extends AppCompatActivity {
                 public void onCancelled(@NonNull DatabaseError databaseError) {
 
                 }
-            });*/
+            });
         }
 
         gameState = 1;

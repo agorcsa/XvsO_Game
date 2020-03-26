@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -173,8 +172,6 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
     }
 
 
-
-
     public void confirmRequest(final String otherPlayer, final String reqType) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
@@ -212,10 +209,15 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
         String playerSession = database.getReference("multiplayer").child(key).getKey();
 
         intent.putExtra(PLAYER_SESSION, playerSession);
-        intent.putExtra(GUEST, (Parcelable) guest);
 
         startActivity(intent);
         finish();
+    }
+
+
+    private void writeGuestToDatabase(User guest) {
+
+        database.getReference("multiplayer").child(key).child("guest").setValue(guest);
     }
 
 
@@ -463,7 +465,31 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
 
    @Override
     public void onJoinGameClick(String key) {
-        startGame(key);
+        writeGuestToDatabase(guest);
+        //startGame(key);
+    }
+
+    public void acceptedRequestListener() {
+
+        DatabaseReference ref = database.getReference(MULTIPLAYER).child(key).child("acceptedRequest");
+
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                int isRequestAccepted = (int) dataSnapshot.getValue();
+
+                if (isRequestAccepted == REQUEST_ACCEPTED) {
+                    startGame(key);
+                } else {
+                    // do nothing
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
 
@@ -484,20 +510,21 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
                                 DatabaseReference ref = database.getReference("multiplayer").child(key).child("guest");
 
                                 ref.addValueEventListener(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                                        guest = dataSnapshot.getValue(User.class);
+                                            guest = dataSnapshot.getValue(User.class);
 
-                                        if (!TextUtils.isEmpty(guest.getFirstName())) {
-                                            String guestFirstName = guest.getFirstName();
-                                        } else {
-                                            String guestName = guest.getName();
+                                            onJoinGameClick(key);
+                                            acceptedRequestListener();
+
+                                            if (!TextUtils.isEmpty(guest.getFirstName())) {
+                                                String guestFirstName = guest.getFirstName();
+                                            } else {
+                                                String guestName = guest.getName();
+                                            }
+                                            game.setStatus(Game.STATUS_PLAYING);
                                         }
-
-                                        startGame(key);
-                                        game.setStatus(Game.STATUS_PLAYING);
-                                    }
 
                                     @Override
                                     public void onCancelled(@NonNull DatabaseError databaseError) {
