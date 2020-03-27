@@ -220,6 +220,8 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
 
     private void writeGuestToDatabase(User guest) {
 
+
+
         database.getReference("multiplayer").child(key).child("guest").setValue(myUser);
     }
 
@@ -450,7 +452,10 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
                     String guestUID = guest.getUID();
 
                     if (!TextUtils.isEmpty(guestUID)) {
-                        showAlert(key);
+                        // Perhaps checking that the guest does not correspond to our currently logged in user?
+                        if (guest.getUID() != myUser.getUID()) {
+                            showAlert(key);
+                        }
                     } else {
                         game.setStatus(Game.STATUS_WAITING);
                     }
@@ -468,8 +473,8 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
 
    @Override
     public void onJoinGameClick(String key) {
-        writeGuestToDatabase(myUser);
-        //startGame(key);
+
+           database.getReference("multiplayer").child(key).child("guest").setValue(myUser);
     }
 
     public void acceptedRequestListener() {
