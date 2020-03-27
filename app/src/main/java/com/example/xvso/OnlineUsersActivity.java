@@ -97,6 +97,9 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
     private boolean newGame;
     private String key;
 
+    private String guestFirstName;
+    private String guestName;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -217,7 +220,7 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
 
     private void writeGuestToDatabase(User guest) {
 
-        database.getReference("multiplayer").child(key).child("guest").setValue(guest);
+        database.getReference("multiplayer").child(key).child("guest").setValue(myUser);
     }
 
 
@@ -465,7 +468,7 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
 
    @Override
     public void onJoinGameClick(String key) {
-        writeGuestToDatabase(guest);
+        writeGuestToDatabase(myUser);
         //startGame(key);
     }
 
@@ -476,7 +479,7 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                int isRequestAccepted = (int) dataSnapshot.getValue();
+                Integer isRequestAccepted = dataSnapshot.getValue(Integer.class);
 
                 if (isRequestAccepted == REQUEST_ACCEPTED) {
                     startGame(key);
@@ -495,56 +498,73 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
 
     // alert dialog used when the guest sends a request to the host
     public void showAlert(String key) {
-        AlertDialog alertDialog = new AlertDialog.Builder(this)
+
+        DatabaseReference ref = database.getReference(MULTIPLAYER).child(key).child("guest");
+
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                guest = dataSnapshot.getValue(User.class);
+
+                if (TextUtils.isEmpty(guest.getFirstName())) {
+                    guestFirstName = guest.getFirstName();
+                } else {
+                    guestName = guest.getName();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this)
                 .setIcon(R.drawable.ic_cross)
                 .setTitle("Accept invitation")
                 // guest.getFirstName()
-                .setMessage(guest.getFirstName() + " has invited you to join XvsO for an unforgettable battle")
+                .setMessage(guest.getName() + " has invited you to join XvsO for an unforgettable battle")
+
+                // (+) button
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        // updates the acceptedRequest variable in the Firebase database
+                        database.getReference("multiplayer").child(key).child("acceptedRequest").setValue(REQUEST_ACCEPTED);
+                        DatabaseReference ref = database.getReference("multiplayer").child(key).child("guest");
+                        ref.addValueEventListener(new ValueEventListener() {
                             @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                // updates the acceptedRequest variable in the Firebase database
-                                database.getReference("multiplayer").child(key).child("acceptedRequest").setValue(REQUEST_ACCEPTED);
-
-                                DatabaseReference ref = database.getReference("multiplayer").child(key).child("guest");
-
-                                ref.addValueEventListener(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                                            guest = dataSnapshot.getValue(User.class);
-
-                                            onJoinGameClick(key);
-                                            acceptedRequestListener();
-
-                                            if (!TextUtils.isEmpty(guest.getFirstName())) {
-                                                String guestFirstName = guest.getFirstName();
-                                            } else {
-                                                String guestName = guest.getName();
-                                            }
-                                            game.setStatus(Game.STATUS_PLAYING);
-                                        }
-
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                    }
-                                });
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                guest = dataSnapshot.getValue(User.class);
+                                onJoinGameClick(key);
+                                acceptedRequestListener();
+                                if (!TextUtils.isEmpty(guest.getFirstName())) {
+                                    String guestFirstName = guest.getFirstName();
+                                } else {
+                                    String guestName = guest.getName();
+                                }
+                                game.setStatus(Game.STATUS_PLAYING);
                             }
-                        })
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                            }
+                        });
+                    }
 
-
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-
+                // (-) button
+                }).setNegativeButton("No", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         Toast.makeText(getApplicationContext(), "You have refused playing with this user", Toast.LENGTH_SHORT).show();
                         dialogInterface.dismiss();
                         game.setStatus(Game.STATUS_WAITING);
                     }
-                })
-                .show();
+                });
+
+        AlertDialog alertDialog = builder.create();
+        if (!this.isFinishing()) {
+            alertDialog.show();
+        }
         alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialogInterface) {
