@@ -82,6 +82,7 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
     DatabaseReference myRef = database.getReference();
 
     private ArrayList<Game> mOpenGamesList = new ArrayList<>();
+    private ArrayList<Game> mOpenGames = new ArrayList<>();
 
     private LinearLayoutManager layoutManager;
     private GameAdapter gameAdapter;
@@ -100,12 +101,16 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
     private String guestFirstName;
     private String guestName;
 
+    private TextView joinButton;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         usersBinding = DataBindingUtil.setContentView(this, R.layout.activity_online_users);
         onlineUsersViewModel = ViewModelProviders.of(this).get(OnlineUsersViewModel.class);
+
+        joinButton = findViewById(R.id.join_game_text_view);
 
         usersBinding.setViewModel(onlineUsersViewModel);
         usersBinding.setLifecycleOwner(this);
@@ -165,9 +170,6 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
             public void onChanged(User user) {
                 myUser = user;
                 buildRecyclerView(myUser);
-                /*if (newGame == false) {
-                    addNewGame();
-                }*/
             }
         });
 
@@ -336,12 +338,21 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
     }
 
     public void buildRecyclerView(User user) {
-        layoutManager = new LinearLayoutManager(this);
-        gameAdapter = new GameAdapter(this, mOpenGamesList, user);
-        usersBinding.gamesRecyclerView.setHasFixedSize(true);
-        usersBinding.gamesRecyclerView.setLayoutManager(layoutManager);
-        usersBinding.gamesRecyclerView.setAdapter(gameAdapter);
-    }
+
+            layoutManager = new LinearLayoutManager(this);
+
+            for (Game game : mOpenGames) {
+                if (game.getStatus() == Game.STATUS_WAITING) {
+                    mOpenGames.add(game);
+                }
+            }
+
+            gameAdapter = new GameAdapter(this, mOpenGamesList, user);
+            usersBinding.gamesRecyclerView.setHasFixedSize(true);
+            usersBinding.gamesRecyclerView.setLayoutManager(layoutManager);
+            usersBinding.gamesRecyclerView.setAdapter(gameAdapter);
+        }
+
 
     public void addNewGame() {
 
@@ -453,11 +464,12 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
 
                     if (!TextUtils.isEmpty(guestUID)) {
                         // Perhaps checking that the guest does not correspond to our currently logged in user?
-                        if (guest.getUID() != myUser.getUID()) {
+                        if (!guest.getUID().equals(myUser.getUID())) {
                             showAlert(key);
                         }
                     } else {
                         game.setStatus(Game.STATUS_WAITING);
+                        database.getReference("multiplayer").child(key).child("status").setValue(Game.STATUS_WAITING);
                     }
                 }
             }
@@ -474,7 +486,32 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
    @Override
     public void onJoinGameClick(String key) {
 
-           database.getReference("multiplayer").child(key).child("guest").setValue(myUser);
+            database.getReference("multiplayer").child(key).child("guest").setValue(myUser);
+
+            DatabaseReference ref = database.getReference(MULTIPLAYER).child(key).child("acceptedRequest");
+
+            ref.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                    Integer isRequestAccepted = dataSnapshot.getValue(Integer.class);
+
+                    if (isRequestAccepted == REQUEST_ACCEPTED) {
+                        startGame(key);
+                        game.setStatus(Game.STATUS_PLAYING);
+                        database.getReference("multiplayer").child(key).child("status").setValue(Game.STATUS_PLAYING);
+                        //joinButton.setClickable(false);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+            Toast.makeText(getApplicationContext(), "Click", Toast.LENGTH_SHORT).show();
+
     }
 
     public void acceptedRequestListener() {
@@ -488,6 +525,10 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
 
                 if (isRequestAccepted == REQUEST_ACCEPTED) {
                     startGame(key);
+
+                    game.setStatus(Game.STATUS_PLAYING);
+                    database.getReference("multiplayer").child(key).child("status").setValue(Game.STATUS_PLAYING);
+
                 } else {
                     // do nothing
                 }
@@ -543,12 +584,6 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
                                 guest = dataSnapshot.getValue(User.class);
                                 onJoinGameClick(key);
                                 acceptedRequestListener();
-                                if (!TextUtils.isEmpty(guest.getFirstName())) {
-                                    String guestFirstName = guest.getFirstName();
-                                } else {
-                                    String guestName = guest.getName();
-                                }
-                                game.setStatus(Game.STATUS_PLAYING);
                             }
                             @Override
                             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -563,6 +598,7 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
                         Toast.makeText(getApplicationContext(), "You have refused playing with this user", Toast.LENGTH_SHORT).show();
                         dialogInterface.dismiss();
                         game.setStatus(Game.STATUS_WAITING);
+                        database.getReference("multiplayer").child(key).child("status").setValue(Game.STATUS_WAITING);
                     }
                 });
 

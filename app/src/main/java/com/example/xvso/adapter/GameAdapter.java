@@ -29,11 +29,13 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder
 
     private String UID = "";
 
+    // constructor 1 (all games)
     public GameAdapter(JoinGameClick listener, ArrayList<Game> mGameItemsList, User user) {
         this.listener = listener;
         this.mGameItemsList = mGameItemsList;
         this.user = user;
     }
+
 
     @NonNull
     @Override
