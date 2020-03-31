@@ -37,6 +37,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -53,6 +54,8 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
 
     private static final int REQUEST_NOT_ACCEPTED = 0;
     private static final int REQUEST_ACCEPTED = 1;
+
+    private static final String STATUS = "status";
 
     private ActivityOnlineUsersBinding usersBinding;
 
@@ -222,8 +225,6 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
 
     private void writeGuestToDatabase(User guest) {
 
-
-
         database.getReference("multiplayer").child(key).child("guest").setValue(myUser);
     }
 
@@ -340,13 +341,6 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
     public void buildRecyclerView(User user) {
 
             layoutManager = new LinearLayoutManager(this);
-
-            for (Game game : mOpenGames) {
-                if (game.getStatus() == Game.STATUS_WAITING) {
-                    mOpenGames.add(game);
-                }
-            }
-
             gameAdapter = new GameAdapter(this, mOpenGamesList, user);
             usersBinding.gamesRecyclerView.setHasFixedSize(true);
             usersBinding.gamesRecyclerView.setLayoutManager(layoutManager);
@@ -389,11 +383,11 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
 
     public void readFromDatabase() {
 
-        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        Query query = database.getReference(MULTIPLAYER)
+                .orderByChild(STATUS)
+                .equalTo(Game.STATUS_WAITING);
 
-        DatabaseReference ref = database.getReference(MULTIPLAYER);
-
-        ref.addValueEventListener(new ValueEventListener() {
+        query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -401,6 +395,7 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
 
                 for (DataSnapshot item: dataSnapshot.getChildren()) {
                     Game game = item.getValue(Game.class);
+
                     mOpenGamesList.add(game);
                     User host = game.getHost();
                     String uidHost = host.getUID();
@@ -483,34 +478,34 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
         return true;
     }
 
-   @Override
+    @Override
     public void onJoinGameClick(String key) {
 
-            database.getReference("multiplayer").child(key).child("guest").setValue(myUser);
+        database.getReference("multiplayer").child(key).child("guest").setValue(myUser);
 
-            DatabaseReference ref = database.getReference(MULTIPLAYER).child(key).child("acceptedRequest");
+        DatabaseReference ref = database.getReference(MULTIPLAYER).child(key).child("acceptedRequest");
 
-            ref.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                    Integer isRequestAccepted = dataSnapshot.getValue(Integer.class);
+                Integer isRequestAccepted = dataSnapshot.getValue(Integer.class);
 
-                    if (isRequestAccepted == REQUEST_ACCEPTED) {
-                        startGame(key);
-                        game.setStatus(Game.STATUS_PLAYING);
-                        database.getReference("multiplayer").child(key).child("status").setValue(Game.STATUS_PLAYING);
-                        //joinButton.setClickable(false);
-                    }
+                if (isRequestAccepted == REQUEST_ACCEPTED) {
+                    startGame(key);
+                    game.setStatus(Game.STATUS_PLAYING);
+                    database.getReference("multiplayer").child(key).child("status").setValue(Game.STATUS_PLAYING);
+                    //joinButton.setClickable(false);
                 }
+            }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                }
-            });
+            }
+        });
 
-            Toast.makeText(getApplicationContext(), "Click", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), "Click", Toast.LENGTH_SHORT).show();
 
     }
 
@@ -571,26 +566,13 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
                 // guest.getFirstName()
                 .setMessage(guest.getName() + " has invited you to join XvsO for an unforgettable battle")
 
-                // (+) button
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         // updates the acceptedRequest variable in the Firebase database
                         database.getReference("multiplayer").child(key).child("acceptedRequest").setValue(REQUEST_ACCEPTED);
-                        DatabaseReference ref = database.getReference("multiplayer").child(key).child("guest");
-                        ref.addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                guest = dataSnapshot.getValue(User.class);
-                                onJoinGameClick(key);
-                                acceptedRequestListener();
-                            }
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-                            }
-                        });
+                        startGame(key);
                     }
-
                 // (-) button
                 }).setNegativeButton("No", new DialogInterface.OnClickListener() {
                     @Override

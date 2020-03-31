@@ -51,7 +51,6 @@
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:text="JOIN GAME"
-                android:onClick="startGame"
                 android:clickable="true"
                 android:textStyle="bold"
                 android:textColor="@android:color/holo_orange_dark"

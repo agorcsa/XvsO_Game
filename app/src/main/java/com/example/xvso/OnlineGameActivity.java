@@ -18,6 +18,8 @@ import com.example.xvso.Objects.Game;
 import com.example.xvso.Objects.User;
 import com.example.xvso.databinding.ActivityOnlineGameBinding;
 import com.example.xvso.viewmodel.OnlineGameViewModel;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -59,8 +61,20 @@ public class OnlineGameActivity extends AppCompatActivity {
     ArrayList<Integer> player1 = new ArrayList<>();
     ArrayList<Integer> player2 = new ArrayList<>();
 
+    private User host;
     private User guest;
+
+    private  String hostUID = "";
+
+    private String hostFirstName = "";
+    private String hostName = "";
+
+    private String guestFirstName = "";
+    private String guestName = "";
+
     private static final String GUEST = "guest";
+
+    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +100,40 @@ public class OnlineGameActivity extends AppCompatActivity {
                     Game game = dataSnapshot.getValue(Game.class);
 
                     if (game != null) {
+
+                        host = game.getHost();
+                        guest = game.getGuest();
+
+                        hostUID = host.getUID();
+
+                        FirebaseUser firebaseUser = mAuth.getCurrentUser();
+                        String firebaseUID = firebaseUser.getUid();
+
+                        if (hostUID.equals(firebaseUID)){
+
+                            hostFirstName = host.getFirstName();
+                            hostName = host.getName();
+
+                            guestFirstName = guest.getFirstName();
+                            guestName = guest.getName();
+
+                            onlineGameBinding.player1Text.setText(hostName);
+                            onlineGameBinding.player2Text.setText(guestName);
+
+                        } else {
+                            onlineGameBinding.player1Text.setText(guestName);
+                            onlineGameBinding.player2Text.setText(hostName);
+                    }
+
+               /*
+                    if (host uid == our currently user uid) {
+                        player 1 text (host name)
+                        player 2 text (guest name)
+                    } else {
+                        player 1 text (guest name)
+                        player 2 text (host name)
+                    }
+                }*/
 
                         String guestFirstName = game.getGuest().getFirstName();
                         String guestName = game.getGuest().getName();
