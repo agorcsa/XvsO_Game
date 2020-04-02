@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -59,7 +58,7 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
     private FirebaseAuth.AuthStateListener mAuthListener;
     private ArrayList<String> loggedUsersArrayList = new ArrayList();
     private ArrayAdapter loggedUsersArrayAdapter;
-//    private ArrayAdapter requestedUsersArrayAdapter;
+    //    private ArrayAdapter requestedUsersArrayAdapter;
     private ListView requestedUsersListView;
     private ArrayList<String> requestedUsersArrayList = new ArrayList<>();
     private TextView userIdTextView;
@@ -80,7 +79,7 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
     private DatabaseReference query;
 
     private User currentUser = new User();
-    private User myUser = new User();
+    private User myUser;
 
     private boolean newGame;
     private String key;
@@ -89,6 +88,9 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
     private String guestName;
 
     private TextView joinButton;
+
+    private AlertDialog alertDialog;
+    AlertDialog.Builder builder;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -106,35 +108,6 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
         mAuth = FirebaseAuth.getInstance();
 
         buildRecyclerView(currentUser);
-        readFromDatabase();
-
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
-
-            // when the user will be changed
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
-                    // User is signed in
-                    LoginUID = user.getUid();
-                    Log.d(LOG_TAG, "onAuthStateChanged:signed_in: " + LoginUID);
-                    LoginUserID = user.getEmail();
-                    usersBinding.userLoginTextview.setText(LoginUserID);
-                    userName = myUser.getName();
-
-                    if (userNameCheck(true)) {
-                        userName = userName.replace(".", "1");
-                    }
-
-                    myRef.child("users").child(LoginUID).child("request").setValue(LoginUID);
-
-                    acceptIncomingRequests();
-                } else {
-                    Log.d(LOG_TAG, "onAuthStateChanged:signed_out or login");
-                    //joinOnlineGame();
-                }
-            }
-        };
 
         myRef.getRoot().child("users").addValueEventListener(new ValueEventListener() {
             @Override
@@ -157,11 +130,15 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
             public void onChanged(User user) {
                 myUser = user;
                 buildRecyclerView(myUser);
+                readFromDatabase();
+                LoginUserID = myUser.getEmailAddress();
+                usersBinding.userLoginTextview.setText(LoginUserID);
             }
         });
 
         gameAdapter.notifyDataSetChanged();
     }
+
 
     public void startGame(String key) {
 
@@ -234,13 +211,6 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
                 });
     }
 
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        mAuth.addAuthStateListener(mAuthListener);
-    }
-
     public void buildRecyclerView(User user) {
 
         layoutManager = new LinearLayoutManager(this);
@@ -249,7 +219,6 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
         usersBinding.gamesRecyclerView.setLayoutManager(layoutManager);
         usersBinding.gamesRecyclerView.setAdapter(gameAdapter);
     }
-
 
     public void addNewGame() {
 
@@ -433,34 +402,43 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
             }
         });
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                .setIcon(R.drawable.ic_cross)
-                .setTitle("Accept invitation")
-                // guest.getFirstName()
-                .setMessage(guest.getName() + " has invited you to join XvsO for an unforgettable battle")
 
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        // updates the acceptedRequest variable in the Firebase database
-                        database.getReference("multiplayer").child(key).child("acceptedRequest").setValue(REQUEST_ACCEPTED);
-                        startGame(key);
-                    }
-                    // (-) button
-                }).setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        Toast.makeText(getApplicationContext(), "You have refused playing with this user", Toast.LENGTH_SHORT).show();
-                        dialogInterface.dismiss();
-                        game.setStatus(Game.STATUS_WAITING);
-                        database.getReference("multiplayer").child(key).child("status").setValue(Game.STATUS_WAITING);
-                    }
-                });
-
-        AlertDialog alertDialog = builder.create();
-        if (!this.isFinishing()) {
+        if (!this.isFinishing() && alertDialog != null && !alertDialog.isShowing()) {
             alertDialog.show();
         }
+
+
+        if (alertDialog != null && alertDialog.isShowing()) {
+            // do nothing here
+        } else {
+            // place all the AlertDialog builder here
+            builder = new AlertDialog.Builder(this)
+                    .setIcon(R.drawable.ic_cross)
+                    .setTitle("Accept invitation")
+                    // guest.getFirstName()
+                    .setMessage(guest.getName() + " has invited you to join XvsO for an unforgettable battle")
+
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            // updates the acceptedRequest variable in the Firebase database
+                            database.getReference("multiplayer").child(key).child("acceptedRequest").setValue(REQUEST_ACCEPTED);
+                            startGame(key);
+                            alertDialog.dismiss();
+                        }
+                        // (-) button
+                    }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            Toast.makeText(getApplicationContext(), "You have refused playing with this user", Toast.LENGTH_SHORT).show();
+                            dialogInterface.dismiss();
+                            game.setStatus(Game.STATUS_WAITING);
+                            database.getReference("multiplayer").child(key).child("status").setValue(Game.STATUS_WAITING);
+                        }
+                    });
+            alertDialog = builder.create();
+        }
+
         alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialogInterface) {
