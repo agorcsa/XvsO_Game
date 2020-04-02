@@ -33,53 +33,37 @@ import java.util.Objects;
 public class OnlineGameActivity extends AppCompatActivity {
 
     private static final String LOG_TAG = "OnlineGameActivity";
-
-    private OnlineGameViewModel onlineGameViewModel;
-    private ActivityOnlineGameBinding onlineGameBinding;
-
-    // current player user name
-    private String userName = "";
-
-    // other player user name
-    private String opponentFirstName = "";
-
-    private String playerSession = "";
     private static final String PLAYER_SESSION = "player_session";
-
-    private String LoginUID = "";
-    private String requestType = "";
-
-    // current user is signed in with X
-    private String myGameSignIn = "X";
-
-    private int gameState = 0;
-
+    private static final String GUEST = "guest";
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference reference = database.getReference();
-
     int activePlayer = 1;
     ArrayList<Integer> player1 = new ArrayList<>();
     ArrayList<Integer> player2 = new ArrayList<>();
-
+    private OnlineGameViewModel onlineGameViewModel;
+    private ActivityOnlineGameBinding onlineGameBinding;
+    // current player user name
+    private String userName = "";
+    // other player user name
+    private String opponentFirstName = "";
+    private String playerSession = "";
+    private String LoginUID = "";
+    private String requestType = "";
+    // current user is signed in with X
+    private String myGameSignIn = "X";
+    private int gameState = 0;
     private User host;
     private User guest;
-
-    private  String hostUID = "";
-
+    private String hostUID = "";
     private String hostFirstName = "";
     private String hostName = "";
-
     private String guestFirstName = "";
     private String guestName = "";
-
-    private static final String GUEST = "guest";
-
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_online_game);
 
         onlineGameViewModel = ViewModelProviders.of(this).get(OnlineGameViewModel.class);
         onlineGameBinding = DataBindingUtil.setContentView(this, R.layout.activity_online_game);
@@ -109,7 +93,7 @@ public class OnlineGameActivity extends AppCompatActivity {
                         FirebaseUser firebaseUser = mAuth.getCurrentUser();
                         String firebaseUID = firebaseUser.getUid();
 
-                        if (hostUID.equals(firebaseUID)){
+                        if (hostUID.equals(firebaseUID)) {
 
                             hostFirstName = host.getFirstName();
                             hostName = host.getName();
@@ -117,31 +101,37 @@ public class OnlineGameActivity extends AppCompatActivity {
                             guestFirstName = guest.getFirstName();
                             guestName = guest.getName();
 
-                            onlineGameBinding.player1Text.setText(hostName);
-                            onlineGameBinding.player2Text.setText(guestName);
+                            if (TextUtils.isEmpty(hostFirstName))  {
+                                onlineGameBinding.player1Text.setText(hostName);
+                            } else {
+                                onlineGameBinding.player1Text.setText(hostFirstName);
+                            }
+
+                            if (TextUtils.isEmpty(guestFirstName)) {
+                                onlineGameBinding.player2Text.setText(guestName);
+                            } else {
+                                onlineGameBinding.player2Text.setText(guestFirstName);
+                            }
 
                         } else {
-                            onlineGameBinding.player1Text.setText(guestName);
-                            onlineGameBinding.player2Text.setText(hostName);
-                    }
 
-               /*
-                    if (host uid == our currently user uid) {
-                        player 1 text (host name)
-                        player 2 text (guest name)
-                    } else {
-                        player 1 text (guest name)
-                        player 2 text (host name)
-                    }
-                }*/
+                            hostFirstName = host.getFirstName();
+                            hostName = host.getName();
 
-                        String guestFirstName = game.getGuest().getFirstName();
-                        String guestName = game.getGuest().getName();
+                            guestFirstName = guest.getFirstName();
+                            guestName = guest.getName();
 
-                        if (!TextUtils.isEmpty(guestFirstName)) {
-                            onlineGameBinding.player2Text.setText(guestFirstName);
-                        } else {
-                            onlineGameBinding.player2Text.setText(guestName);
+                            if (TextUtils.isEmpty(guestFirstName)) {
+                                onlineGameBinding.player1Text.setText(guestName);
+                            } else {
+                                onlineGameBinding.player1Text.setText(guestFirstName);
+                            }
+
+                            if (TextUtils.isEmpty(hostFirstName)) {
+                                onlineGameBinding.player2Text.setText(hostName);
+                            } else {
+                                onlineGameBinding.player2Text.setText(hostFirstName);
+                            }
                         }
                     }
                 }
@@ -213,11 +203,11 @@ public class OnlineGameActivity extends AppCompatActivity {
                     onlineGameBinding.player1Result.clearComposingText();
                     onlineGameBinding.player2Result.clearComposingText();
                     activePlayer = 2;
-                    HashMap<String,Object> map = (HashMap<String, Object>) dataSnapshot.getValue();
+                    HashMap<String, Object> map = (HashMap<String, Object>) dataSnapshot.getValue();
                     if (map != null) {
                         String value = "";
                         String firstPlayer = userName;
-                        for (String key:map.keySet()) {
+                        for (String key : map.keySet()) {
                             value = (String) map.get(key);
                             if (value.equals(userName)) {
                                 activePlayer = 2;
@@ -307,52 +297,84 @@ public class OnlineGameActivity extends AppCompatActivity {
         }
     }
 
-    void checkWinner(){
+    void checkWinner() {
         int winner = 0;
 
         /********* for Player 1 *********/
-        if(player1.contains(1) && player1.contains(2) && player1.contains(3)){ winner = 1; }
-        if(player1.contains(4) && player1.contains(5) && player1.contains(6)){ winner = 1; }
-        if(player1.contains(7) && player1.contains(8) && player1.contains(9)){ winner = 1; }
+        if (player1.contains(1) && player1.contains(2) && player1.contains(3)) {
+            winner = 1;
+        }
+        if (player1.contains(4) && player1.contains(5) && player1.contains(6)) {
+            winner = 1;
+        }
+        if (player1.contains(7) && player1.contains(8) && player1.contains(9)) {
+            winner = 1;
+        }
 
-        if(player1.contains(1) && player1.contains(4) && player1.contains(7)){ winner = 1; }
-        if(player1.contains(2) && player1.contains(5) && player1.contains(8)){ winner = 1; }
-        if(player1.contains(3) && player1.contains(6) && player1.contains(9)){ winner = 1; }
+        if (player1.contains(1) && player1.contains(4) && player1.contains(7)) {
+            winner = 1;
+        }
+        if (player1.contains(2) && player1.contains(5) && player1.contains(8)) {
+            winner = 1;
+        }
+        if (player1.contains(3) && player1.contains(6) && player1.contains(9)) {
+            winner = 1;
+        }
 
-        if(player1.contains(1) && player1.contains(5) && player1.contains(9)){ winner = 1; }
-        if(player1.contains(3) && player1.contains(5) && player1.contains(7)){ winner = 1; }
+        if (player1.contains(1) && player1.contains(5) && player1.contains(9)) {
+            winner = 1;
+        }
+        if (player1.contains(3) && player1.contains(5) && player1.contains(7)) {
+            winner = 1;
+        }
 
 
         /********* for Player 2 *********/
-        if(player2.contains(1) && player2.contains(2) && player2.contains(3)){ winner = 2; }
-        if(player2.contains(4) && player2.contains(5) && player2.contains(6)){ winner = 2; }
-        if(player2.contains(7) && player2.contains(8) && player2.contains(9)){ winner = 2; }
+        if (player2.contains(1) && player2.contains(2) && player2.contains(3)) {
+            winner = 2;
+        }
+        if (player2.contains(4) && player2.contains(5) && player2.contains(6)) {
+            winner = 2;
+        }
+        if (player2.contains(7) && player2.contains(8) && player2.contains(9)) {
+            winner = 2;
+        }
 
-        if(player2.contains(1) && player2.contains(4) && player2.contains(7)){ winner = 2; }
-        if(player2.contains(2) && player2.contains(5) && player2.contains(8)){ winner = 2; }
-        if(player2.contains(3) && player2.contains(6) && player2.contains(9)){ winner = 2; }
+        if (player2.contains(1) && player2.contains(4) && player2.contains(7)) {
+            winner = 2;
+        }
+        if (player2.contains(2) && player2.contains(5) && player2.contains(8)) {
+            winner = 2;
+        }
+        if (player2.contains(3) && player2.contains(6) && player2.contains(9)) {
+            winner = 2;
+        }
 
-        if(player2.contains(1) && player2.contains(5) && player2.contains(9)){ winner = 2; }
-        if(player2.contains(3) && player2.contains(5) && player2.contains(7)){ winner = 2; }
+        if (player2.contains(1) && player2.contains(5) && player2.contains(9)) {
+            winner = 2;
+        }
+        if (player2.contains(3) && player2.contains(5) && player2.contains(7)) {
+            winner = 2;
+        }
 
 
-        if(winner != 0 && gameState == 1){
-            if(winner == 1){
+        if (winner != 0 && gameState == 1) {
+            if (winner == 1) {
                 ShowAlert(opponentFirstName + " is winner");
-            }else if(winner == 2){
+            } else if (winner == 2) {
                 ShowAlert("You won the game");
             }
             gameState = 2;
         }
 
         ArrayList<Integer> emptyBlocks = new ArrayList<Integer>();
-        for(int i=1; i<=9; i++){
-            if(!(player1.contains(i) || player2.contains(i))){
+        for (int i = 1; i <= 9; i++) {
+            if (!(player1.contains(i) || player2.contains(i))) {
                 emptyBlocks.add(i);
             }
         }
-        if(emptyBlocks.size() == 0) {
-            if(gameState == 1) {
+        if (emptyBlocks.size() == 0) {
+            if (gameState == 1) {
                 AlertDialog.Builder b = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert);
                 ShowAlert("Draw");
             }
@@ -376,14 +398,14 @@ public class OnlineGameActivity extends AppCompatActivity {
     }
 
     public void ShowAlert(String message) {
-        Toast toast=Toast. makeText(getApplicationContext(),message,Toast. LENGTH_SHORT);
+        Toast toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT);
         toast.show();
     }
 
 
     private void hideView(View view) {
         GridLayout gridLayout = (GridLayout) view.getParent();
-        for (int i = 0; i <  gridLayout.getChildCount(); i++) {
+        for (int i = 0; i < gridLayout.getChildCount(); i++) {
             if (view == gridLayout.getChildAt(i)) {
                 gridLayout.removeViewAt(i);
                 break;

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">X vs. 0 in Space</string>
+    <string name="app_name">Single Player</string>
     <string name="app_label">X vs. O in Space</string>
     <string name="profile_label">Your Profile</string>
     <string name="log_in_activity">Log In</string>
@@ -18,7 +18,7 @@
     <string name="new_pass">New Password</string>
     <string name="title_activity_profile" translatable="false">Firebase</string>
     <string name="title_activity_login">Sign in</string>
-    <string name="online_users_activity">Online Users</string>
+    <string name="online_users_activity">Multi Player</string>
 
     <string name="hint_name">Fullname</string>
 
