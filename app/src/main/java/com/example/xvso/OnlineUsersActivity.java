@@ -1,7 +1,6 @@
 package com.example.xvso;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -17,6 +16,9 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.Theme;
 import com.example.xvso.Objects.Game;
 import com.example.xvso.Objects.User;
 import com.example.xvso.adapter.GameAdapter;
@@ -74,7 +76,6 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
     private GameAdapter gameAdapter;
 
     private User host;
-    private User guest;
 
     private DatabaseReference query;
 
@@ -91,6 +92,8 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
 
     private AlertDialog alertDialog;
     AlertDialog.Builder builder;
+
+    private User guest;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -378,6 +381,14 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
 
     }
 
+    public String getGuestName(User user) {
+        if (TextUtils.isEmpty(user.getFirstName())) {
+            return user.getName();
+        } else {
+            return user.getFirstName();
+        }
+    }
+
     // shows AlertDialog
     // when guest sends a request to the host
     public void showAlert(String key) {
@@ -397,47 +408,14 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
         });
 
 
-        if (alertDialog != null && alertDialog.isShowing()) {
-            // do nothing here
-        } else {
-            // place all the AlertDialog builder here
-            builder = new AlertDialog.Builder(this)
-                    .setIcon(R.drawable.ic_cross)
-                    .setTitle("Accept invitation")
-                    // guest.getFirstName()
-                    .setMessage(guest.getName() + " has invited you to join XvsO for an unforgettable battle")
-                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            // updates the acceptedRequest variable in the Firebase database
-                            database.getReference("multiplayer").child(key).child("acceptedRequest").setValue(REQUEST_ACCEPTED);
-                            startGame(key);
-                            alertDialog.dismiss();
-                        }
-                        // (-) button
-                    }).setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            Toast.makeText(getApplicationContext(), "You have refused playing with this user", Toast.LENGTH_SHORT).show();
-                            dialogInterface.dismiss();
-                            game.setStatus(Game.STATUS_WAITING);
-                            database.getReference("multiplayer").child(key).child("status").setValue(Game.STATUS_WAITING);
-                        }
-                    });
-            alertDialog = builder.create();
-            if (!this.isFinishing() && alertDialog != null && !alertDialog.isShowing()) {
-                alertDialog.show();
-            }
-        }
-
-        /*new MaterialDialog.Builder(this)
-                .icon(R.drawable.ic_cross)
+        new MaterialDialog.Builder(this)
+                .icon(getResources().getDrawable(R.drawable.ic_cross, null))
                 .limitIconToDefaultSize()
                 .title(R.string.alert_dialog_title)
-                .content(guest.getFirstName() + R.string.alert_dialog_content)
+                .content(getString(R.string.alert_dialog_content, guestName))
                 .positiveText(R.string.alert_dialog_yes)
                 .negativeText(R.string.alert_dialog_no)
-                .theme(Theme.AlertDialogStyle)
+                .theme(Theme.DARK)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(MaterialDialog dialog, DialogAction which) {
@@ -451,11 +429,12 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
                 .onNegative(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(MaterialDialog dialog, DialogAction which) {
-                        Toast.makeText(getApplicationContext(), "You have refused playing with " + guest.getFirstName(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "You have refused playing with " + getGuestName(guest), Toast.LENGTH_SHORT).show();
                         game.setStatus(Game.STATUS_WAITING);
                         database.getReference("multiplayer").child(key).child("status").setValue(Game.STATUS_WAITING);
                     }
                 })
-                .show();*/
+                .show();
     }
+
 }

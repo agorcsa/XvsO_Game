@@ -66,4 +66,8 @@
     <string name="register">Registrarse</string>
     <string name="back">atrás</string>
     <string name="new_game">Nuevo Juego</string>
+    <string name="alert_dialog_title">Aceptar la invitacion</string>
+    <string name="alert_dialog_yes">SI</string>
+    <string name="alert_dialog_no">NO</string>
+    <string name="alert_dialog_content"> %1$s se ha unido a tu juego, ¿quieres aceptar el desafío?</string>
 </resources>

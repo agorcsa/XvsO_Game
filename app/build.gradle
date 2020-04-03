@@ -62,6 +62,8 @@ dependencies {
     // Youtube Android WebView
     implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:core:10.0.5'
 
+    // Alert Dialog library
+    implementation 'com.afollestad.material-dialogs:core:0.9.6.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

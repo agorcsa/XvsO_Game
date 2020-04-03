@@ -88,4 +88,10 @@
 
     <string name="new_game">New Game</string>
 
+    <!-- Alert Dialog-->
+    <string name="alert_dialog_title">Accept invitation</string>
+    <string name="alert_dialog_content"> %1$s has joined your game, do you want to accept the challenge?</string>
+    <string name="alert_dialog_yes">YES</string>
+    <string name="alert_dialog_no">NO</string>
+
 </resources>
