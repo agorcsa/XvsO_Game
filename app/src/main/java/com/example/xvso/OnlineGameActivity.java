@@ -18,6 +18,7 @@ import com.example.xvso.Objects.Game;
 import com.example.xvso.Objects.User;
 import com.example.xvso.databinding.ActivityOnlineGameBinding;
 import com.example.xvso.viewmodel.OnlineGameViewModel;
+import com.example.xvso.viewmodel.OnlineUsersViewModelFactory;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -60,12 +61,13 @@ public class OnlineGameActivity extends AppCompatActivity {
     private String guestFirstName = "";
     private String guestName = "";
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    private String gameId = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        onlineGameViewModel = ViewModelProviders.of(this).get(OnlineGameViewModel.class);
+        onlineGameViewModel = ViewModelProviders.of(this, new OnlineUsersViewModelFactory(gameId)).get(OnlineGameViewModel.class);
         onlineGameBinding = DataBindingUtil.setContentView(this, R.layout.activity_online_game);
         onlineGameBinding.setViewModel(onlineGameViewModel);
         onlineGameBinding.setLifecycleOwner(this);

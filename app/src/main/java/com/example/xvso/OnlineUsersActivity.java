@@ -412,7 +412,7 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
                 .icon(getResources().getDrawable(R.drawable.ic_cross, null))
                 .limitIconToDefaultSize()
                 .title(R.string.alert_dialog_title)
-                .content(getString(R.string.alert_dialog_content, guestName))
+                .content(getString(R.string.alert_dialog_content, getGuestName(guest)))
                 .positiveText(R.string.alert_dialog_yes)
                 .negativeText(R.string.alert_dialog_no)
                 .theme(Theme.DARK)
