@@ -34,7 +34,7 @@ import java.util.Objects;
 public class OnlineGameActivity extends AppCompatActivity {
 
     private static final String LOG_TAG = "OnlineGameActivity";
-    private static final String PLAYER_SESSION = "player_session";
+    private static final String GAME_ID = "gameId";
     private static final String GUEST = "guest";
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference reference = database.getReference();
@@ -47,7 +47,7 @@ public class OnlineGameActivity extends AppCompatActivity {
     private String userName = "";
     // other player user name
     private String opponentFirstName = "";
-    private String playerSession = "";
+    private String gameId = "";
     private String LoginUID = "";
     private String requestType = "";
     // current user is signed in with X
@@ -61,7 +61,6 @@ public class OnlineGameActivity extends AppCompatActivity {
     private String guestFirstName = "";
     private String guestName = "";
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    private String gameId = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,9 +76,9 @@ public class OnlineGameActivity extends AppCompatActivity {
 
         if (getIntent().getExtras() != null) {
 
-            playerSession = Objects.requireNonNull(getIntent().getExtras().get(PLAYER_SESSION)).toString();
+            gameId = Objects.requireNonNull(getIntent().getExtras().get(GAME_ID)).toString();
 
-            reference.child("multiplayer").child(playerSession).addValueEventListener(new ValueEventListener() {
+            reference.child("multiplayer").child(gameId).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
@@ -167,7 +166,7 @@ public class OnlineGameActivity extends AppCompatActivity {
             reference.child("playing").child(playerSession).child("turn").setValue(opponentFirstName);
         }*/
 
-        reference.child("playing").child(playerSession).child("turn").addValueEventListener(new ValueEventListener() {
+        reference.child("playing").child(gameId).child("turn").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 try {
@@ -197,7 +196,7 @@ public class OnlineGameActivity extends AppCompatActivity {
             }
         });
 
-        reference.child("playing").child(playerSession).child("game").addValueEventListener(new ValueEventListener() {
+        reference.child("playing").child(gameId).child("game").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 try {
@@ -238,7 +237,7 @@ public class OnlineGameActivity extends AppCompatActivity {
 
         ImageView selectedImage = (ImageView) view;
 
-        if (playerSession.length() <= 0) {
+        if (gameId.length() <= 0) {
             Intent intent = new Intent(getApplicationContext(), OnlineGameActivity.class);
             startActivity(intent);
             finish();
@@ -275,8 +274,8 @@ public class OnlineGameActivity extends AppCompatActivity {
                     selectedBlock = 9;
                     break;
             }
-            reference.child("playing").child(playerSession).child("game").child("block" + selectedBlock).setValue(userName);
-            reference.child("playing").child(playerSession).child(playerSession).child("turn").setValue(opponentFirstName);
+            reference.child("playing").child(gameId).child("game").child("block" + selectedBlock).setValue(userName);
+            reference.child("playing").child(gameId).child(gameId).child("turn").setValue(opponentFirstName);
             setEnableClick(false);
             activePlayer = 2;
 

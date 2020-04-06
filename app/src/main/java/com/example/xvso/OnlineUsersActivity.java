@@ -44,7 +44,7 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
 
     private static final String LOG_TAG = "OnlineUsersActivity";
     private static final String MULTIPLAYER = "multiplayer";
-    private static final String PLAYER_SESSION = "player_session";
+    private static final String GAME_ID = "gameId";
     private static final String GUEST = "guest";
 
     private static final int REQUEST_NOT_ACCEPTED = 0;
@@ -147,9 +147,9 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
 
         Intent intent = new Intent(getApplicationContext(), OnlineGameActivity.class);
 
-        String playerSession = database.getReference("multiplayer").child(key).getKey();
+        String gameID = database.getReference("multiplayer").child(key).getKey();
 
-        intent.putExtra(PLAYER_SESSION, playerSession);
+        intent.putExtra(GAME_ID, gameID);
 
         startActivity(intent);
         finish();
