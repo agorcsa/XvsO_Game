@@ -122,6 +122,7 @@ public class MainActivity extends BaseActivity {
     }
 
     /**
+     *
      * auxiliary method which displays a toast message only by giving the message as String parameter
      * @param message
      */
