@@ -423,6 +423,7 @@ public class OnlineUsersActivity extends BaseActivity implements GameAdapter.Joi
                         // updates the acceptedRequest variable in the Firebase database
                         database.getReference("multiplayer").child(key).child("acceptedRequest").setValue(REQUEST_ACCEPTED);
                         startGame(key);
+                        /// --> here is the problem
                         alertDialog.dismiss();
                     }
                 })
